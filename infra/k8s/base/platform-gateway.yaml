@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: platform-gateway
+  namespace: platform
+  labels:
+    app: platform-gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: platform-gateway
+  template:
+    metadata:
+      labels:
+        app: platform-gateway
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+        - name: graphql-router
+          image: ghcr.io/tribalmingle/graphql-gateway:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: SUPERGRAPH_PATH
+              value: /config/supergraph.graphql
+            - name: APOLLO_ROUTER_CONFIG_PATH
+              value: /router/router.yaml
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: router-config
+              mountPath: /router
+      volumes:
+        - name: config
+          configMap:
+            name: graphql-gateway-config
+        - name: router-config
+          configMap:
+            name: apollo-router-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: platform-gateway
+  namespace: platform
+spec:
+  selector:
+    app: platform-gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+  type: ClusterIP

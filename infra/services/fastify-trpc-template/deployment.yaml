@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: template-fastify-trpc
+  namespace: platform
+  labels:
+    app: template-fastify-trpc
+    component: api
+    tier: backend
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: template-fastify-trpc
+  template:
+    metadata:
+      labels:
+        app: template-fastify-trpc
+        component: api
+      annotations:
+        config.linkerd.io/proxy-log-level: warn,linkerd=info
+        config.linkerd.io/proxy-await: enabled
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9464"
+        prometheus.io/path: /metrics
+    spec:
+      serviceAccountName: template-fastify-trpc
+      containers:
+        - name: app
+          image: ghcr.io/tribalmingle/template-fastify-trpc:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: template-fastify-trpc-config
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://otel-collector.observability:4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "service.name=template-fastify-trpc,service.namespace=platform"
+            - name: LOG_LEVEL
+              value: info
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            failureThreshold: 10
+            periodSeconds: 5
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: { }
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: template-fastify-trpc

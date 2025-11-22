@@ -1,0 +1,175 @@
+{
+  "hero": {
+    "title": "Find love with someone who truly",
+    "highlight": "shares your culture",
+    "description": "Meet 30+ singles from real African tribes like Igbo, Yoruba, Ashanti and more. Verified profiles. Premium, serious connections.",
+    "primaryCta": "Join Tribal Mingle",
+    "secondaryCta": "I already have an account",
+    "subcopy": "Built for Africans at home and in the diaspora who want partners that respect their tribe, language and values.",
+    "diasporaTagline": "Diaspora ready: connect in any city you call home.",
+    "localTagline": "Close to home: celebrate love rooted in your community.",
+    "referralTagline": "A friend invited you—unlock premium perks for both of you.",
+    "safetyTagline": "Safety-first platform with selfie, ID, and background verification.",
+    "featureDeckTitle": "Why Choose Tribal Mingle?"
+  },
+  "features": [
+    {
+      "icon": "zap",
+      "title": "Tribe-aware matching",
+      "description": "Match by authentic cultural signals, not just swipes."
+    },
+    {
+      "icon": "shield",
+      "title": "Verified Profiles",
+      "description": "ID, selfie, and behavior review keep the community real."
+    },
+    {
+      "icon": "users",
+      "title": "Community first",
+      "description": "Discover Igbo, Yoruba, Ashanti and 25+ other tribes worldwide."
+    },
+    {
+      "icon": "heart",
+      "title": "Premium outcomes",
+      "description": "Unlock unlimited likes, priority boosts, and concierge introductions."
+    }
+  ],
+  "testimonialsFallback": [
+    {
+      "name": "Ada",
+      "location": "Lagos, Nigeria",
+      "tribe": "Igbo",
+      "content": "We bonded over childhood stories only another Igbo person would understand.",
+      "rating": 5
+    },
+    {
+      "name": "Kwame",
+      "location": "Accra, Ghana",
+      "tribe": "Ashanti",
+      "content": "It took just two weeks to find someone who shares my faith and family values.",
+      "rating": 5
+    },
+    {
+      "name": "Lola",
+      "location": "London, UK",
+      "tribe": "Yoruba",
+      "content": "Finally a diaspora app where my language, food, and traditions are celebrated.",
+      "rating": 4
+    }
+  ],
+  "mapSection": {
+    "title": "Explore tribes across Africa and the diaspora",
+    "description": "See where intentional relationships are growing and meet members who share your roots.",
+    "cta": "Request an introduction",
+    "fallbackTitle": "Browse featured tribes",
+    "fallbackDescription": "Your browser cannot load the live map. Discover highlighted tribes below."
+  },
+  "cmsSections": {
+    "blog": {
+      "eyebrow": "Field Notes",
+      "title": "From the Tribe Journal",
+      "description": "Editorial stories on culture-first dating, safety, and diaspora wins.",
+      "ctaLabel": "Read the story"
+    },
+    "events": {
+      "eyebrow": "On the Road",
+      "title": "Upcoming salons & mixers",
+      "description": "Meet matchmakers, cultural hosts, and serious singles in premium settings.",
+      "ctaLabel": "RSVP"
+    }
+  },
+  "ctaSection": {
+    "title": "Ready to find your tribe?",
+    "description": "Join thousands of singles building intentional relationships.",
+    "cta": "Get Started Free"
+  },
+  "familyPortal": {
+    "hero": {
+      "eyebrow": "Trusted Friend Access",
+      "title": "Invite the people who protect your heart",
+      "description": "Share a private dashboard with a parent, sibling, or trusted elder so they can review matches, verify safety steps, and celebrate milestones with you.",
+      "primaryCta": "Invite a trusted friend",
+      "secondaryCta": "Download the trust brief"
+    },
+    "pillars": [
+      {
+        "icon": "shield",
+        "title": "Liveness verified",
+        "description": "Photo, video, and ID checks keep fake profiles away before a trusted friend ever reviews them."
+      },
+      {
+        "icon": "users",
+        "title": "Shared visibility",
+        "description": "Trusted friends see curated snapshots—not private chats—so members keep agency while feeling supported."
+      },
+      {
+        "icon": "sparkles",
+        "title": "Consent controls",
+        "description": "Granular toggles let members pause access, hide sensitive fields, or escalate concerns instantly."
+      }
+    ],
+    "howItWorks": {
+      "title": "How the family portal works",
+      "steps": [
+        {
+          "title": "Send a secure invite",
+          "description": "Add an email or WhatsApp number. We generate a one-time link that expires in 24 hours."
+        },
+        {
+          "title": "Trusted friend reviews highlights",
+          "description": "They see verification status, match insights, and upcoming video dates—never private messages."
+        },
+        {
+          "title": "Co-sign or raise a flag",
+          "description": "Trusted friends can endorse a connection, leave notes, or trigger an instant safety review."
+        }
+      ],
+      "cta": "Invite a trusted friend"
+    },
+    "trustSignals": {
+      "title": "Safeguards families asked for",
+      "items": [
+        "SOC2-aligned audit trail with immutable activity logs",
+        "24/7 concierge trust desk for escalations across regions",
+        "Optional clergy or community elder access with limited scopes"
+      ]
+    },
+    "faq": {
+      "title": "Frequently asked",
+      "items": [
+        {
+          "question": "Can trusted friends edit my profile?",
+          "answer": "No. They only view safety status, matches you share, and notes you invite them to leave."
+        },
+        {
+          "question": "Is my chat history visible?",
+          "answer": "Never. We only surface metadata (date scheduled, verification status) so your private conversations stay yours."
+        },
+        {
+          "question": "How many trusted friends can I add?",
+          "answer": "Up to three at launch. You control access start/end dates and can revoke instantly."
+        }
+      ]
+    },
+    "support": {
+      "title": "Need a custom setup?",
+      "description": "Concierge matchmakers can onboard elders via phone if they prefer offline guidance.",
+      "contactCta": "Talk to the trust desk",
+      "contactHref": "mailto:family@tribalmingle.com",
+      "responseTime": "Avg. response time · under 2 hours"
+    }
+  },
+  "footer": {
+    "company": "Company",
+    "product": "Product",
+    "legal": "Legal",
+    "connect": "Connect",
+    "about": "About",
+    "features": "Features",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "contact": "Contact",
+    "comingSoon": "coming soon",
+    "copyright": "All rights reserved."
+  }
+}

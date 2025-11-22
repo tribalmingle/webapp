@@ -1,0 +1,36 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+  - ../../base
+patches:
+  - target:
+      kind: Deployment
+      name: platform-gateway
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: platform-gateway
+      spec:
+        replicas: 4
+        template:
+          spec:
+            containers:
+              - name: graphql-router
+                resources:
+                  limits:
+                    cpu: "1"
+                    memory: 512Mi
+                  requests:
+                    cpu: 250m
+                    memory: 256Mi
+  - target:
+      kind: Service
+      name: platform-gateway
+    patch: |-
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: platform-gateway
+      spec:
+        type: LoadBalancer

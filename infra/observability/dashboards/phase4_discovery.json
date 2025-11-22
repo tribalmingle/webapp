@@ -1,0 +1,38 @@
+{
+  "title": "Phase 4 Discovery",
+  "description": "Feed latency, interaction quotas, boost saturation",
+  "widgets": [
+    {
+      "definition": {
+        "type": "timeseries",
+        "requests": [
+          {
+            "q": "avg:matching.service.duration{service:matching-service}",
+            "display_type": "line",
+            "style": { "line_type": "solid", "line_width": "normal", "palette": "dog_classic" }
+          }
+        ],
+        "title": "MatchingService latency"
+      }
+    },
+    {
+      "definition": {
+        "type": "timeseries",
+        "requests": [
+          { "q": "sum:interaction.events.count{event:like}", "display_type": "bars" },
+          { "q": "sum:interaction.events.count{event:super_like}", "display_type": "bars" }
+        ],
+        "title": "Interaction volume"
+      }
+    },
+    {
+      "definition": {
+        "type": "query_value",
+        "requests": [
+          { "q": "avg:discovery.feed.latency{*}", "aggregator": "avg" }
+        ],
+        "title": "Feed latency"
+      }
+    }
+  ]
+}

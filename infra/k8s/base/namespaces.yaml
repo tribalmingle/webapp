@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: List
+items:
+  - apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: platform
+      labels:
+        linkerd.io/inject: enabled
+  - apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: realtime
+      labels:
+        linkerd.io/inject: enabled
+  - apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: jobs
+      labels:
+        linkerd.io/inject: enabled
+  - apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: observability

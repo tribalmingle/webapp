@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: funnel-snapshot
+  labels:
+    app: funnel-snapshot
+spec:
+  schedule: "0 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: funnel-snapshot
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: snapshot
+              image: ghcr.io/tribalmingle/analytics-worker:latest
+              args: ["npm", "run", "snapshots:create"]
+              env:
+                - name: NODE_ENV
+                  value: production
+                - name: MONGODB_URI
+                  valueFrom:
+                    secretKeyRef:
+                      name: analytics-mongo
+                      key: uri
+                - name: NEON_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: neon-analytics
+                      key: url

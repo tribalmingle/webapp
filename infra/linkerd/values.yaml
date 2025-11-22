@@ -1,0 +1,19 @@
+# Linkerd Helm values for multi-cluster install
+installNamespace: true
+identityTrustAnchorsPEM: |
+  -----BEGIN CERTIFICATE-----
+  PLACEHOLDER
+  -----END CERTIFICATE-----
+identity:
+  issuer:
+    scheme: kube-public
+proxy:
+  logLevel: warn,linkerd=info
+  resources:
+    requests:
+      cpu: 100m
+      memory: 64Mi
+    limits:
+      cpu: 400m
+      memory: 256Mi
+heartbeatSchedule: "0 * * * *"

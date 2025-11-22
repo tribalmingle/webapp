@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentry-relay
+  namespace: observability
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sentry-relay
+  template:
+    metadata:
+      labels:
+        app: sentry-relay
+    spec:
+      containers:
+        - name: relay
+          image: getsentry/relay:23.8.0
+          env:
+            - name: RELAY_UPSTREAM
+              value: https://sentry.io/
+            - name: RELAY_HOST
+              value: relay.observability.svc.cluster.local
+          volumeMounts:
+            - name: config
+              mountPath: /work/.relay
+      volumes:
+        - name: config
+          configMap:
+            name: sentry-relay-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sentry-relay-config
+  namespace: observability
+  labels:
+    app: sentry-relay
+  data:
+    config.yml: |
+      relay:
+        mode: proxy
+        upstream: https://sentry.io/
+        tls:
+          cert: null
+      logging:
+        level: warn

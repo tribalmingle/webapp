@@ -1,0 +1,53 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: platform-rate-limit
+  namespace: platform
+config:
+  minute: 6000
+  policy: redis
+  redis_host: redis.platform.svc.cluster.local
+plugin: rate-limiting
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: platform-jwt
+  namespace: platform
+config:
+  claims_to_verify:
+    - exp
+  key_claim_name: kid
+  secret_is_base64: false
+plugin: jwt
+---
+apiVersion: configuration.konghq.com/v1beta1
+kind: KongIngress
+metadata:
+  name: platform-rest-ingress
+  namespace: platform
+route:
+  protocols:
+    - http
+    - https
+  methods:
+    - GET
+    - POST
+    - PUT
+    - PATCH
+    - DELETE
+  preserve_host: true
+  strip_path: false
+upstream:
+  healthchecks:
+    active:
+      http_path: /healthz
+      healthy:
+        interval: 10
+        successes: 2
+      unhealthy:
+        http_failures: 3
+        interval: 5
+service:
+  host: platform-rest
+  path: /

@@ -1,0 +1,357 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "igbo",
+        "name": "Igbo",
+        "country": "Nigeria",
+        "capital": "Enugu",
+        "populationEstimate": 32000000,
+        "color": "#a855f7",
+        "centroid": [7.2, 6.3]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[6.2, 7.5], [8.4, 7.5], [8.4, 5.0], [6.2, 5.0], [6.2, 7.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "yoruba",
+        "name": "Yoruba",
+        "country": "Nigeria",
+        "capital": "Ibadan",
+        "populationEstimate": 40000000,
+        "color": "#7c3aed",
+        "centroid": [4.2, 7.9]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[3.0, 9.2], [6.0, 9.2], [6.0, 6.5], [3.0, 6.5], [3.0, 9.2]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hausa",
+        "name": "Hausa",
+        "country": "Nigeria",
+        "capital": "Kano",
+        "populationEstimate": 36000000,
+        "color": "#c084fc",
+        "centroid": [8.6, 11.5]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[6.5, 13.5], [10.8, 13.5], [10.8, 9.6], [6.5, 9.6], [6.5, 13.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ashanti",
+        "name": "Ashanti",
+        "country": "Ghana",
+        "capital": "Kumasi",
+        "populationEstimate": 11000000,
+        "color": "#f97316",
+        "centroid": [-1.6, 6.8]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-2.6, 7.6], [-0.4, 7.6], [-0.4, 5.9], [-2.6, 5.9], [-2.6, 7.6]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "amharic",
+        "name": "Amhara",
+        "country": "Ethiopia",
+        "capital": "Bahir Dar",
+        "populationEstimate": 27000000,
+        "color": "#fb923c",
+        "centroid": [38.4, 11.7]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[36.5, 13.2], [40.2, 13.2], [40.2, 10.0], [36.5, 10.0], [36.5, 13.2]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "oromo",
+        "name": "Oromo",
+        "country": "Ethiopia",
+        "capital": "Addis Ababa",
+        "populationEstimate": 37000000,
+        "color": "#fdba74",
+        "centroid": [39.5, 8.5]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[36.8, 10.2], [41.4, 10.2], [41.4, 6.6], [36.8, 6.6], [36.8, 10.2]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "somali",
+        "name": "Somali",
+        "country": "Somalia",
+        "capital": "Mogadishu",
+        "populationEstimate": 17000000,
+        "color": "#10b981",
+        "centroid": [46.0, 6.5]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[42.0, 10.5], [50.2, 10.5], [50.2, 2.8], [42.0, 2.8], [42.0, 10.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "fulani",
+        "name": "Fulani",
+        "country": "West Africa",
+        "capital": "Multi-region",
+        "populationEstimate": 38000000,
+        "color": "#14b8a6",
+        "centroid": [-1.0, 13.0]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-8.0, 16.0], [6.0, 16.0], [6.0, 10.0], [-8.0, 10.0], [-8.0, 16.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "zulu",
+        "name": "Zulu",
+        "country": "South Africa",
+        "capital": "Durban",
+        "populationEstimate": 12000000,
+        "color": "#0ea5e9",
+        "centroid": [31.0, -28.7]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[28.5, -26.5], [33.5, -26.5], [33.5, -30.8], [28.5, -30.8], [28.5, -26.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "xhosa",
+        "name": "Xhosa",
+        "country": "South Africa",
+        "capital": "East London",
+        "populationEstimate": 8000000,
+        "color": "#38bdf8",
+        "centroid": [27.0, -32.0]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[24.5, -30.0], [29.0, -30.0], [29.0, -34.0], [24.5, -34.0], [24.5, -30.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "berber",
+        "name": "Amazigh",
+        "country": "North Africa",
+        "capital": "Tizi Ouzou",
+        "populationEstimate": 25000000,
+        "color": "#22d3ee",
+        "centroid": [2.0, 30.0]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-10.0, 34.0], [10.0, 34.0], [10.0, 26.0], [-10.0, 26.0], [-10.0, 34.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tuareg",
+        "name": "Tuareg",
+        "country": "Sahara",
+        "capital": "Agadez",
+        "populationEstimate": 3500000,
+        "color": "#06b6d4",
+        "centroid": [3.0, 20.0]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-4.0, 23.0], [10.0, 23.0], [10.0, 17.0], [-4.0, 17.0], [-4.0, 23.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kikuyu",
+        "name": "Kikuyu",
+        "country": "Kenya",
+        "capital": "Nairobi",
+        "populationEstimate": 9000000,
+        "color": "#4ade80",
+        "centroid": [37.3, -0.5]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[36.4, 1.0], [38.2, 1.0], [38.2, -1.8], [36.4, -1.8], [36.4, 1.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "baganda",
+        "name": "Baganda",
+        "country": "Uganda",
+        "capital": "Kampala",
+        "populationEstimate": 6000000,
+        "color": "#4ade80",
+        "centroid": [32.5, 0.2]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[31.5, 1.4], [33.5, 1.4], [33.5, -1.0], [31.5, -1.0], [31.5, 1.4]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "shona",
+        "name": "Shona",
+        "country": "Zimbabwe",
+        "capital": "Harare",
+        "populationEstimate": 14000000,
+        "color": "#bef264",
+        "centroid": [30.8, -18.2]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[28.5, -16.5], [32.5, -16.5], [32.5, -19.8], [28.5, -19.8], [28.5, -16.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "wolof",
+        "name": "Wolof",
+        "country": "Senegal",
+        "capital": "Dakar",
+        "populationEstimate": 6500000,
+        "color": "#fde047",
+        "centroid": [-15.5, 15.1]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-17.0, 16.2], [-14.0, 16.2], [-14.0, 14.4], [-17.0, 14.4], [-17.0, 16.2]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ewe",
+        "name": "Ewe",
+        "country": "Ghana & Togo",
+        "capital": "Ho",
+        "populationEstimate": 7000000,
+        "color": "#fbbf24",
+        "centroid": [0.5, 6.2]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-0.6, 7.1], [1.6, 7.1], [1.6, 5.3], [-0.6, 5.3], [-0.6, 7.1]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tutsi",
+        "name": "Tutsi",
+        "country": "Rwanda & Burundi",
+        "capital": "Kigali",
+        "populationEstimate": 3000000,
+        "color": "#facc15",
+        "centroid": [30.1, -1.8]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[29.4, -1.0], [30.8, -1.0], [30.8, -2.8], [29.4, -2.8], [29.4, -1.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "himba",
+        "name": "Himba",
+        "country": "Namibia",
+        "capital": "Opuwo",
+        "populationEstimate": 50000,
+        "color": "#fef08a",
+        "centroid": [13.5, -18.2]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[11.8, -16.5], [15.2, -16.5], [15.2, -20.0], [11.8, -20.0], [11.8, -16.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "afar",
+        "name": "Afar",
+        "country": "Ethiopia & Djibouti",
+        "capital": "Asaita",
+        "populationEstimate": 2500000,
+        "color": "#e879f9",
+        "centroid": [41.0, 12.0]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[39.0, 13.5], [43.0, 13.5], [43.0, 10.5], [39.0, 10.5], [39.0, 13.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ga",
+        "name": "Ga-Dangme",
+        "country": "Ghana",
+        "capital": "Accra",
+        "populationEstimate": 1500000,
+        "color": "#ec4899",
+        "centroid": [-0.1, 5.8]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-0.6, 6.3], [0.4, 6.3], [0.4, 5.3], [-0.6, 5.3], [-0.6, 6.3]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "amazulu",
+        "name": "AmaNdebele",
+        "country": "South Africa",
+        "capital": "Pretoria",
+        "populationEstimate": 4000000,
+        "color": "#d946ef",
+        "centroid": [29.2, -25.2]
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[27.5, -24.0], [31.0, -24.0], [31.0, -26.5], [27.5, -26.5], [27.5, -24.0]]]
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: template-fastify-trpc
+  namespace: platform
+  labels:
+    app: template-fastify-trpc
+    component: api
+spec:
+  selector:
+    app: template-fastify-trpc
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  type: ClusterIP

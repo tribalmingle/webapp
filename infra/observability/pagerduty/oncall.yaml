@@ -1,0 +1,33 @@
+schedules:
+  - name: Platform Primary
+    time_zone: UTC
+    description: Primary on-call for platform outages
+    layers:
+      - name: Platform Primary Layer
+        start: 2025-01-01T00:00:00Z
+        rotation_virtual_start: 2025-01-01T00:00:00Z
+        rotation_turn_length_seconds: 604800
+        users:
+          - user@example.com
+  - name: Data Secondary
+    time_zone: UTC
+    layers:
+      - name: Data Layer
+        start: 2025-01-01T00:00:00Z
+        rotation_virtual_start: 2025-01-01T00:00:00Z
+        rotation_turn_length_seconds: 1209600
+        users:
+          - data-oncall@example.com
+
+escalation_policies:
+  - name: Platform Escalation
+    description: Escalates from primary to secondary to leadership
+    escalation_rules:
+      - escalation_delay_in_minutes: 15
+        targets:
+          - type: schedule_reference
+            name: Platform Primary
+      - escalation_delay_in_minutes: 30
+        targets:
+          - type: schedule_reference
+            name: Data Secondary

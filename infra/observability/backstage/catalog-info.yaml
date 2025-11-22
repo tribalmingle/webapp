@@ -1,0 +1,35 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: admin-app
+  description: Secured admin workspace
+  annotations:
+    github.com/project-slug: tribalmingle/tribalmingle
+    pagerduty.com/integration-key: pd-admin
+spec:
+  type: service
+  lifecycle: production
+  owner: ops
+  system: tribalmingle
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: matching-service
+  description: Matching + personalization engine
+  annotations:
+    github.com/project-slug: tribalmingle/tribalmingle
+    pagerduty.com/integration-key: pd-matching
+spec:
+  type: service
+  lifecycle: production
+  owner: ai
+  system: tribalmingle
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: tribalmingle
+  description: TribalMingle Platform
+spec:
+  owner: platform

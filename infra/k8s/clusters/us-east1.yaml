@@ -1,0 +1,46 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: tribalmingle-us-east1
+  region: us-east-1
+  version: "1.29"
+availabilityZones: [us-east-1a, us-east-1b, us-east-1c]
+iam:
+  withOIDC: true
+managedNodeGroups:
+  - name: core-apps
+    instanceType: m6i.large
+    desiredCapacity: 3
+    labels:
+      workload: core
+      mesh: linkerd
+    tags:
+      k8s.io/cluster-autoscaler/enabled: "true"
+    ssh:
+      allow: false
+  - name: realtime
+    instanceType: m6i.xlarge
+    minSize: 1
+    desiredCapacity: 2
+    labels:
+      workload: realtime
+      mesh: linkerd
+addons:
+  - name: vpc-cni
+  - name: coredns
+  - name: kube-proxy
+  - name: aws-ebs-csi-driver
+identityProviders:
+  - name: github-oidc
+    type: oidc
+    issuerUrl: https://token.actions.githubusercontent.com
+    clientId: tribalmingle-infra
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["*"]
+addonsConfig:
+  linkerd:
+    installNamespace: linkerd
+    valuesFile: ../../linkerd/values.yaml
+
+# Apply with: eksctl create cluster -f infra/k8s/clusters/us-east1.yaml

@@ -1,0 +1,27 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: tribalmingle-eu-west1
+  region: eu-west-1
+  version: "1.29"
+availabilityZones: [eu-west-1a, eu-west-1b]
+managedNodeGroups:
+  - name: core-apps
+    instanceType: m6i.large
+    desiredCapacity: 2
+    labels:
+      region: eu
+      mesh: linkerd
+fargateProfiles:
+  - name: jobs
+    selectors:
+      - namespace: jobs
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["api", "audit", "authenticator"]
+addonsConfig:
+  linkerd:
+    installNamespace: linkerd
+    valuesFile: ../../linkerd/values.yaml
+
+# Apply with: eksctl create cluster -f infra/k8s/clusters/eu-west1.yaml

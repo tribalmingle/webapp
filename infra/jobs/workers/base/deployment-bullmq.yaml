@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bullmq-workers
+  labels:
+    app: bullmq-workers
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bullmq-workers
+  template:
+    metadata:
+      labels:
+        app: bullmq-workers
+        linkerd.io/inject: enabled
+    spec:
+      serviceAccountName: bullmq-workers
+      containers:
+        - name: worker
+          image: ghcr.io/tribalmingle/bullmq-worker:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: redis-credentials
+                  key: url
+            - name: QUEUE_CONCURRENCY
+              value: "50"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://otel-collector.observability:4317
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 1
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 3000
+            initialDelaySeconds: 10
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bullmq-workers
+  namespace: jobs

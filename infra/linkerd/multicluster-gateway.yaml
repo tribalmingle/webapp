@@ -1,0 +1,42 @@
+apiVersion: linkerd.io/v1alpha1
+kind: LinkResourceExport
+metadata:
+  name: platform-gateway
+  namespace: platform
+spec:
+  type: ServiceExport
+  service: platform-gateway
+  ports:
+    - name: http
+      port: 80
+---
+apiVersion: policy.linkerd.io/v1beta1
+kind: ServerAuthorization
+metadata:
+  name: admin-mesh-access
+  namespace: platform
+spec:
+  server:
+    name: platform-gateway
+  client:
+    meshTLS:
+      identities:
+        - "*.platform.serviceaccount.identity.linkerd.cluster.local"
+---
+apiVersion: policy.linkerd.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: mesh-default-route
+  namespace: platform
+spec:
+  parentRefs:
+    - name: platform-gateway
+      kind: Service
+  rules:
+    - matches:
+        - path:
+            value: /
+      backends:
+        - backendRef:
+            name: platform-gateway
+            port: 80

@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: template-fastify-trpc
+  namespace: observability
+  labels:
+    release: kube-prometheus-stack
+spec:
+  namespaceSelector:
+    matchNames:
+      - platform
+  selector:
+    matchLabels:
+      app: template-fastify-trpc
+  endpoints:
+    - port: http
+      path: /metrics
+      scrapeTimeout: 10s
+      interval: 30s

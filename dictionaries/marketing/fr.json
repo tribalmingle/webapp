@@ -1,0 +1,175 @@
+{
+  "hero": {
+    "title": "Trouvez l'amour avec une personne qui",
+    "highlight": "partage vraiment votre culture",
+    "description": "Rencontrez des célibataires de tribus africaines comme les Igbo, Yoruba, Ashanti et bien d'autres. Profils vérifiés. Rencontres sérieuses.",
+    "primaryCta": "Rejoindre Tribal Mingle",
+    "secondaryCta": "J'ai déjà un compte",
+    "subcopy": "Conçu pour les Africains du continent et de la diaspora qui recherchent des partenaires respectant leur tribu, leur langue et leurs valeurs.",
+    "diasporaTagline": "Diaspora : restez connectés où que vous viviez.",
+    "localTagline": "Près de chez vous : célébrez l'amour enraciné dans votre communauté.",
+    "referralTagline": "Un ami vous a invité : débloquez des avantages premium ensemble.",
+    "safetyTagline": "Sécurité avant tout avec vérification selfie, pièce d'identité et contrôle d'antécédents.",
+    "featureDeckTitle": "Pourquoi choisir Tribal Mingle ?"
+  },
+  "features": [
+    {
+      "icon": "zap",
+      "title": "Matching centré sur la tribu",
+      "description": "Des signaux culturels authentiques plutôt que de simples balayages."
+    },
+    {
+      "icon": "shield",
+      "title": "Profils vérifiés",
+      "description": "Contrôles d'identité et de comportement pour une communauté fiable."
+    },
+    {
+      "icon": "users",
+      "title": "Communauté avant tout",
+      "description": "Découvrez plus de 25 tribus à travers l'Afrique et la diaspora."
+    },
+    {
+      "icon": "heart",
+      "title": "Résultats premium",
+      "description": "Likes illimités, boosts prioritaires et introductions concierge."
+    }
+  ],
+  "testimonialsFallback": [
+    {
+      "name": "Aminata",
+      "location": "Abidjan, Côte d'Ivoire",
+      "tribe": "Baoulé",
+      "content": "J'ai trouvé quelqu'un qui comprend ma foi et mon sens de la famille.",
+      "rating": 5
+    },
+    {
+      "name": "Serge",
+      "location": "Paris, France",
+      "tribe": "Bamiléké",
+      "content": "La plateforme respecte réellement nos traditions et nos langues.",
+      "rating": 4
+    },
+    {
+      "name": "Mariam",
+      "location": "Montréal, Canada",
+      "tribe": "Peul",
+      "content": "Enfin un espace pour la diaspora francophone sérieuse.",
+      "rating": 5
+    }
+  ],
+  "mapSection": {
+    "title": "Explorez nos tribus sur le continent et dans la diaspora",
+    "description": "Découvrez où nos membres construisent des relations intentionnelles.",
+    "cta": "Demander une introduction",
+    "fallbackTitle": "Tribus mises en avant",
+    "fallbackDescription": "Votre navigateur ne peut pas afficher la carte. Parcourez la liste ci-dessous."
+  },
+  "familyPortal": {
+    "hero": {
+      "eyebrow": "Accès famille",
+      "title": "Invite the people who protect your heart",
+      "description": "Share a private dashboard with a parent, sibling, or trusted elder so they can review matches, verify safety steps, and celebrate milestones with you.",
+      "primaryCta": "Invite a trusted friend",
+      "secondaryCta": "Download the trust brief"
+    },
+    "pillars": [
+      {
+        "icon": "shield",
+        "title": "Liveness verified",
+        "description": "Photo, video, and ID checks keep fake profiles away before a trusted friend ever reviews them."
+      },
+      {
+        "icon": "users",
+        "title": "Shared visibility",
+        "description": "Trusted friends see curated snapshots—not private chats—so members keep agency while feeling supported."
+      },
+      {
+        "icon": "sparkles",
+        "title": "Consent controls",
+        "description": "Granular toggles let members pause access, hide sensitive fields, or escalate concerns instantly."
+      }
+    ],
+    "howItWorks": {
+      "title": "How the family portal works",
+      "steps": [
+        {
+          "title": "Send a secure invite",
+          "description": "Add an email or WhatsApp number. We generate a one-time link that expires in 24 hours."
+        },
+        {
+          "title": "Trusted friend reviews highlights",
+          "description": "They see verification status, match insights, and upcoming video dates—never private messages."
+        },
+        {
+          "title": "Co-sign or raise a flag",
+          "description": "Trusted friends can endorse a connection, leave notes, or trigger an instant safety review."
+        }
+      ],
+      "cta": "Invite a trusted friend"
+    },
+    "trustSignals": {
+      "title": "Safeguards families asked for",
+      "items": [
+        "SOC2-aligned audit trail with immutable activity logs",
+        "24/7 concierge trust desk for escalations across regions",
+        "Optional clergy or community elder access with limited scopes"
+      ]
+    },
+    "faq": {
+      "title": "Frequently asked",
+      "items": [
+        {
+          "question": "Can trusted friends edit my profile?",
+          "answer": "No. They only view safety status, matches you share, and notes you invite them to leave."
+        },
+        {
+          "question": "Is my chat history visible?",
+          "answer": "Never. We only surface metadata (date scheduled, verification status) so your private conversations stay yours."
+        },
+        {
+          "question": "How many trusted friends can I add?",
+          "answer": "Up to three at launch. You control access start/end dates and can revoke instantly."
+        }
+      ]
+    },
+    "support": {
+      "title": "Need a custom setup?",
+      "description": "Concierge matchmakers can onboard elders via phone if they prefer offline guidance.",
+      "contactCta": "Talk to the trust desk",
+      "contactHref": "mailto:family@tribalmingle.com",
+      "responseTime": "Avg. response time · under 2 hours"
+    }
+  },
+  "cmsSections": {
+    "blog": {
+      "eyebrow": "Carnet du clan",
+      "title": "Chroniques de la tribu",
+      "description": "Histoires éditoriales sur les rencontres centrées culture, la sécurité et la diaspora.",
+      "ctaLabel": "Lire l'article"
+    },
+    "events": {
+      "eyebrow": "En tournée",
+      "title": "Salons et rencontres à venir",
+      "description": "Rencontrez nos matchmakers et membres vérifiés lors d'événements premium.",
+      "ctaLabel": "Je participe"
+    }
+  },
+  "ctaSection": {
+    "title": "Prêt·e à trouver votre tribu ?",
+    "description": "Rejoignez des milliers de célibataires engagés.",
+    "cta": "Commencer gratuitement"
+  },
+  "footer": {
+    "company": "Entreprise",
+    "product": "Produit",
+    "legal": "Légal",
+    "connect": "Réseaux",
+    "about": "À propos",
+    "features": "Fonctionnalités",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "contact": "Contact",
+    "comingSoon": "bientôt disponible",
+    "copyright": "Tous droits réservés."
+  }
+}

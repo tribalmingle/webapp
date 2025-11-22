@@ -1,0 +1,175 @@
+{
+  "hero": {
+    "title": "اعثر على حب حقيقي مع شخص",
+    "highlight": "يشاركك الثقافة والجذور",
+    "description": "قابل عزاباً من قبائل أفريقية حقيقية مثل الإيبو واليوروبا والأشانتي وغيرهم. ملفات موثقة وروابط جادة.",
+    "primaryCta": "انضم إلى Tribal Mingle",
+    "secondaryCta": "لدي حساب بالفعل",
+    "subcopy": "صُمم للأفارقة في الوطن والمهجر الذين يبحثون عن شريك يحترم القبيلة واللغة والقيم.",
+    "diasporaTagline": "للمغتربين: تواصل أينما كنت.",
+    "localTagline": "محلياً: احتفل بالحب المتجذر في مجتمعك.",
+    "referralTagline": "صديق دعاك؟ احصلوا معاً على مزايا حصرية.",
+    "safetyTagline": "أولوية للسلامة عبر التحقق بالهوية والصورة والسجل.",
+    "featureDeckTitle": "لماذا Tribal Mingle؟"
+  },
+  "features": [
+    {
+      "icon": "zap",
+      "title": "مطابقة واعية بالقبيلة",
+      "description": "خوارزميات تفهم الإشارات الثقافية الحقيقية."
+    },
+    {
+      "icon": "shield",
+      "title": "ملفات موثقة",
+      "description": "تحقق متعدد الطبقات يحافظ على أصالة المجتمع."
+    },
+    {
+      "icon": "users",
+      "title": "مجتمع عالمي",
+      "description": "تعرف على أكثر من 25 قبيلة داخل إفريقيا وخارجها."
+    },
+    {
+      "icon": "heart",
+      "title": "نتائج مميزة",
+      "description": "إعجابات غير محدودة وBoosts أولوية وتعريفات شخصية."
+    }
+  ],
+  "testimonialsFallback": [
+    {
+      "name": "ليلى",
+      "location": "دبي، الإمارات",
+      "tribe": "الهوسا",
+      "content": "أخيراً منصة تحترم لغتي وثقافتي مع تجربة فاخرة.",
+      "rating": 5
+    },
+    {
+      "name": "يوسف",
+      "location": "الدار البيضاء، المغرب",
+      "tribe": "الأمازيغ",
+      "content": "وجدت شريكة تتفهم عاداتي العائلية بسرعة غير متوقعة.",
+      "rating": 4
+    },
+    {
+      "name": "سلمى",
+      "location": "الرياض، السعودية",
+      "tribe": "الفولاني",
+      "content": "أشعر بالأمان لأن كل الملفات يتم توثيقها بجدية.",
+      "rating": 5
+    }
+  ],
+  "mapSection": {
+    "title": "استكشف قبائلنا في إفريقيا والمهجر",
+    "description": "شاهد أين تنمو العلاقات الهادفة وتعرف على الأعضاء الذين يشاركونك الجذور.",
+    "cta": "اطلب تعارفاً",
+    "fallbackTitle": "قبائل مميزة",
+    "fallbackDescription": "لا يمكن للمتصفح تحميل الخريطة. تصفح القائمة أدناه."
+  },
+  "cmsSections": {
+    "blog": {
+      "eyebrow": "يوميات القبيلة",
+      "title": "قصص من مجلة المجتمع",
+      "description": "مقالات تحريرية عن المواعدة المرتكزة على الثقافة والسلامة ونجاحات المهجر.",
+      "ctaLabel": "اقرأ القصة"
+    },
+    "events": {
+      "eyebrow": "جولاتنا",
+      "title": "فعاليات ولقاءات قادمة",
+      "description": "التقِ بمطابقينا وأفراد المجتمع في صالونات وتجارب فاخرة حول العالم.",
+      "ctaLabel": "سجل حضورك"
+    }
+  },
+  "ctaSection": {
+    "title": "جاهز لتجد قبيلتك؟",
+    "description": "انضم إلى آلاف الباحثين عن علاقات هادفة.",
+    "cta": "ابدأ مجاناً"
+  },
+  "familyPortal": {
+    "hero": {
+      "eyebrow": "وصول للعائلة",
+      "title": "Invite the people who protect your heart",
+      "description": "Share a private dashboard with a parent, sibling, or trusted elder so they can review matches, verify safety steps, and celebrate milestones with you.",
+      "primaryCta": "Invite a trusted friend",
+      "secondaryCta": "Download the trust brief"
+    },
+    "pillars": [
+      {
+        "icon": "shield",
+        "title": "Liveness verified",
+        "description": "Photo, video, and ID checks keep fake profiles away before a trusted friend ever reviews them."
+      },
+      {
+        "icon": "users",
+        "title": "Shared visibility",
+        "description": "Trusted friends see curated snapshots—not private chats—so members keep agency while feeling supported."
+      },
+      {
+        "icon": "sparkles",
+        "title": "Consent controls",
+        "description": "Granular toggles let members pause access, hide sensitive fields, or escalate concerns instantly."
+      }
+    ],
+    "howItWorks": {
+      "title": "How the family portal works",
+      "steps": [
+        {
+          "title": "Send a secure invite",
+          "description": "Add an email or WhatsApp number. We generate a one-time link that expires in 24 hours."
+        },
+        {
+          "title": "Trusted friend reviews highlights",
+          "description": "They see verification status, match insights, and upcoming video dates—never private messages."
+        },
+        {
+          "title": "Co-sign or raise a flag",
+          "description": "Trusted friends can endorse a connection, leave notes, or trigger an instant safety review."
+        }
+      ],
+      "cta": "Invite a trusted friend"
+    },
+    "trustSignals": {
+      "title": "Safeguards families asked for",
+      "items": [
+        "SOC2-aligned audit trail with immutable activity logs",
+        "24/7 concierge trust desk for escalations across regions",
+        "Optional clergy or community elder access with limited scopes"
+      ]
+    },
+    "faq": {
+      "title": "Frequently asked",
+      "items": [
+        {
+          "question": "Can trusted friends edit my profile?",
+          "answer": "No. They only view safety status, matches you share, and notes you invite them to leave."
+        },
+        {
+          "question": "Is my chat history visible?",
+          "answer": "Never. We only surface metadata (date scheduled, verification status) so your private conversations stay yours."
+        },
+        {
+          "question": "How many trusted friends can I add?",
+          "answer": "Up to three at launch. You control access start/end dates and can revoke instantly."
+        }
+      ]
+    },
+    "support": {
+      "title": "Need a custom setup?",
+      "description": "Concierge matchmakers can onboard elders via phone if they prefer offline guidance.",
+      "contactCta": "Talk to the trust desk",
+      "contactHref": "mailto:family@tribalmingle.com",
+      "responseTime": "Avg. response time · under 2 hours"
+    }
+  },
+  "footer": {
+    "company": "الشركة",
+    "product": "المنتج",
+    "legal": "قانوني",
+    "connect": "تواصل",
+    "about": "من نحن",
+    "features": "المزايا",
+    "privacy": "الخصوصية",
+    "terms": "الشروط",
+    "contact": "اتصل بنا",
+    "comingSoon": "قريباً",
+    "copyright": "جميع الحقوق محفوظة."
+  }
+}

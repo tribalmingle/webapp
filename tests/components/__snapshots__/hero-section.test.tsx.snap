@@ -1,0 +1,61 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`HeroSection > matches snapshot 1`] = `
+<div>
+  <div
+    class="flex flex-col items-center text-center lg:items-start lg:text-left"
+    data-variant="default"
+    dir="ltr"
+  >
+    <div
+      class="mb-4 flex flex-col items-center gap-2 text-sm font-semibold uppercase tracking-[0.2em] text-purple-500 lg:items-start"
+    >
+      <span
+        class="rounded-full border border-purple-200 px-3 py-1 text-xs text-purple-600"
+      >
+        Diaspora
+      </span>
+      <span>
+        Safety-first platform for real people.
+      </span>
+    </div>
+    <h1
+      class="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl"
+    >
+      Connect intentionally
+       
+      <span
+        class="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+      >
+        with your tribe
+      </span>
+    </h1>
+    <p
+      class="mt-6 text-lg text-muted-foreground"
+    >
+      Build meaningful relationships.
+    </p>
+    <div
+      class="mt-8 flex flex-col gap-3 sm:flex-row"
+    >
+      <a
+        class="flex-1 rounded-xl bg-accent px-6 py-4 text-center text-lg font-semibold text-accent-foreground shadow-sm transition hover:scale-[1.01]"
+        href="/sign-up"
+      >
+        Join Tribal Mingle
+      </a>
+      <a
+        class="flex-1 rounded-xl border border-accent px-6 py-4 text-center text-lg font-semibold text-accent transition hover:bg-accent/10"
+        href="/login"
+      >
+        I already have an account
+      </a>
+    </div>
+    <p
+      class="mt-4 text-sm text-muted-foreground"
+    >
+      Subcopy
+    </p>
+  </div>
+</div>
+`;

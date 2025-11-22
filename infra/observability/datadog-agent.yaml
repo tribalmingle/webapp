@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: datadog-agent
+  namespace: observability
+spec:
+  selector:
+    matchLabels:
+      app: datadog-agent
+  template:
+    metadata:
+      labels:
+        app: datadog-agent
+    spec:
+      serviceAccountName: datadog-agent
+      containers:
+        - name: agent
+          image: gcr.io/datadoghq/agent:7.55.0
+          env:
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: datadog-api
+                  key: key
+            - name: DD_SITE
+              value: datadoghq.com
+            - name: DD_ENV
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: DD_LOGS_ENABLED
+              value: "true"
+            - name: DD_APM_ENABLED
+              value: "true"
+            - name: DD_CONTAINER_EXCLUDE
+              value: "image:gcr.io/datadoghq/agent"
+          volumeMounts:
+            - name: dockersocket
+              mountPath: /var/run/docker.sock
+      volumes:
+        - name: dockersocket
+          hostPath:
+            path: /var/run/docker.sock
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: datadog-agent
+  namespace: observability
