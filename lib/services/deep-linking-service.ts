@@ -98,21 +98,21 @@ export class DeepLinkingService {
    * Get link analytics
    */
   static async getLinkAnalytics(code: string) {
-    const [link, clicksCollection] = await Promise.all([
+    const [link, clicks] = await Promise.all([
       this.getShortLink(code),
-      getCollection<LinkClick>(COLLECTIONS.LINK_CLICKS),
+        await getCollection<LinkClick>(COLLECTIONS.LINK_CLICKS)
+          .find({ linkCode: code })
+          .toArray()
     ]);
 
     if (!link) {
       return null;
     }
 
-    const clicks = await clicksCollection.find({ linkCode: code }).toArray();
-
     return {
       link,
       totalClicks: clicks.length,
-      uniqueUsers: new Set(clicks.filter((click: LinkClick) => click.userId).map((click) => click.userId as string)).size,
+      uniqueUsers: new Set(clicks.filter(c => c.userId).map(c => c.userId)).size,
       clicksByDay: this.groupClicksByDay(clicks),
       topReferrers: this.getTopReferrers(clicks),
       deviceBreakdown: this.getDeviceBreakdown(clicks),

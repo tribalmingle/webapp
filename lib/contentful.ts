@@ -261,17 +261,21 @@ const getLinkedHeroVariants = cache(async (variantCollectionId: string, locale: 
     return []
   }
 
-  return collection.items.map((item) => ({
-    key: item.fields.key,
-    title: item.fields.title,
-    highlight: item.fields.highlight,
-    description: item.fields.description,
-    primaryCta: item.fields.primaryCta,
-    secondaryCta: item.fields.secondaryCta,
-    tagline: item.fields.tagline,
-    badge: item.fields.badge,
-    alignment: item.fields.alignment,
-  }))
+  return collection.items.map((item) => {
+    const fieldsAny: any = item.fields as any
+    return {
+      key: item.fields.key,
+      title: item.fields.title,
+      highlight: item.fields.highlight,
+      // Contentful fields may not match generated typings in all environments — coerce via `any`.
+      description: fieldsAny.description,
+      primaryCta: fieldsAny.primaryCta,
+      secondaryCta: fieldsAny.secondaryCta,
+      tagline: fieldsAny.tagline,
+      badge: fieldsAny.badge,
+      alignment: fieldsAny.alignment,
+    }
+  })
 })
 
 export const fetchLandingContent = cache(async (locale: AppLocale): Promise<LandingContent | null> => {

@@ -3,7 +3,7 @@
  * Provides singleton connection pool for MongoDB Atlas
  */
 
-import { MongoClient, Db, Collection, Document } from 'mongodb';
+import { MongoClient, Db, Collection } from 'mongodb';
 
 if (!process.env.MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable');
@@ -54,6 +54,8 @@ export async function getDb(): Promise<Db> {
 /**
  * Get specific collection
  */
+import type { Document } from 'mongodb'
+
 export async function getCollection<T extends Document = Document>(
   collectionName: string
 ): Promise<Collection<T>> {

@@ -117,7 +117,8 @@ export function NotificationsMenu() {
 
   const commitFilters = (nextFilters: typeof inboxPreferences.filters) => {
     updateInboxPreferences({ filters: nextFilters })
-    trackClientEvent("chat.inbox.filter_saved", { filters: nextFilters })
+    // `trackClientEvent` expects a Record<string, unknown> — cast the filters safely
+    trackClientEvent("chat.inbox.filter_saved", nextFilters as unknown as Record<string, unknown>)
     void persistFilters(nextFilters)
   }
 

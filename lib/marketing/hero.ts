@@ -43,7 +43,8 @@ export async function getHeroVariant(context: HeroDecisionContext): Promise<{ va
     country: countryCode,
     custom: {
       locale,
-      referral: referralMeta?.code,
+      // LaunchDarkly expects string/number/boolean values in `custom`; ensure referral is a string
+      referral: referralMeta?.code ?? '',
     },
   }
   const experimentVariantKey = await getHeroExperimentVariant(ldUser, 'default')
@@ -114,16 +115,15 @@ function mergeVariant(
   overrides: Partial<HeroVariant>,
   locale: AppLocale,
 ): HeroVariant {
-  const base = landingContent || {}
+  const base: any = landingContent || {}
   return {
     key,
-    title: overrides.title || base.heroTitle || dictionaryHero.title,
-    highlight: overrides.highlight || base.heroHighlight || dictionaryHero.highlight,
-    description: overrides.description || base.heroDescription || dictionaryHero.description,
-    primaryCta: overrides.primaryCta || base.heroPrimaryCta || dictionaryHero.primaryCta,
-    secondaryCta: overrides.secondaryCta || base.heroSecondaryCta || dictionaryHero.secondaryCta,
-    tagline:
-      overrides.tagline || landingContent?.heroSafetyTagline || dictionaryHero.safetyTagline || dictionaryHero.description,
+    title: (overrides.title ?? base.heroTitle ?? dictionaryHero.title) ?? '',
+    highlight: (overrides.highlight ?? base.heroHighlight ?? dictionaryHero.highlight) ?? '',
+    description: (overrides.description ?? base.heroDescription ?? dictionaryHero.description) ?? '',
+    primaryCta: (overrides.primaryCta ?? base.heroPrimaryCta ?? dictionaryHero.primaryCta) ?? '',
+    secondaryCta: (overrides.secondaryCta ?? base.heroSecondaryCta ?? dictionaryHero.secondaryCta) ?? '',
+    tagline: (overrides.tagline ?? landingContent?.heroSafetyTagline ?? dictionaryHero.safetyTagline ?? dictionaryHero.description) ?? '',
     badge: overrides.badge,
     alignment: overrides.alignment || 'center',
     direction: overrides.direction || (isRtlLocale(locale) ? 'rtl' : 'ltr'),
@@ -133,12 +133,12 @@ function mergeVariant(
 function createVariantFromSource(key: HeroVariant['key'], heroSource: any): HeroVariant {
   return {
     key,
-    title: heroSource.title,
-    highlight: heroSource.highlight,
-    description: heroSource.description,
-    primaryCta: heroSource.primaryCta,
-    secondaryCta: heroSource.secondaryCta,
-    tagline: heroSource.safetyTagline,
+    title: heroSource?.title ?? '',
+    highlight: heroSource?.highlight ?? '',
+    description: heroSource?.description ?? '',
+    primaryCta: heroSource?.primaryCta ?? '',
+    secondaryCta: heroSource?.secondaryCta ?? '',
+    tagline: heroSource?.safetyTagline ?? '',
     alignment: 'center',
     direction: 'ltr',
   }
@@ -225,12 +225,12 @@ function resolveSearchParam(searchParams: Record<string, string | string[] | und
 function normalizeVariant(variant: NonNullable<LandingContent['variants']>[number], locale: AppLocale, defaultKey: HeroVariant['key']): HeroVariant {
   return {
     key: (variant.key as HeroVariant['key']) || defaultKey,
-    title: variant.title,
-    highlight: variant.highlight,
-    description: variant.description,
-    primaryCta: variant.primaryCta,
-    secondaryCta: variant.secondaryCta,
-    tagline: variant.tagline,
+    title: variant.title ?? '',
+    highlight: variant.highlight ?? '',
+    description: variant.description ?? '',
+    primaryCta: variant.primaryCta ?? '',
+    secondaryCta: variant.secondaryCta ?? '',
+    tagline: variant.tagline ?? '',
     badge: variant.badge,
     alignment: variant.alignment || 'center',
     direction: isRtlLocale(locale) ? 'rtl' : 'ltr',
