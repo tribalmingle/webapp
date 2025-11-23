@@ -100,19 +100,20 @@ export class DeepLinkingService {
   static async getLinkAnalytics(code: string) {
     const [link, clicks] = await Promise.all([
       this.getShortLink(code),
-        await getCollection<LinkClick>(COLLECTIONS.LINK_CLICKS)
-          .find({ linkCode: code })
-          .toArray()
+      (await getCollection<LinkClick>(COLLECTIONS.LINK_CLICKS)).find({ linkCode: code }).toArray(),
     ]);
 
     if (!link) {
       return null;
     }
 
+    const uniqueUsers = new Set<string>()
+    clicks.forEach((c: LinkClick) => { if (c.userId) uniqueUsers.add(String(c.userId)) })
+
     return {
       link,
       totalClicks: clicks.length,
-      uniqueUsers: new Set(clicks.filter(c => c.userId).map(c => c.userId)).size,
+      uniqueUsers: uniqueUsers.size,
       clicksByDay: this.groupClicksByDay(clicks),
       topReferrers: this.getTopReferrers(clicks),
       deviceBreakdown: this.getDeviceBreakdown(clicks),

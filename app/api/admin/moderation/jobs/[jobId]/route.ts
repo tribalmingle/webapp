@@ -5,13 +5,13 @@ import { resolveModerationJob } from '@/lib/services/moderation-review-service'
 
 const RESOLUTIONS = new Set(['approve', 'reject', 'request_reshoot'])
 
-export async function PATCH(request: NextRequest, { params }: { params: { jobId: string } }) {
+export async function PATCH(request: NextRequest, context: any) {
   const auth = ensureAdminRequest(request)
   if ('response' in auth) {
     return auth.response
   }
 
-  const jobId = params.jobId
+  const jobId = context?.params?.jobId
   if (!jobId) {
     return NextResponse.json({ success: false, error: 'Missing job id' }, { status: 400 })
   }

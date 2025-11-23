@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { EventsService, EventsServiceError } from '@/lib/services/events-service'
 
-export async function POST(request: NextRequest, context: { params: { eventId: string } }) {
+export async function POST(request: NextRequest, context: any) {
   const user = await getCurrentUser()
   if (!user) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
@@ -12,7 +12,8 @@ export async function POST(request: NextRequest, context: { params: { eventId: s
   const body = await request.json().catch(() => ({}))
 
   try {
-    const data = await EventsService.registerForEvent(context.params.eventId, user.userId, {
+    const eventId = context?.params?.eventId
+    const data = await EventsService.registerForEvent(eventId, user.userId, {
       source: typeof body?.source === 'string' ? body.source : 'member_app',
     })
     return NextResponse.json({ success: true, data })

@@ -20,7 +20,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
   const locale = isSupportedLocale(params.locale) ? params.locale : DEFAULT_LOCALE
-  const content = await loadMarketingContent(locale)
+  const content = await loadMarketingContent(locale as typeof SUPPORTED_LOCALES[number])
 
   return {
     title: `${content.hero.headline} · Tribal Mingle`,
@@ -35,7 +35,7 @@ export default async function LocalePage({ params }: { params: { locale: string 
   if (!isSupportedLocale(params.locale)) {
     notFound()
   }
-  const content = await loadMarketingContent(params.locale)
+  const content = await loadMarketingContent(params.locale as typeof SUPPORTED_LOCALES[number])
 
   return (
     <main className="space-y-10">

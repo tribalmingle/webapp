@@ -68,13 +68,13 @@ async function collectDigests(window: ReminderWindow) {
     const event = eventIdMap.get(registration.eventId.toHexString())
     if (!event) continue
 
-    const digestItem: EventReminderDigestItem = {
+      const digestItem: EventReminderDigestItem = {
       id: event._id!.toHexString(),
       slug: event.slug,
       title: event.title,
       startAt: event.startAt.toISOString(),
       timezone: event.timezone,
-      locationLabel: formatLocationLabel(event),
+      locationLabel: formatLocationLabel(event as Pick<EventDocument, 'location'>),
       meetingUrl: event.location?.meetingUrl,
     }
 

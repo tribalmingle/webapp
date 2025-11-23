@@ -179,7 +179,7 @@ function mapDictionaryToContent(dictionary: MarketingDictionary): MarketingConte
     },
     testimonials: {
       title: dictionary.testimonials.title,
-      quotes: dictionary.testimonials.quotes.map((quote) => ({
+      quotes: dictionary.testimonials.quotes.map((quote: any) => ({
         name: quote.name,
         tribe: quote.tribe,
         quote: quote.quote,
@@ -187,20 +187,20 @@ function mapDictionaryToContent(dictionary: MarketingDictionary): MarketingConte
     },
     metrics: {
       title: dictionary.metrics.title,
-      items: dictionary.metrics.items.map((metric) => ({ ...metric })),
+      items: dictionary.metrics.items.map((metric: any) => ({ ...metric })),
     },
     events: {
       title: dictionary.events.title,
-      items: dictionary.events.items.map((event) => ({ ...event })),
+      items: dictionary.events.items.map((event: any) => ({ ...event })),
     },
     blog: {
       title: dictionary.blog.title,
-      posts: dictionary.blog.posts.map((post) => ({ ...post })),
+      posts: dictionary.blog.posts.map((post: any) => ({ ...post })),
     },
     map: {
       title: dictionary.map.title,
       subtitle: dictionary.map.subtitle,
-      clusters: dictionary.map.clusters.map((cluster) => ({ ...cluster })),
+      clusters: dictionary.map.clusters.map((cluster: any) => ({ ...cluster })),
     },
     cta: {
       title: dictionary.cta.title,

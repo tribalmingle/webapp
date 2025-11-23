@@ -1281,7 +1281,7 @@ export default function SignUpPage() {
                   ref={voiceInputRef}
                   type="file"
                   accept="audio/*"
-                  capture="microphone"
+                  capture={'microphone' as any}
                   className="hidden"
                   onChange={(event) => handleMediaSelection('voice', event.target.files?.[0])}
                 />

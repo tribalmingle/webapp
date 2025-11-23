@@ -89,6 +89,12 @@ export class NotificationService {
           deliveryTag: dedupeKey,
         })
 
+        const deliveryResponse: any = { provider: 'onesignal', status: result.status }
+        if (result && typeof result === 'object') {
+          if ('id' in result) deliveryResponse.id = (result as any).id
+          if ('reason' in result) deliveryResponse.reason = (result as any).reason
+        }
+
         await notifications.updateOne(
           { _id: insertedId },
           {
@@ -96,12 +102,7 @@ export class NotificationService {
               status: 'sent',
               sentAt: new Date(),
               updatedAt: new Date(),
-              deliveryResponse: {
-                provider: 'onesignal',
-                status: result.status,
-                id: result.id,
-                reason: result.reason,
-              },
+              deliveryResponse,
             },
           },
         )

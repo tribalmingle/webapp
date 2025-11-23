@@ -130,10 +130,10 @@ export class CommunityService {
 
       return {
         clubs: clubs.map((club) => this.buildClubSummary(club)),
-        trendingPosts: trendingPosts.map((post) => this.toPostSummary(post, profileMap)),
+        trendingPosts: trendingPosts.map((post) => this.toPostSummary(post, profileMap as Map<string, ProfileDocument>)),
         amaSchedule,
       }
-    }, { userId })
+    }, { userId: userId ?? '' })
   }
 
   static async getClubFeed(slug: string, userId?: string, options?: { cursor?: string }) {
@@ -166,7 +166,7 @@ export class CommunityService {
       const comments = await this.loadComments(posts.map((post) => post._id!))
 
       const summaries = posts.map((post) =>
-        this.toPostSummary(post, profileMap, {
+        this.toPostSummary(post, profileMap as Map<string, ProfileDocument>, {
           comments: comments.get(post._id!.toHexString()),
           club,
         }),
@@ -184,7 +184,7 @@ export class CommunityService {
         posts: summaries,
         nextCursor,
       }
-    }, { userId, slug })
+    }, { userId: userId ?? '', slug })
   }
 
   static async createPost(userId: string, payload: CreateCommunityPostPayload) {
@@ -226,10 +226,10 @@ export class CommunityService {
       }
 
       await postsCollection.insertOne(document)
-      await createTrustEvent({ userId, eventType: 'community_post_created', relatedIds: [document._id] })
+      await createTrustEvent({ userId, eventType: 'community_post_created', relatedIds: [document._id!] })
 
       const profileMap = await this.loadProfiles([userId])
-      return this.toPostSummary(document, profileMap, { club })
+      return this.toPostSummary(document, profileMap as Map<string, ProfileDocument>, { club })
     }, { userId, clubId: payload.clubId })
   }
 
@@ -268,7 +268,7 @@ export class CommunityService {
       await postsCollection.updateOne({ _id: post._id }, { $inc: { commentCount: 1 }, $set: { updatedAt: now } })
 
       const profileMap = await this.loadProfiles([userId])
-      return this.toCommentSummary(document, profileMap)
+      return this.toCommentSummary(document, profileMap as Map<string, ProfileDocument>)
     }, { userId, postId })
   }
 
@@ -364,8 +364,8 @@ export class CommunityService {
       ])
 
       return {
-        posts: posts.map((post) => this.toPostSummary(post, profileMap)),
-        comments: comments.map((comment) => this.toCommentSummary(comment, profileMap)),
+        posts: posts.map((post) => this.toPostSummary(post, profileMap as Map<string, ProfileDocument>)),
+        comments: comments.map((comment) => this.toCommentSummary(comment, profileMap as Map<string, ProfileDocument>)),
       }
     })
   }
@@ -442,7 +442,7 @@ export class CommunityService {
     comments.forEach((comment) => {
       const list = map.get(comment.postId.toHexString()) ?? []
       if (list.length < 3) {
-        list.push(this.toCommentSummary(comment, profileMap))
+        list.push(this.toCommentSummary(comment, profileMap as Map<string, ProfileDocument>))
       }
       map.set(comment.postId.toHexString(), list)
     })
