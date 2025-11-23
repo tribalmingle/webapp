@@ -4123,6 +4123,27 @@ function formatSnapshotTimestamp(value: string) {
 function formatRelativeTime(value: string) {
   const date = safeDate(value)
   if (!date) {
+    return value
+  }
+
+  let delta = Math.round((date.getTime() - Date.now()) / 1000)
+  const divisions: Array<{ amount: number; unit: Intl.RelativeTimeFormatUnit }> = [
+    { amount: 60, unit: 'second' },
+    { amount: 60, unit: 'minute' },
+    { amount: 24, unit: 'hour' },
+    { amount: 7, unit: 'day' },
+  ]
+
+  for (const division of divisions) {
+    if (Math.abs(delta) < division.amount) {
+      return relativeTimeFormatter.format(delta, division.unit)
+    }
+    delta = Math.round(delta / division.amount)
+  }
+
+  return dateFormatter.format(date)
+}
+
 function formatMediaTypeLabel(type: 'id' | 'selfie' | 'voice' | 'video') {
   switch (type) {
     case 'id':
@@ -4145,26 +4166,6 @@ function formatAiScoreLabel(score?: number | null) {
 
   const normalized = Math.min(1, Math.max(0, score))
   return `${Math.round(normalized * 100)}% AI confidence`
-}
-    return value
-  }
-
-  let delta = Math.round((date.getTime() - Date.now()) / 1000)
-  const divisions: Array<{ amount: number; unit: Intl.RelativeTimeFormatUnit }> = [
-    { amount: 60, unit: 'second' },
-    { amount: 60, unit: 'minute' },
-    { amount: 24, unit: 'hour' },
-    { amount: 7, unit: 'day' },
-  ]
-
-  for (const division of divisions) {
-    if (Math.abs(delta) < division.amount) {
-      return relativeTimeFormatter.format(delta, division.unit)
-    }
-    delta = Math.round(delta / division.amount)
-  }
-
-  return dateFormatter.format(date)
 }
 
 function formatLocaleTag(locale?: string) {

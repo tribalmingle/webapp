@@ -62,6 +62,9 @@ export class EventsServiceError extends Error {
 
 export class EventsService {
   static async listUpcoming(userId: string, filters?: EventFilters) {
+    const spanAttributes: Record<string, string | number | boolean> = { userId }
+    spanAttributes.hasFilters = Boolean(filters)
+
     return withSpan('events.listUpcoming', async () => {
       const db = await getMongoDb()
       const eventsCollection = db.collection<EventDocument>('events')
@@ -128,7 +131,7 @@ export class EventsService {
       userRegistrations.forEach((reg) => registrationMap.set(reg.eventId.toHexString(), reg))
 
       return docs.map((doc) => this.toSummary(doc, countMap.get(doc._id!.toHexString()), registrationMap.get(doc._id!.toHexString())))
-    }, { userId, filters })
+    }, spanAttributes)
   }
 
   static async getEventDetail(eventIdOrSlug: string, userId?: string) {
@@ -142,7 +145,7 @@ export class EventsService {
         return null
       }
 
-      const regCounts = await registrations
+      const regCountsDoc = await registrations
         .aggregate([
           { $match: { eventId: doc._id!, status: { $in: ['pending', 'confirmed', 'waitlisted'] } } },
           {
@@ -163,6 +166,13 @@ export class EventsService {
         ])
         .next()
 
+      const regCounts = regCountsDoc
+        ? {
+            confirmed: regCountsDoc.confirmed as number,
+            waitlisted: regCountsDoc.waitlisted as number,
+          }
+        : undefined
+
       const registration = userId
         ? await registrations.findOne({ eventId: doc._id!, userId: new ObjectId(userId) })
         : null
@@ -174,7 +184,7 @@ export class EventsService {
         .toArray()
 
       const detail: EventDetail = {
-        ...this.toSummary(doc, regCounts ?? undefined, registration ?? undefined),
+        ...this.toSummary(doc, regCounts, registration ?? undefined),
         assets: doc.assets,
         hosts: hosts.map((host) => ({ userId: host.userId.toHexString(), name: host.name, tribe: host.tribe })),
         visibility: doc.visibility,
@@ -189,10 +199,10 @@ export class EventsService {
       }
 
       return detail
-    }, { eventIdOrSlug, userId })
+    }, { eventIdOrSlug, userId: userId ?? 'anonymous' })
   }
 
-  static async registerForEvent(eventIdOrSlug: string, userId: string, params?: { source?: string }) {
+  static async registerForEvent(eventIdOrSlug: string, userId: string, params?: { source?: EventRegistrationDocument['source'] }) {
     return withSpan('events.register', async () => {
       const db = await getMongoDb()
       const eventsCollection = db.collection<EventDocument>('events')
@@ -227,6 +237,8 @@ export class EventsService {
           : 'requires_payment'
         : 'none'
 
+      const source: EventRegistrationDocument['source'] = params?.source ?? 'organic'
+
       await registrations.updateOne(
         { eventId: event._id!, userId: userObjectId },
         {
@@ -235,7 +247,7 @@ export class EventsService {
             userId: userObjectId,
             status,
             paymentStatus,
-            source: params?.source ?? 'organic',
+            source,
             updatedAt: new Date(),
           },
           $setOnInsert: { createdAt: new Date() },

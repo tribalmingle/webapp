@@ -22,6 +22,7 @@ export type ChatMessageDocument = CollectionDocument<'chat_messages'>
 export type NotificationDocument = CollectionDocument<'notifications'>
 export type EventDocument = CollectionDocument<'events'>
 export type EventRegistrationDocument = CollectionDocument<'event_registrations'>
+export type CommunityClubDocument = CollectionDocument<'community_clubs'>
 export type CommunityPostDocument = CollectionDocument<'community_posts'>
 export type CommunityCommentDocument = CollectionDocument<'community_comments'>
 export type ReportDocument = CollectionDocument<'reports'>

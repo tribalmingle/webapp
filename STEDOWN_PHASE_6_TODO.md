@@ -32,13 +32,14 @@
 - [x] **Event detail & RSVP flows**: Build `app/events/[id]/page.tsx` with host info, agenda, LiveKit lobby link, guardian notices, CTA for RSVP with payment hooks for ticketed events.
 - [x] **EventsService**: Implement `lib/services/events-service.ts` handling CRUD, waitlists, reminders, and host dashboards. Use Mongo `events` + `event_registrations` + `community_posts` as described.
 - [x] **API routes**: Add `app/api/events`, `/events/[id]`, `/events/[id]/register`, `/events/[id]/feedback`. Support POST for RSVP, PATCH for attendance updates, LiveKit token issuance for virtual lobby.
-- [ ] **Notifications & reminders**: Integrate NotificationService digests for 24h/1h reminders (Segment + OneSignal). Update `docs/phase6/events.md` with steward SOP.
+- [x] **Notifications & reminders**: Integrate NotificationService digests for 24h/1h reminders (Segment + OneSignal). Update `docs/phase6/events.md` with steward SOP.
 - [x] **Validation**: Playwright spec `tests/playwright/events.spec.ts` covering browse, RSVP, cancellation, waitlist. Unit tests for EventsService + API error cases.
 
 ### 2. Community Clubs & Social Surfaces
-- [ ] **Community hub UI**: Implement `app/community/page.tsx` with club list, trending posts, AMA schedule. Provide filters + search, LaunchDarkly flag for staged rollout.
-- [ ] **Club feed + posts**: Build `app/community/clubs/[id]/page.tsx` showing pinned stories, polls, comment threads, moderation flags. Reuse `components/community/*` new folder.
-- [ ] **CommunityService**: Add `lib/services/community-service.ts` for topics, posts, comments, reactions, AMA scheduling. Enforce trust rules and guardian access.
+> Next execution focus: ship community hub UI + CommunityService scaffolding first, then layer club feeds, moderation tooling, and realtime streaming.
+- [x] **Community hub UI**: Implement `app/community/page.tsx` with club list, trending posts, AMA schedule. Provide filters + search, LaunchDarkly flag for staged rollout.
+- [x] **Club feed + posts**: Build `app/community/clubs/[id]/page.tsx` showing pinned stories, polls, comment threads, moderation flags. Reuse `components/community/*` new folder.
+- [x] **CommunityService**: Add `lib/services/community-service.ts` for topics, posts, comments, reactions, AMA scheduling. Enforce trust rules and guardian access.
 - [ ] **Moderation tooling**: Extend TrustService to queue posts/comments for review; add admin routes in `app/admin/community` and GraphQL resolvers for moderation actions.
 - [ ] **Realtime updates**: Use Socket.IO namespace `community:*` for live polls/comment streaming; ensure clients subscribe/unsubscribe gracefully.
 - [ ] **Validation**: Vitest coverage for CommunityService, Playwright spec verifying post creation, moderation flag, guardian visibility; manual QA script for AMA flow.
@@ -72,4 +73,5 @@
 
 ## Next Steps
 - Align with Phase 5 owners so messaging + events/community changes don’t conflict (e.g., NotificationService fan-out).
+- Execution order locked: **Community** → **Insights** → **Gamification** → **Admin/Ops & QA**. Complete each slice end-to-end (UI/API/jobs/tests/docs/flags) before moving to the next.
 - Begin executing tasks above immediately; keep this document updated with progress notes or refinements.

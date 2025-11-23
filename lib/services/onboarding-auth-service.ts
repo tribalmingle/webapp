@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 
 import { generateRegistrationOptions, verifyRegistrationResponse } from '@simplewebauthn/server'
-import type { RegistrationResponseJSON } from '@simplewebauthn/typescript-types'
+import type { PublicKeyCredentialCreationOptionsJSON, RegistrationResponseJSON } from '@simplewebauthn/typescript-types'
 import { ObjectId } from 'mongodb'
 import twilio from 'twilio'
 
@@ -19,7 +19,7 @@ const twilioClient = TWILIO_ACCOUNT_SID && TWILIO_AUTH_TOKEN ? twilio(TWILIO_ACC
 const applicantsCollectionName = 'onboarding_applicants'
 
 interface PasskeyChallengeResult {
-  options: ReturnType<typeof generateRegistrationOptions>
+  options: PublicKeyCredentialCreationOptionsJSON
   prospectId: string
 }
 
@@ -44,11 +44,11 @@ export async function startPasskeyRegistration(email: string, prospectId?: strin
     { upsert: true },
   )
 
-  const options = generateRegistrationOptions({
+  const options = await generateRegistrationOptions({
     rpID: PASSKEY_RP_ID,
     rpName: PASSKEY_RP_NAME,
     timeout: 60000,
-    userID: applicantId.toHexString(),
+    userID: Buffer.from(applicantId.toHexString()),
     userName: email,
     attestationType: 'none',
     authenticatorSelection: {

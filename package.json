@@ -10,6 +10,7 @@
     "test": "vitest run --exclude tests/playwright/**",
     "auction-worker": "tsx scripts/run-auction-worker.ts",
     "moderation-worker": "tsx scripts/moderation-worker.ts",
+    "event-reminder-worker": "tsx scripts/event-reminder-worker.ts",
     "schema:csfle": "tsx scripts/setup/generate-csfle-metadata.ts"
   },
   "dependencies": {

@@ -35,7 +35,7 @@ type ProfileFormState = {
 export default function ProfilePage() {
   const { user, updateUser } = useAuth()
   const router = useRouter()
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -251,7 +251,7 @@ function ProfileEditor({
   onCancel: () => void
   onRemovePhoto: (index: number) => void
   onTriggerUpload: () => void
-  fileInputRef: React.RefObject<HTMLInputElement>
+  fileInputRef: React.RefObject<HTMLInputElement | null>
   onUpload: (event: React.ChangeEvent<HTMLInputElement>) => void
 }) {
   return (

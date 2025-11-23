@@ -8,8 +8,15 @@ import { AnalyticsService } from './analytics-service'
 
 type InteractionKind = 'like' | 'super_like' | 'rewind'
 
-type InteractionContext = {
+type InteractionContextInput = {
   source?: string
+  device?: string
+  location?: string
+  recipeId?: string
+}
+
+type PersistedInteractionContext = {
+  source: string
   device?: string
   location?: string
   recipeId?: string
@@ -22,11 +29,11 @@ const DAILY_LIMITS: Record<InteractionKind, number> = {
 }
 
 export class InteractionService {
-  static async like(actorId: string, targetId: string, context?: InteractionContext) {
+  static async like(actorId: string, targetId: string, context?: InteractionContextInput) {
     return this.recordInteraction('like', actorId, targetId, context)
   }
 
-  static async superLike(actorId: string, targetId: string, context?: InteractionContext & { boostScore?: number }) {
+  static async superLike(actorId: string, targetId: string, context?: InteractionContextInput & { boostScore?: number }) {
     return this.recordInteraction('super_like', actorId, targetId, context)
   }
 
@@ -95,7 +102,7 @@ export class InteractionService {
     }
   }
 
-  private static async recordInteraction(kind: InteractionKind, actorId: string, targetId: string, context?: InteractionContext) {
+  private static async recordInteraction(kind: InteractionKind, actorId: string, targetId: string, context?: InteractionContextInput) {
     return withSpan(`interaction.${kind}`, async () => {
       const actor = new ObjectId(actorId)
       const target = new ObjectId(targetId)
@@ -106,15 +113,18 @@ export class InteractionService {
         ? db.collection<LikeDocument>('likes')
         : db.collection<SuperLikeDocument>('super_likes')
 
-      const payload = {
+      const normalizedContext = this.normalizeContext(context)
+      const basePayload = {
         actorId: actor,
         targetId: target,
-        type: kind === 'like' ? 'like' : 'super_like',
-        context,
-        boostScore: kind === 'super_like' ? Math.max(1, (context as { boostScore?: number } | undefined)?.boostScore ?? 2) : undefined,
+        context: normalizedContext,
         createdAt: new Date(),
         updatedAt: new Date(),
       }
+
+      const payload = kind === 'like'
+        ? { ...basePayload, type: 'like' as const }
+        : { ...basePayload, boostScore: Math.max(1, (context as { boostScore?: number } | undefined)?.boostScore ?? 2) }
 
       await collection.updateOne(
         { actorId: actor, targetId: target },
@@ -122,7 +132,7 @@ export class InteractionService {
         { upsert: true },
       )
 
-      await this.recordEvent(actor, target, kind, context)
+      await this.recordEvent(actor, target, kind, normalizedContext)
 
       const mutual = await db.collection<LikeDocument>('likes').findOne({ actorId: target, targetId: actor })
       if (mutual) {
@@ -132,7 +142,7 @@ export class InteractionService {
       await AnalyticsService.track({
         eventType: `discover.${kind}`,
         userId: actorId,
-        properties: { targetId, source: context?.source },
+        properties: { targetId, source: normalizedContext.source },
       })
 
       return { success: true, mutual: Boolean(mutual) }
@@ -164,6 +174,15 @@ export class InteractionService {
     })
     if (events >= limit) {
       throw new Error(`${kind} quota exceeded`)
+    }
+  }
+
+  private static normalizeContext(context?: InteractionContextInput): PersistedInteractionContext {
+    return {
+      source: context?.source ?? 'discovery',
+      device: context?.device,
+      location: context?.location,
+      recipeId: context?.recipeId,
     }
   }
 

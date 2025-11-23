@@ -49,6 +49,7 @@ async function claimJob() {
     {
       sort: { updatedAt: 1, createdAt: 1 },
       returnDocument: 'after',
+      includeResultMetadata: true,
     },
   )
 

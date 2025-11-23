@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb'
+import { ObjectId, type FindCursor } from 'mongodb'
 
 import type {
   MatchingSnapshotDocument,
@@ -9,14 +9,31 @@ import type {
 import { getMongoDb } from '@/lib/mongodb'
 import { withSpan } from '@/lib/observability/tracing'
 
+type CandidateScoreBreakdown = {
+  compatibility: number
+  culture: number
+  intent: number
+  boost?: number
+}
+
 export type RankedCandidate = {
   candidateId: string
-  profile: Pick<ProfileDocument, 'name' | 'tribe' | 'languages' | 'location' | 'verificationStatus' | 'culturalValues' | 'faithPractice' | 'marriageTimeline' | 'childrenPreference' | 'visibility'> & {
+  profile: {
+    name: string
+    tribe?: ProfileDocument['tribe']
+    languages: ProfileDocument['languages']
+    location?: ProfileDocument['location']
+    verificationStatus?: ProfileDocument['verificationStatus']
+    culturalValues: ProfileDocument['culturalValues']
+    faithPractice?: ProfileDocument['faithPractice']
+    marriageTimeline?: ProfileDocument['marriageTimeline']
+    childrenPreference?: ProfileDocument['childrenPreference']
+    visibility?: ProfileDocument['visibility']
     age?: number
     trustBadges?: string[]
   }
   matchScore: number
-  scoreBreakdown: Record<string, number>
+  scoreBreakdown: CandidateScoreBreakdown
   conciergePrompt: string
   aiOpener: string
   boostContext?: {
@@ -60,7 +77,7 @@ export class MatchingService {
     const snapshot = await this.getOrBuildSnapshot(userId)
     const candidateIds = snapshot.candidates.map((candidate) => candidate.candidateId)
     const db = await getMongoDb()
-    const profiles = await db
+    const profiles = (await db
       .collection<ProfileDocument>('profiles')
       .find({ userId: { $in: candidateIds.map((id) => new ObjectId(id)) } })
       .project({
@@ -76,7 +93,7 @@ export class MatchingService {
         childrenPreference: 1,
         visibility: 1,
       })
-      .toArray()
+      .toArray()) as ProfileDocument[]
 
     const profileMap = new Map<string, ProfileDocument>()
     profiles.forEach((profile) => profileMap.set(profile.userId.toHexString(), profile))
@@ -98,18 +115,19 @@ export class MatchingService {
     const languages = profile?.languages ?? []
     const firstLanguage = languages[0]?.code
     const trustBadges = this.computeTrustBadges(profile)
+    const culturalValues = profile?.culturalValues ?? { spirituality: 0, tradition: 0, family: 0, modernity: 0 }
 
     return {
       candidateId: candidate.candidateId.toHexString(),
       matchScore: Number(candidate.score.toFixed(3)),
-      scoreBreakdown: candidate.scoreBreakdown ?? {},
+      scoreBreakdown: (candidate.scoreBreakdown ?? {}) as CandidateScoreBreakdown,
       profile: {
         name: profile?.name ?? 'Unknown',
         tribe: profile?.tribe,
         languages,
         location: profile?.location,
         verificationStatus: profile?.verificationStatus,
-        culturalValues: profile?.culturalValues ?? { spirituality: 0, tradition: 0, family: 0, modernity: 0 },
+        culturalValues,
         faithPractice: profile?.faithPractice,
         marriageTimeline: profile?.marriageTimeline,
         childrenPreference: profile?.childrenPreference,
@@ -117,7 +135,7 @@ export class MatchingService {
         age: profile?.dob ? this.calculateAge(profile.dob) : undefined,
         trustBadges,
       },
-      conciergePrompt: `Share a ${firstLanguage ?? 'favorite'} ritual or weekly practice with ${profile?.name ?? 'this member'}.` ,
+      conciergePrompt: `Share a ${firstLanguage ?? 'favorite'} ritual or weekly practice with ${profile?.name ?? 'this member'}.`,
       aiOpener: this.buildAiOpener(profile, candidate.scoreBreakdown ?? {}),
       boostContext: candidate.scoreBreakdown?.boost
         ? { placement: 'spotlight', endsAt: candidate.metadata?.boostEndsAt }
@@ -142,7 +160,7 @@ export class MatchingService {
     const cursor = profileCollection
       .find({ userId: { $ne: userId }, 'verificationStatus.selfie': true })
       .limit(SNAPSHOT_MAX * 2)
-      .project({ name: 1, tribe: 1, culturalValues: 1, languages: 1, userId: 1, location: 1, dob: 1, verificationStatus: 1 })
+      .project<ProfileDocument>({ name: 1, tribe: 1, culturalValues: 1, languages: 1, userId: 1, location: 1, dob: 1, verificationStatus: 1 }) as FindCursor<ProfileDocument>
 
     const boostSessions = await boostCollection
       .find({ status: 'active', startedAt: { $lte: new Date() }, endsAt: { $gte: new Date() } })
@@ -167,8 +185,6 @@ export class MatchingService {
         score,
         rank,
         scoreBreakdown,
-        createdAt: new Date(),
-        updatedAt: new Date(),
         metadata: boostSession ? { boostEndsAt: boostSession.endsAt.toISOString() } : undefined,
       })
       rank += 1
@@ -178,7 +194,7 @@ export class MatchingService {
     return candidates
   }
 
-  private static computeScoreBreakdown(baseProfile: ProfileDocument, candidate: ProfileDocument, baseVector: number[]) {
+  private static computeScoreBreakdown(baseProfile: ProfileDocument, candidate: ProfileDocument, baseVector: number[]): CandidateScoreBreakdown {
     const compatibility = this.vectorSimilarity(baseVector, this.buildEmbedding(candidate))
     const culture = this.culturalDelta(baseProfile, candidate)
     const intent = this.intentHeuristic(candidate)

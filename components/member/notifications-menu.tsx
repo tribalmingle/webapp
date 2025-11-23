@@ -117,7 +117,7 @@ export function NotificationsMenu() {
 
   const commitFilters = (nextFilters: typeof inboxPreferences.filters) => {
     updateInboxPreferences({ filters: nextFilters })
-    trackClientEvent("chat.inbox.filter_saved", nextFilters)
+    trackClientEvent("chat.inbox.filter_saved", { filters: nextFilters })
     void persistFilters(nextFilters)
   }
 

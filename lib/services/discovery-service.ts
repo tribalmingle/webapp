@@ -15,6 +15,7 @@ export interface DiscoveryFilters {
   travelMode?: 'home' | 'passport'
   onlineNow?: boolean
   guardianApproved?: boolean
+  custom?: Record<string, unknown>
 }
 
 export interface DiscoveryFeedResponse {
@@ -26,11 +27,14 @@ export interface DiscoveryFeedResponse {
   telemetry: { generatedAt: string; total: number }
 }
 
-const DEFAULT_FILTERS: DiscoveryFilters = {
+type StoredFilters = DiscoveryRecipeDocument['filters']
+
+const DEFAULT_FILTERS: StoredFilters = {
   verifiedOnly: true,
   travelMode: 'home',
   lifeGoals: [],
   guardianApproved: false,
+  onlineNow: false,
 }
 
 export class DiscoveryService {
@@ -44,13 +48,13 @@ export class DiscoveryService {
       if (params?.recipeId) {
         const selected = recipes.find((recipe) => recipe.id === params.recipeId)
         if (selected) {
-          recipeFilters = { ...recipeFilters, ...selected.filters }
+          recipeFilters = selected.filters
           await this.markRecipeUsage(selected.id)
         }
       } else {
         const defaultRecipe = recipes.find((recipe) => recipe.isDefault)
         if (defaultRecipe) {
-          recipeFilters = { ...recipeFilters, ...defaultRecipe.filters }
+          recipeFilters = defaultRecipe.filters
         }
       }
 
@@ -94,10 +98,12 @@ export class DiscoveryService {
         await collection.updateMany({ userId: userObjectId }, { $set: { isDefault: false } })
       }
 
+      const filters = this.mergeFilters(DEFAULT_FILTERS, payload.filters)
+
       const doc: DiscoveryRecipeDocument = {
         userId: userObjectId,
         name: payload.name,
-        filters: { ...DEFAULT_FILTERS, ...payload.filters },
+        filters,
         isDefault: payload.isDefault ?? false,
         lastUsedAt: now,
         createdAt: now,
@@ -107,7 +113,7 @@ export class DiscoveryService {
       const result = await collection.findOneAndUpdate(
         { userId: userObjectId, name: payload.name },
         { $set: doc },
-        { upsert: true, returnDocument: 'after' },
+        { upsert: true, returnDocument: 'after', includeResultMetadata: true },
       )
 
       await AnalyticsService.track({
@@ -116,7 +122,7 @@ export class DiscoveryService {
         properties: { name: payload.name, isDefault: payload.isDefault ?? false },
       })
 
-      return result.value
+      return result.value ?? doc
     }, { userId, recipeName: payload.name })
   }
 
@@ -133,15 +139,22 @@ export class DiscoveryService {
     }))
   }
 
-  private static mergeFilters(base: DiscoveryFilters, overrides?: DiscoveryFilters) {
-    if (!overrides) return base
+  private static mergeFilters(base: StoredFilters, overrides?: DiscoveryFilters): StoredFilters {
+    if (!overrides) {
+      return base
+    }
     return {
-      ...base,
-      ...overrides,
+      verifiedOnly: overrides.verifiedOnly ?? base.verifiedOnly,
+      faithPractice: overrides.faithPractice ?? base.faithPractice,
+      lifeGoals: overrides.lifeGoals ?? base.lifeGoals,
+      travelMode: overrides.travelMode ?? base.travelMode,
+      onlineNow: overrides.onlineNow ?? base.onlineNow,
+      guardianApproved: overrides.guardianApproved ?? base.guardianApproved,
+      custom: overrides.custom ?? base.custom,
     }
   }
 
-  private static applyFilters(candidates: RankedCandidate[], filters: DiscoveryFilters) {
+  private static applyFilters(candidates: RankedCandidate[], filters: StoredFilters) {
     return candidates.filter((candidate) => {
       if (filters.verifiedOnly && !candidate.profile.verificationStatus?.badgeIssuedAt) {
         return false

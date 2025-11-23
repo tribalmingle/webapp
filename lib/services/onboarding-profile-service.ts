@@ -42,6 +42,44 @@ type ModerationJobPayload = {
   partner?: ModerationPartner
 }
 
+type MediaUploadEntry = {
+  type: MediaType
+  uploadKey: string
+  fileUrl: string
+  status: string
+  requestedAt: Date
+  aiScore?: number
+  scoredAt?: Date
+  moderation?: {
+    jobId: string
+    status: string
+    partner: ModerationPartner
+    queuedAt: Date
+  }
+}
+
+type OnboardingApplicantDocument = {
+  _id: ObjectId
+  email?: string
+  compatibilityDraft?: {
+    personas: Array<{ id: string; score: number }>
+    values: Array<{ promptId: string; value: number; note?: string }>
+    stage: string
+    savedAt: Date
+  }
+  planSelection?: {
+    planId: string
+    priceCents: number
+    interval: 'trial' | 'monthly' | 'quarterly' | 'annual'
+    selectedAt: Date
+  }
+  mediaUploads?: MediaUploadEntry[]
+  lastStep?: string
+  status?: string
+  createdAt?: Date
+  updatedAt?: Date
+}
+
 type PlanSelectionRequest = {
   prospectId: string
   planId: string
@@ -54,7 +92,7 @@ async function resolveApplicantId(prospectId?: string) {
 }
 
 export async function upsertCompatibilityDraft(payload: CompatibilityPayload) {
-  const collection = await getCollection(COLLECTION)
+  const collection = await getCollection<OnboardingApplicantDocument>(COLLECTION)
   const _id = await resolveApplicantId(payload.prospectId)
   const now = new Date()
 
@@ -84,7 +122,7 @@ export async function upsertCompatibilityDraft(payload: CompatibilityPayload) {
 }
 
 export async function requestMediaUpload(payload: MediaUploadRequest) {
-  const collection = await getCollection(COLLECTION)
+  const collection = await getCollection<OnboardingApplicantDocument>(COLLECTION)
   const _id = await resolveApplicantId(payload.prospectId)
   const signed = await createSignedUpload(payload.contentType, `onboarding/${payload.mediaType}`)
   const now = new Date()
@@ -117,7 +155,7 @@ export async function requestMediaUpload(payload: MediaUploadRequest) {
 }
 
 export async function finalizeMediaUpload(payload: MediaFinalizeRequest) {
-  const collection = await getCollection(COLLECTION)
+  const collection = await getCollection<OnboardingApplicantDocument>(COLLECTION)
   const _id = new ObjectId(payload.prospectId)
   const now = new Date()
   const aiScore = calculateMediaScore(payload)
@@ -165,7 +203,7 @@ export async function finalizeMediaUpload(payload: MediaFinalizeRequest) {
 }
 
 export async function savePlanSelection(payload: PlanSelectionRequest) {
-  const collection = await getCollection(COLLECTION)
+  const collection = await getCollection<OnboardingApplicantDocument>(COLLECTION)
   const _id = new ObjectId(payload.prospectId)
   const now = new Date()
 

@@ -733,6 +733,65 @@ const postMediaSchema = z.object({
 	blurhash: z.string().optional(),
 })
 
+const amaScheduleItemSchema = z.object({
+	topic: z.string(),
+	startAt: z.date(),
+	hostId: objectIdSchema.optional(),
+	description: z.string().optional(),
+	meetingUrl: z.string().url().optional(),
+})
+
+const communityClubSchema = withTimestamps({
+	_id: objectIdSchema.optional(),
+	slug: z.string().min(2),
+	name: z.string().min(3),
+	tagline: z.string().max(160).optional(),
+	description: z.string().max(4000),
+	tags: z.array(z.string()).default([]),
+	coverImage: z.string().url().optional(),
+	accentColor: z.string().optional(),
+	visibility: z.enum(['public', 'invite', 'guardian']).default('public'),
+	guardianOnly: z.boolean().default(false),
+	memberCount: z.number().int().nonnegative().default(0),
+	featuredHostIds: z.array(objectIdSchema).default([]),
+	timezone: z.string().optional(),
+	amaSchedule: z.array(amaScheduleItemSchema).default([]),
+	metadata: z.record(z.string(), z.any()).optional(),
+	status: z.enum(['active', 'archived']).default('active'),
+	pinnedPostIds: z.array(objectIdSchema).default([]),
+})
+
+const communityClubsDefinition: CollectionDefinition<typeof communityClubSchema> = {
+	name: 'community_clubs',
+	schema: communityClubSchema,
+	validator: buildJsonSchema(
+		{
+			slug: { bsonType: 'string' },
+			name: { bsonType: 'string' },
+			tagline: { bsonType: 'string' },
+			description: { bsonType: 'string' },
+			tags: { bsonType: 'array' },
+			coverImage: { bsonType: 'string' },
+			accentColor: { bsonType: 'string' },
+			visibility: { bsonType: 'string' },
+			guardianOnly: { bsonType: 'bool' },
+			memberCount: { bsonType: 'int' },
+			featuredHostIds: { bsonType: 'array' },
+			timezone: { bsonType: 'string' },
+			amaSchedule: { bsonType: 'array' },
+			metadata: { bsonType: 'object' },
+			status: { bsonType: 'string' },
+			pinnedPostIds: { bsonType: 'array' },
+		},
+		['slug', 'name', 'description'],
+	),
+	indexes: [
+		{ key: { slug: 1 }, name: 'community_club_slug_unique', unique: true },
+		{ key: { status: 1, memberCount: -1 }, name: 'community_club_status_members_idx' },
+		{ key: { visibility: 1 }, name: 'community_club_visibility_idx' },
+	],
+}
+
 const pollSchema = z.object({
 	question: z.string(),
 	options: z.array(z.object({ optionId: z.string(), label: z.string(), votes: z.number().int().nonnegative().default(0) })).min(2),
@@ -1933,6 +1992,7 @@ export const collectionRegistry = {
 	notifications: notificationsDefinition,
 	events: eventsDefinition,
 	event_registrations: eventRegistrationsDefinition,
+	community_clubs: communityClubsDefinition,
 	community_posts: communityPostsDefinition,
 	community_comments: communityCommentsDefinition,
 	reports: reportsDefinition,
