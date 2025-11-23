@@ -12,6 +12,9 @@ export interface SubscriptionRecord {
   status: 'active' | 'canceled' | 'past_due' | 'trialing'
   stripeCustomerId?: string
   stripeSubscriptionId?: string
+  proratedFromPlan?: SubscriptionPlan
+  prorationCreditCents?: number
+  pastDueSince?: Date
   createdAt: Date
   updatedAt: Date
 }
@@ -111,13 +114,28 @@ export async function startTrial(userId: string, plan: SubscriptionPlan = 'conci
 
 export async function activateSubscription(userId: string, plan: SubscriptionPlan): Promise<SubscriptionRecord> {
   const existing = subscriptions.get(userId)
+  // Simple proration: if upgrading mid-cycle, credit remaining days of current plan (placeholder pricing)
+  let prorationCreditCents: number | undefined
+  let proratedFromPlan: SubscriptionPlan | undefined
+  if (existing && existing.status === 'active' && existing.plan !== plan && existing.renewsAt) {
+    const remainingMs = existing.renewsAt.getTime() - Date.now()
+    if (remainingMs > 0) {
+      const remainingDays = remainingMs / 86400000
+      const priceMap: Record<SubscriptionPlan, number> = { free: 0, concierge: 1000, guardian: 2000, premium_plus: 3000 } // cents placeholder
+      const dailyOld = priceMap[existing.plan] / 30
+      prorationCreditCents = Math.round(dailyOld * remainingDays)
+      proratedFromPlan = existing.plan
+    }
+  }
   const rec: SubscriptionRecord = existing ? {
     ...existing,
     plan,
     status: 'active',
     trialEndsAt: undefined,
     renewsAt: new Date(Date.now() + 30 * 86400000), // placeholder monthly renewal
-    updatedAt: now()
+    updatedAt: now(),
+    prorationCreditCents,
+    proratedFromPlan
   } : {
     id: crypto.randomUUID(),
     userId,
@@ -125,7 +143,9 @@ export async function activateSubscription(userId: string, plan: SubscriptionPla
     status: 'active',
     renewsAt: new Date(Date.now() + 30 * 86400000),
     createdAt: now(),
-    updatedAt: now()
+    updatedAt: now(),
+    prorationCreditCents: undefined,
+    proratedFromPlan: undefined
   }
   // Stripe subscription creation if configured
   try {
@@ -204,6 +224,15 @@ export async function downgradeToFree(userId: string): Promise<SubscriptionRecor
       rec.stripeSubscriptionId = undefined
     }
   } catch {}
+  subscriptions.set(userId, rec)
+  await persist(rec)
+  return rec
+}
+
+export async function markSubscriptionPastDue(userId: string): Promise<SubscriptionRecord | null> {
+  const existing = subscriptions.get(userId)
+  if (!existing) return null
+  const rec: SubscriptionRecord = { ...existing, status: 'past_due', pastDueSince: existing.pastDueSince || now(), updatedAt: now() }
   subscriptions.set(userId, rec)
   await persist(rec)
   return rec

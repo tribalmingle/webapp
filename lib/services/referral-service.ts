@@ -3,6 +3,12 @@
 
 import crypto from 'crypto'
 
+// Simple in-memory counters for rate limiting
+const codeCreationCounters = new Map<string, { count: number; windowStart: number }>()
+const EVENT_IP_WINDOW_MS = 24 * 60 * 60 * 1000
+const MAX_CODES_PER_WINDOW = 3 // per user per 24h
+const MAX_EVENTS_PER_IP_PER_CODE = 10 // basic anti-abuse threshold
+
 export interface ReferralCode {
   code: string
   referrerUserId: string
@@ -33,6 +39,15 @@ function generateCode(): string {
 }
 
 export async function createReferralCode(referrerUserId: string): Promise<ReferralCode> {
+  // Rate limiting: max codes per 24h per user
+  const now = Date.now()
+  const counter = codeCreationCounters.get(referrerUserId)
+  if (!counter || now - counter.windowStart > 24 * 60 * 60 * 1000) {
+    codeCreationCounters.set(referrerUserId, { count: 0, windowStart: now })
+  }
+  const current = codeCreationCounters.get(referrerUserId)!
+  if (current.count >= MAX_CODES_PER_WINDOW) throw new Error('REFERRAL_CODE_RATE_LIMIT')
+  current.count++
   const code = generateCode()
   const record: ReferralCode = { code, referrerUserId, createdAt: new Date() }
   referralCodes.set(code, record)
@@ -44,6 +59,12 @@ export async function createReferralCode(referrerUserId: string): Promise<Referr
 }
 
 export async function recordEvent(code: string, type: ReferralEvent['type'], meta?: Record<string, unknown>): Promise<ReferralEvent> {
+  // Basic IP-based abuse check
+  const ip = meta?.ip as string | undefined
+  if (ip) {
+    const recent = referralEvents.filter(e => e.code === code && e.meta?.ip === ip && (Date.now() - e.createdAt.getTime()) < EVENT_IP_WINDOW_MS)
+    if (recent.length >= MAX_EVENTS_PER_IP_PER_CODE) throw new Error('REFERRAL_EVENT_RATE_LIMIT')
+  }
   const event: ReferralEvent = { id: crypto.randomUUID(), code, type, meta, createdAt: new Date() }
   referralEvents.push(event)
   try {
@@ -121,4 +142,5 @@ export async function getReferralProgress(referrerUserId: string) {
   }
 }
 
-// TODO (Phase 7): Integrate WalletService/SubscriptionService for rewards, add fraud heuristics, telemetry spans, rate limits.
+// Fraud heuristics placeholder: rate limits + IP duplication checks implemented.
+// Future: device fingerprint correlation, geo velocity, reward abuse anomaly scores.
