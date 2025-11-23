@@ -141,70 +141,76 @@ export class AnalyticsService {
    * Get event counts by type (for dashboard)
    */
   static async getEventCounts(startDate: Date, endDate: Date) {
-    const collection = await getCollection<AnalyticsEvent>(COLLECTIONS.ANALYTICS_EVENTS);
-    
-    const pipeline = [
-      {
-        $match: {
-          timestamp: { $gte: startDate, $lte: endDate }
+    return withSpan('analytics.getEventCounts', async () => {
+      const collection = await getCollection<AnalyticsEvent>(COLLECTIONS.ANALYTICS_EVENTS);
+      
+      const pipeline = [
+        {
+          $match: {
+            timestamp: { $gte: startDate, $lte: endDate }
+          }
+        },
+        {
+          $group: {
+            _id: '$eventType',
+            count: { $sum: 1 }
+          }
+        },
+        {
+          $sort: { count: -1 }
         }
-      },
-      {
-        $group: {
-          _id: '$eventType',
-          count: { $sum: 1 }
-        }
-      },
-      {
-        $sort: { count: -1 }
-      }
-    ];
+      ];
 
-    return collection.aggregate(pipeline).toArray();
+      return collection.aggregate(pipeline).toArray();
+    }, { startDate: startDate.toISOString(), endDate: endDate.toISOString() })
   }
 
   /**
    * Get funnel conversion data
    */
   static async getFunnelData(steps: string[], startDate: Date, endDate: Date) {
-    const collection = await getCollection<AnalyticsEvent>(COLLECTIONS.ANALYTICS_EVENTS);
+    return withSpan('analytics.getFunnelData', async () => {
+      const collection = await getCollection<AnalyticsEvent>(COLLECTIONS.ANALYTICS_EVENTS);
 
-    const stepCounts = await Promise.all(
-      steps.map(async (eventType, index) => {
-        const count = await collection.countDocuments({
-          eventType,
-          timestamp: { $gte: startDate, $lte: endDate }
-        });
+      const stepCounts = await Promise.all(
+        steps.map(async (eventType, index) => {
+          const count = await collection.countDocuments({
+            eventType,
+            timestamp: { $gte: startDate, $lte: endDate }
+          });
 
-        return {
-          step: index + 1,
-          name: eventType,
-          count,
-          dropoff: 0 // Will calculate below
-        };
-      })
-    );
+          return {
+            step: index + 1,
+            name: eventType,
+            count,
+            dropoff: 0 // Will calculate below
+          };
+        })
+      );
 
-    // Calculate dropoff rates
-    for (let i = 1; i < stepCounts.length; i++) {
-      const prev = stepCounts[i - 1].count;
-      const current = stepCounts[i].count;
-      stepCounts[i].dropoff = prev > 0 ? ((prev - current) / prev) * 100 : 0;
-    }
+      // Calculate dropoff rates
+      for (let i = 1; i < stepCounts.length; i++) {
+        const prev = stepCounts[i - 1].count;
+        const current = stepCounts[i].count;
+        stepCounts[i].dropoff = prev > 0 ? ((prev - current) / prev) * 100 : 0;
+      }
 
-    return stepCounts;
+      return stepCounts;
+    }, { steps, startDate: startDate.toISOString(), endDate: endDate.toISOString() })
   }
 
   /**
    * Get real-time event stream (for dashboard)
    */
   static async getRealtimeEvents(limit = 50) {
-    const collection = await getCollection<AnalyticsEvent>(COLLECTIONS.ANALYTICS_EVENTS);
-    return collection
-      .find()
-      .sort({ timestamp: -1 })
-      .limit(limit)
-      .toArray();
+    return withSpan('analytics.getRealtimeEvents', async () => {
+      const collection = await getCollection<AnalyticsEvent>(COLLECTIONS.ANALYTICS_EVENTS);
+      return collection
+        .find()
+        .sort({ timestamp: -1 })
+        .limit(limit)
+        .toArray();
+    }, { limit })
   }
 
   /**

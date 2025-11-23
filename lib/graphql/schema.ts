@@ -18,7 +18,7 @@ import { ChatSafetyService } from '@/lib/services/chat-safety-service'
 import { getSubscription } from '@/lib/services/subscription-service'
 import { getSnapshot } from '@/lib/services/wallet-service'
 import { getReferralProgress, generateOrGetExistingCode } from '@/lib/services/referral-service'
-import { getRealtimeStats, listRecentSnapshots } from '@/lib/services/analytics-service'
+import { getRealtimeStats, listRecentSnapshots, AnalyticsService } from '@/lib/services/analytics-service'
 
 interface GraphQLContext {
   userId: string
@@ -276,6 +276,47 @@ const QueryType = new GraphQLObjectType({
           actionLabel: nudge.action?.label ?? null,
           actionUrl: nudge.action?.url ?? null,
         }
+      }
+    },
+    // Phase 6: Analytics event counts
+    analyticsEventCounts: {
+      type: new GraphQLList(new GraphQLObjectType({
+        name: 'EventCount',
+        fields: {
+          eventType: { type: GraphQLString, resolve: (ec: any) => ec._id },
+          count: { type: GraphQLFloat },
+        }
+      })),
+      args: {
+        startDate: { type: new GraphQLNonNull(GraphQLString) },
+        endDate: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve: async (_s, args) => {
+        const start = new Date(args.startDate)
+        const end = new Date(args.endDate)
+        return await AnalyticsService.getEventCounts(start, end)
+      }
+    },
+    // Phase 6: Analytics funnel data
+    analyticsFunnel: {
+      type: new GraphQLList(new GraphQLObjectType({
+        name: 'FunnelStep',
+        fields: {
+          step: { type: GraphQLFloat },
+          name: { type: GraphQLString },
+          count: { type: GraphQLFloat },
+          dropoff: { type: GraphQLFloat },
+        }
+      })),
+      args: {
+        steps: { type: new GraphQLNonNull(new GraphQLList(GraphQLString)) },
+        startDate: { type: new GraphQLNonNull(GraphQLString) },
+        endDate: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve: async (_s, args) => {
+        const start = new Date(args.startDate)
+        const end = new Date(args.endDate)
+        return await AnalyticsService.getFunnelData(args.steps, start, end)
       }
     }
   },
