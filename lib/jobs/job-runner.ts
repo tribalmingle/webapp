@@ -2,7 +2,8 @@
 // Replace with actual scheduler / worker infrastructure (e.g. BullMQ / Cloud cron)
 
 import { recordDailySnapshot } from '../services/analytics-service'
-import { getMongoDb } from '../db/mongo'
+import { getReferralFingerprintSignals } from '../services/referral-service'
+import { getMongoDb } from '../mongodb'
 
 export async function runDailyMetricsJob() {
   // TODO: derive real counts instead of placeholders
@@ -29,7 +30,12 @@ export async function runWalletCleanupJob() {
 }
 
 export async function runReferralFraudScanJob() {
-  // TODO: heuristic checks on referral events (same IP/device, rapid signups)
+  const signals = getReferralFingerprintSignals()
+  // For now just log top risky fingerprints; future: persist to collection + alerting
+  const top = signals.slice(0, 5)
+  if (top.length) {
+    console.log('[referral-fraud-scan] Top fingerprint risks:', top.map(t => ({ fp: t.fingerprint, risk: t.riskScore, events: t.eventCount, codes: t.codeCount })))
+  }
 }
 
 export async function runAllScheduledJobs() {

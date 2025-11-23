@@ -8,6 +8,7 @@ const codeCreationCounters = new Map<string, { count: number; windowStart: numbe
 const EVENT_IP_WINDOW_MS = 24 * 60 * 60 * 1000
 const MAX_CODES_PER_WINDOW = 3 // per user per 24h
 const MAX_EVENTS_PER_IP_PER_CODE = 10 // basic anti-abuse threshold
+const MAX_EVENTS_PER_FINGERPRINT_PER_CODE = 12 // slightly higher than IP threshold
 
 export interface ReferralCode {
   code: string
@@ -25,6 +26,8 @@ export interface ReferralEvent {
 
 const referralCodes = new Map<string, ReferralCode>() // code -> record (in-memory fallback)
 const referralEvents: ReferralEvent[] = []
+// Fingerprint aggregate cache (rolling window)
+const fingerprintEventCache = new Map<string, { count: number; firstSeen: number; codes: Set<string> }>()
 
 async function getDbSafe() {
   if (!process.env.MONGODB_URI) return null
@@ -64,6 +67,16 @@ export async function recordEvent(code: string, type: ReferralEvent['type'], met
   if (ip) {
     const recent = referralEvents.filter(e => e.code === code && e.meta?.ip === ip && (Date.now() - e.createdAt.getTime()) < EVENT_IP_WINDOW_MS)
     if (recent.length >= MAX_EVENTS_PER_IP_PER_CODE) throw new Error('REFERRAL_EVENT_RATE_LIMIT')
+  }
+  const fingerprint = meta?.fingerprint as string | undefined
+  if (fingerprint) {
+    const key = fingerprint
+    const rec = fingerprintEventCache.get(key) || { count: 0, firstSeen: Date.now(), codes: new Set<string>() }
+    rec.count++
+    rec.codes.add(code)
+    fingerprintEventCache.set(key, rec)
+    const fpRecent = referralEvents.filter(e => e.code === code && e.meta?.fingerprint === fingerprint && (Date.now() - e.createdAt.getTime()) < EVENT_IP_WINDOW_MS)
+    if (fpRecent.length >= MAX_EVENTS_PER_FINGERPRINT_PER_CODE) throw new Error('REFERRAL_EVENT_FP_RATE_LIMIT')
   }
   const event: ReferralEvent = { id: crypto.randomUUID(), code, type, meta, createdAt: new Date() }
   referralEvents.push(event)
@@ -144,3 +157,26 @@ export async function getReferralProgress(referrerUserId: string) {
 
 // Fraud heuristics placeholder: rate limits + IP duplication checks implemented.
 // Future: device fingerprint correlation, geo velocity, reward abuse anomaly scores.
+
+export interface FingerprintRiskSummary {
+  fingerprint: string
+  eventCount: number
+  codeCount: number
+  firstSeen: number
+  riskScore: number // 0-1 heuristic
+}
+
+export function getReferralFingerprintSignals(): FingerprintRiskSummary[] {
+  const now = Date.now()
+  const signals: FingerprintRiskSummary[] = []
+  for (const [fp, data] of fingerprintEventCache.entries()) {
+    // Simple risk heuristic: more than 2 codes + >15 events => elevated
+    const ageHours = (now - data.firstSeen) / 3600000
+    const base = Math.min(1, data.count / 40)
+    const multiCodeFactor = data.codes.size > 2 ? 0.3 : 0
+    const velocityFactor = data.count / Math.max(1, ageHours * 10) > 2 ? 0.2 : 0
+    const riskScore = Math.min(1, base + multiCodeFactor + velocityFactor)
+    signals.push({ fingerprint: fp, eventCount: data.count, codeCount: data.codes.size, firstSeen: data.firstSeen, riskScore })
+  }
+  return signals.sort((a, b) => b.riskScore - a.riskScore)
+}
