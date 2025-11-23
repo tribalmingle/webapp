@@ -3,8 +3,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
-import { ArrowLeft, Send, Smile, Image as ImageIcon, MoreVertical, Mic } from 'lucide-react'
+import { ArrowLeft, Send, Smile, Image as ImageIcon, MoreVertical, Mic, AlertTriangle, Info, XCircle } from 'lucide-react'
 import { translate } from '@/lib/services/translation-service'
+import { ChatSafetyService, type SafetyNudge } from '@/lib/services/chat-safety-service'
 import { Button } from '@/components/ui/button'
 
 interface Message {
@@ -43,6 +44,9 @@ export default function ChatConversationPage() {
   const [showTranslation, setShowTranslation] = useState(false)
   const [translated, setTranslated] = useState<string | null>(null)
   const [translating, setTranslating] = useState(false)
+  // Safety nudges
+  const [safetyNudge, setSafetyNudge] = useState<SafetyNudge | null>(null)
+  const [nudgeDismissed, setNudgeDismissed] = useState(false)
       // Translation handler (mock)
       const handleTranslate = async () => {
         setTranslating(true)
@@ -54,6 +58,22 @@ export default function ChatConversationPage() {
           setTranslating(false)
         }
       }
+      
+      // Safety scan on message change
+      useEffect(() => {
+        const scanContent = async () => {
+          if (newMessage.trim() && user?.email) {
+            const nudge = await ChatSafetyService.scanMessage(newMessage, user.email)
+            setSafetyNudge(nudge)
+            setNudgeDismissed(false)
+          } else {
+            setSafetyNudge(null)
+          }
+        }
+        
+        const debounce = setTimeout(scanContent, 500)
+        return () => clearTimeout(debounce)
+      }, [newMessage, user?.email])
     // Voice note: start/stop recording handlers
     const handleStartRecording = async () => {
       setRecordingError(null)
@@ -304,6 +324,39 @@ export default function ChatConversationPage() {
 
       {/* Message Input */}
       <footer className="fixed bottom-0 left-0 right-0 bg-card border-t border-border p-4 z-40">
+        {/* Safety Nudge Banner */}
+        {safetyNudge && !nudgeDismissed && (
+          <div className="max-w-4xl mx-auto mb-3">
+            {(() => {
+              const style = ChatSafetyService.getSafetyNudgeForDisplay(safetyNudge)
+              return (
+                <div className={`flex items-start gap-3 p-3 rounded-lg border ${style.bgColor} ${style.borderColor}`}>
+                  <span className="text-xl">{style.icon}</span>
+                  <div className="flex-1">
+                    <p className={`text-sm font-medium ${style.textColor}`}>{safetyNudge.message}</p>
+                    {safetyNudge.action && (
+                      <a
+                        href={safetyNudge.action.url}
+                        className={`text-xs ${style.textColor} underline mt-1 inline-block`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {safetyNudge.action.label}
+                      </a>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => setNudgeDismissed(true)}
+                    className={`${style.textColor} opacity-60 hover:opacity-100`}
+                  >
+                    <XCircle className="w-4 h-4" />
+                  </button>
+                </div>
+              )
+            })()}
+          </div>
+        )}
+        
         <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-end gap-2">
           <button
             type="button"

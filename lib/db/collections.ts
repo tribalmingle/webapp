@@ -10,6 +10,7 @@ export const COLLECTIONS = {
   CHAT_THREADS: 'chat_threads',
   LIKES: 'likes',
   PROFILE_VIEWS: 'profile_views',
+  NOTIFICATIONS: 'notifications',
   
   // New: Deep Linking System
   SHORT_LINKS: 'short_links',
@@ -128,3 +129,75 @@ export interface Funnel {
   createdAt: Date;
   isActive: boolean;
 }
+
+// Chat Message Document (Phase 5 extensions)
+export interface ChatMessage {
+  _id?: string;
+  senderId: string;
+  receiverId: string;
+  threadId?: string;
+  content: string;
+  type?: 'text' | 'voice' | 'image' | 'video' | 'gift';
+  status: 'sent' | 'delivered' | 'read' | 'recalled' | 'failed';
+  createdAt: Date;
+  updatedAt?: Date;
+  deliveredAt?: Date;
+  readAt?: Date;
+  recalledAt?: Date;
+  expiresAt?: Date; // For disappearing messages
+  
+  // Phase 5: Attachments
+  attachments?: Array<{
+    type: 'audio' | 'image' | 'video' | 'document';
+    s3Key: string;
+    duration?: number; // For audio/video
+    waveform?: number[]; // For audio visualization
+    locale?: string;
+    moderationStatus?: 'pending' | 'approved' | 'rejected';
+    moderationFlags?: string[];
+  }>;
+  
+  // Phase 5: Translation state
+  translationState?: {
+    [locale: string]: {
+      text: string;
+      translatedAt: Date;
+      provider: string;
+    };
+  };
+  
+  // Phase 5: Safety flags
+  safetyFlags?: {
+    hasFinancialInfo?: boolean;
+    hasExternalLink?: boolean;
+    hasSensitiveContent?: boolean;
+    riskScore?: number;
+    flaggedAt?: Date;
+    reviewedAt?: Date;
+    reviewedBy?: string;
+  };
+}
+
+// Chat Thread Document (Phase 5 extensions)
+export interface ChatThread {
+  _id?: string;
+  participantIds: string[];
+  lastMessageId?: string;
+  lastMessageAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  
+  // Phase 5: Folder assignment
+  folder?: 'spark' | 'active' | 'snoozed' | 'trust';
+  snoozedUntil?: Date;
+  
+  // Metadata
+  unreadCount?: { [userId: string]: number };
+  isArchived?: boolean;
+  isPinned?: boolean;
+  preferences?: {
+    translatorEnabled?: boolean;
+    disappearingMessages?: number; // seconds, 0 = disabled
+  };
+}
+
