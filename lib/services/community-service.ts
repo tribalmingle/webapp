@@ -10,6 +10,7 @@ import type {
 import { getMongoDb } from '@/lib/mongodb'
 import { withSpan } from '@/lib/observability/tracing'
 import { createTrustEvent } from '@/lib/trust/trust-event-service'
+import { CommunityRealtime } from '@/lib/realtime/socket-community'
 
 export type ClubSummary = {
   id: string
@@ -228,6 +229,9 @@ export class CommunityService {
       await postsCollection.insertOne(document)
       await createTrustEvent({ userId, eventType: 'community_post_created', relatedIds: [document._id!] })
 
+      // Realtime broadcast
+      CommunityRealtime.postCreated(club._id!.toHexString(), { id: document._id!.toHexString() })
+
       const profileMap = await this.loadProfiles([userId])
       return this.toPostSummary(document, profileMap as Map<string, ProfileDocument>, { club })
     }, { userId, clubId: payload.clubId })
@@ -268,7 +272,9 @@ export class CommunityService {
       await postsCollection.updateOne({ _id: post._id }, { $inc: { commentCount: 1 }, $set: { updatedAt: now } })
 
       const profileMap = await this.loadProfiles([userId])
-      return this.toCommentSummary(document, profileMap as Map<string, ProfileDocument>)
+      const summary = this.toCommentSummary(document, profileMap as Map<string, ProfileDocument>)
+      CommunityRealtime.commentAdded(post.clubId?.toHexString?.() ?? '', post._id!.toHexString(), summary.id)
+      return summary
     }, { userId, postId })
   }
 
@@ -315,7 +321,7 @@ export class CommunityService {
           },
         },
       )
-
+      CommunityRealtime.reactionUpdated(post.clubId?.toHexString?.() ?? '', post._id!.toHexString(), reactionCounts)
       return reactionCounts
     }, { userId, postId, emoji })
   }
@@ -336,6 +342,7 @@ export class CommunityService {
       )
 
       await createTrustEvent({ userId: actorId, eventType: `community_post_${action}`, relatedIds: [post._id!] })
+      CommunityRealtime.postModerated(post.authorId.toHexString(), post._id!.toHexString(), nextState)
     }, { postId, action })
   }
 

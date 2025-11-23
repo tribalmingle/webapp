@@ -1,4 +1,15 @@
 import { NextResponse } from 'next/server'
+import { CommunityService } from '@/lib/services/community-service'
+
+export async function GET() {
+  try {
+    const queue = await CommunityService.listModerationQueue(50)
+    return NextResponse.json(queue)
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: error.status ?? 500 })
+  }
+}
+import { NextResponse } from 'next/server'
 
 import { getCurrentUser } from '@/lib/auth'
 import { CommunityService } from '@/lib/services/community-service'
