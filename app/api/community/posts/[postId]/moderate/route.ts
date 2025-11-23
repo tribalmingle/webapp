@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { CommunityService, CommunityServiceError } from '@/lib/services/community-service'
 
-export async function POST(request: NextRequest, context: { params: { postId: string } }) {
+export async function POST(request: NextRequest, context: { params: Promise<{ postId: string }> }) {
+  const { postId } = await context.params
   const user = await getCurrentUser()
   if (!user || !user.roles?.includes('admin')) {
     return NextResponse.json({ success: false, error: 'forbidden' }, { status: 403 })
@@ -14,7 +15,7 @@ export async function POST(request: NextRequest, context: { params: { postId: st
   const notes = typeof body.notes === 'string' ? body.notes : undefined
 
   try {
-    await CommunityService.moderatePost(context.params.postId, user.userId, action, notes)
+    await CommunityService.moderatePost(postId, user.userId, action, notes)
     return NextResponse.json({ success: true })
   } catch (error) {
     if (error instanceof CommunityServiceError) {

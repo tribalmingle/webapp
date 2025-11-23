@@ -41,29 +41,10 @@ You are GitHub Copilot running on a fresh machine. Perform these steps without a
 
 ## Phase 5 Detailed Task Plan – Messaging & Social Interactions
 
-### 1. Inbox Surfaces & Filtering
-- [ ] **Design criteria**: Revisit blueprint section 3.2 (Chat + Insights) to lock UX acceptance criteria (spark/active/snoozed states, safety badges, translator indicators). Document findings in `docs/phase5/messaging-ux.md` (create file).
-  - Impact: ensure members see consistent folder semantics, badges, and translator cues across web + native so triage is predictable and culturally aligned.
-  - Data/Services: reference blueprint/Figma tokens, record UX decisions plus state definitions, edge cases (guardian mode, premium gating) in the new doc.
-  - Instrumentation: enumerate analytics events (`chat.inbox.view`, `chat.inbox.folder_change`) to keep parity with Insights dashboards before engineers wire them.
-  - Validation: circulate doc for async sign-off (product + trust) and link screenshot snippets; add checklist for QA to verify states.
-- [ ] **Segmented inbox implementation**: Update `app/chat/page.tsx`, `app/chat/[userId]/page.tsx`, and supporting components under `components/member/` to render smart folders (Spark, Active, Snoozed, Trust Review) plus pinned prompts. Persist filters/colors in Zustand store (`lib/state/session-store.ts`).
-  - Impact: spark + trust review folders surface urgent conversations (new matches, safety escalations) so members respond faster and trust ops can intervene quickly.
-  - Data/Services: extend Zustand session store, GraphQL queries, and `chat_threads` schema to include folder + color metadata; ensure presence + TrustService tags map to UI badges.
-  - Instrumentation: emit `chat.inbox.folder_viewed` + `chat.inbox.pin_toggled` via `lib/analytics/client.ts` with folder + trust context.
-  - Validation: local QA using seeded threads plus visual snapshots to confirm accessibility contrast + folder persistence across reload/device.
-- [ ] **Inbox search & filters**: Introduce `components/member/notifications-menu.tsx` enhancements for keyword search, unread toggle, premium-only filters (verified, translator-enabled). Store preferences in Mongo `chat_threads` metadata.
-  - Impact: empower premium members to slice inbox by verification/translator readiness, reducing churn from noisy threads.
-  - Data/Services: add indexed fields on `chat_threads` for filter prefs, update Mongo metadata write paths, and sync default state via onboarding flows.
-  - Instrumentation: track `chat.inbox.search` (query length, filter combos) and `chat.inbox.filter_saved` to feed marketing funnels.
-  - Validation: unit tests for Zustand selector logic + manual QA covering premium vs free gating and translator badge display.
-- [ ] **Validation**: Playwright flow `tests/playwright/discovery.spec.ts` clone into `tests/playwright/messaging-inbox.spec.ts` covering filter switching, search, translator indicator, premium gating. Snapshot updated inbox UI.
-  - Impact: protects inbox quality by preventing regressions before rollout.
-  - Data/Services: seed fixtures for spark/active/trust threads plus premium vs free accounts in the new Playwright spec.
-  - Instrumentation: ensure snapshots include badges + translator chips so Percy/regression diffs catch styling drift.
-  - Validation: run new Playwright suite in CI + capture artifacts under `test-results/messaging-inbox/`.
+### 1. Inbox Surfaces & Filtering (Completed)
+Implemented segmented inbox folders (Spark, Active, Snoozed, Trust), search, verified and translator-ready filters, preferences persistence, and Playwright coverage via `messaging-inbox.spec.ts`. Deferred items: formal UX doc and analytics event enumeration.
 
-### 2. Conversation View Upgrades
+### 2. Conversation View Upgrades (Pending)
 - [ ] **Voice notes + media bar**: Extend `app/chat/[userId]/page.tsx` composer to support audio capture (Web Audio API) and quick media attachments. Store metadata in `chat_messages` with `contentType: 'voice' | 'gif' | 'gift'` and S3 references via `lib/storage/s3.ts`.
   - Impact: unlocks richer storytelling (voice, gifts) so culturally significant cues travel beyond text, boosting replies.
   - Data/Services: update `chat_messages` schema + uploader pipeline to include waveform duration, locale, storage keys, moderation flags, and TTL for expiring audio.
@@ -90,7 +71,7 @@ You are GitHub Copilot running on a fresh machine. Perform these steps without a
   - Instrumentation: ensure Vitest collects coverage for new hooks + components; update CI thresholds if needed.
   - Validation: integrate new tests into `pnpm test` + `pnpm test:e2e`, capturing recordings for release notes.
 
-### 3. ChatService & API Layer
+### 3. ChatService & API Layer (Pending)
 - [ ] **Data model extensions**: Update `lib/db/collections.ts` schemas for `chat_threads` and `chat_messages` to include `folders`, `safetyFlags`, `translationState`, `attachments[]`, and TTL for disappearing timers. Run migration scripts under `scripts/setup/ensure-collections.ts`.
   - Impact: guarantees UI state persists server-side so inbox filters, safety escalations, and disappearing timers remain reliable across devices.
   - Data/Services: add schema validation + indexes, ensure migrations populate defaults + backfill existing documents, and update `scripts/setup` to enforce TTL indexes.
@@ -117,7 +98,7 @@ You are GitHub Copilot running on a fresh machine. Perform these steps without a
   - Instrumentation: enforce coverage thresholds and add contract test job to CI pipeline.
   - Validation: run `pnpm test --filter api-chat` locally + ensure CI gating.
 
-### 4. NotificationService & Activity Signals
+### 4. NotificationService & Activity Signals (Pending)
 - [ ] **Notification templates**: Define new MJML templates for missed voice note, translator suggestion, LiveKit invite, safety alert. Place under `components/email/` (create directory) and wire via `lib/services/notification-service.ts`.
   - Impact: keeps members engaged even when away, reinforcing premium value.
   - Data/Services: add localized copy, dynamic sections for badges + CTA deeplinks, ensure template config stored in NotificationService and respects per-locale settings.
@@ -139,7 +120,7 @@ You are GitHub Copilot running on a fresh machine. Perform these steps without a
   - Instrumentation: add CI badge for notification coverage.
   - Validation: e2e test hitting notification webhook simulator + verifying suppression logs.
 
-### 5. Trust, Safety, and Compliance Enhancements
+### 5. Trust, Safety, and Compliance Enhancements (Pending)
 - [ ] **Moderation pipeline**: Plug audio/text attachments into TrustService (Hive/Spectrum). Update `lib/trust/liveness-provider-dispatcher.ts` or create `lib/trust/chat-safety-service.ts`. Store moderation flags on messages, auto-snooze risky threads.
   - Impact: shields members from harmful content and auto-pauses risky conversations for review.
   - Data/Services: route new attachment types through moderation queue, persist `moderationFlags` + reviewer notes, integrate with TrustService scoring + guardian alerts.
@@ -161,7 +142,7 @@ You are GitHub Copilot running on a fresh machine. Perform these steps without a
   - Instrumentation: store QA script + screenshots in `test-results/trust/`.
   - Validation: run manual tabletop exercise documenting escalation timeline.
 
-### 6. Background Jobs & Storage
+### 6. Background Jobs & Storage (Pending)
 - [ ] **Message lifecycle jobs**: Create Temporal workflow for disappearing timers and message recall windows. Add BullMQ job to purge expired attachments from S3.
   - Impact: upholds disappearing message promises + privacy commitments.
   - Data/Services: Temporal workflow orchestrates TTL countdowns + recall windows; BullMQ worker scans S3 manifest + deletes expired assets, updating Mongo state.
@@ -183,7 +164,7 @@ You are GitHub Copilot running on a fresh machine. Perform these steps without a
   - Instrumentation: capture dry-run logs + compare to expectations.
   - Validation: share execution report with infra + analytics leads.
 
-### 7. QA, Rollout, and Documentation
+### 7. QA, Rollout, and Documentation (Partial)
 - [ ] **Automated suites**: Run `pnpm lint`, `pnpm test`, `pnpm test:e2e` (Playwright) with messaging-specific specs. Add CI job gating merges for socket + LiveKit tests (update `.github/workflows/marketing-app-ci.yml` or new workflow for app).
   - Impact: prevents regressions before phased rollout.
   - Data/Services: ensure workflows install browsers, configure secrets for LiveKit mocks, collect artifacts.
@@ -205,7 +186,7 @@ You are GitHub Copilot running on a fresh machine. Perform these steps without a
   - Instrumentation: list metrics + alert thresholds required before each stage.
   - Validation: walkthrough w/ leadership; sign-off recorded in rollout doc.
 
-### 8. Exit Criteria Before Moving To Phase 7
+### 8. Exit Criteria Before Moving To Phase 7 (Not Yet Met)
 - Inbox folders, conversation upgrades, ChatService, NotificationService, and safety workflows deployed with telemetry + dashboards.
 - All automated + manual tests green; QA evidence stored in `test-results/`.
 - Knowledge base + SOPs updated; stewardship team briefed.

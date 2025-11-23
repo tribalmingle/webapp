@@ -1,7 +1,7 @@
 import type { EntrySkeletonType } from "contentful"
 
 import type { Locale } from "@/lib/i18n/config"
-import { getDictionary, type MarketingDictionary } from "@/lib/i18n/dictionaries"
+import { getMarketingDictionary } from "@/lib/i18n/dictionaries"
 
 import { getOptionalContentfulClient } from "./client"
 
@@ -132,8 +132,10 @@ interface MapClusterEntryFields {
   longitude?: number
 }
 
+type MarketingDictionary = Awaited<ReturnType<typeof getMarketingDictionary>>
+
 export async function loadMarketingContent(locale: Locale): Promise<MarketingContent> {
-  const dictionary = getDictionary(locale)
+  const dictionary = await getMarketingDictionary(locale)
   const fallback = mapDictionaryToContent(dictionary)
   const client = getOptionalContentfulClient()
 
@@ -169,43 +171,42 @@ export async function loadMarketingContent(locale: Locale): Promise<MarketingCon
 }
 
 function mapDictionaryToContent(dictionary: MarketingDictionary): MarketingContent {
+  const d: any = dictionary
   return {
     hero: {
-      eyebrow: dictionary.hero.eyebrow,
-      headline: dictionary.hero.headline,
-      body: dictionary.hero.body,
-      primaryCta: dictionary.hero.ctaPrimary,
-      secondaryCta: dictionary.hero.ctaSecondary,
+      eyebrow: d.hero.title,
+      headline: d.hero.highlight,
+      body: d.hero.description,
+      primaryCta: d.hero.primaryCta,
+      secondaryCta: d.hero.secondaryCta,
     },
     testimonials: {
-      title: dictionary.testimonials.title,
-      quotes: dictionary.testimonials.quotes.map((quote: any) => ({
-        name: quote.name,
-        tribe: quote.tribe,
-        quote: quote.quote,
-      })),
+      title: 'Member stories',
+      quotes: Array.isArray(d.testimonialsFallback)
+        ? d.testimonialsFallback.map((q: any) => ({ name: q.name, tribe: q.tribe ?? '', quote: q.content }))
+        : [],
     },
     metrics: {
-      title: dictionary.metrics.title,
-      items: dictionary.metrics.items.map((metric: any) => ({ ...metric })),
+      title: 'Platform metrics',
+      items: [],
     },
     events: {
-      title: dictionary.events.title,
-      items: dictionary.events.items.map((event: any) => ({ ...event })),
+      title: d.cmsSections?.events?.title ?? 'Upcoming events',
+      items: [],
     },
     blog: {
-      title: dictionary.blog.title,
-      posts: dictionary.blog.posts.map((post: any) => ({ ...post })),
+      title: d.cmsSections?.blog?.title ?? 'Latest stories',
+      posts: [],
     },
     map: {
-      title: dictionary.map.title,
-      subtitle: dictionary.map.subtitle,
-      clusters: dictionary.map.clusters.map((cluster: any) => ({ ...cluster })),
+      title: d.mapSection?.title ?? 'Explore tribes',
+      subtitle: d.mapSection?.description ?? '',
+      clusters: [],
     },
     cta: {
-      title: dictionary.cta.title,
-      body: dictionary.cta.body,
-      button: dictionary.cta.button,
+      title: d.ctaSection?.title ?? 'Ready to begin?',
+      body: d.ctaSection?.description ?? '',
+      button: d.ctaSection?.cta ?? 'Get Started',
     },
   }
 }

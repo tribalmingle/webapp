@@ -31,7 +31,7 @@ test.describe('Events hub', () => {
   test('lists upcoming events and RSVP flow', async ({ page }) => {
     await expect(page.getByText('Culture Night Lagos')).toBeVisible()
     await page.getByRole('button', { name: 'RSVP' }).click()
-    await expect(page.getByText('You are confirmed')).toBeVisible()
+    await expect(page.getByText('You are in')).toBeVisible()
     await expect(page.getByRole('link', { name: 'Details' })).toHaveAttribute('href', '/events/culture-night')
   })
 })

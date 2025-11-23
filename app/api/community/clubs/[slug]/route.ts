@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { CommunityService, CommunityServiceError } from '@/lib/services/community-service'
 
-export async function GET(request: NextRequest, context: { params: { slug: string } }) {
+export async function GET(request: NextRequest, context: { params: Promise<{ slug: string }> }) {
+  const { slug } = await context.params
   const user = await getCurrentUser()
   if (!user) {
     return NextResponse.json({ success: false, error: 'unauthorized' }, { status: 401 })
@@ -12,7 +13,7 @@ export async function GET(request: NextRequest, context: { params: { slug: strin
   const cursor = request.nextUrl.searchParams.get('cursor') ?? undefined
 
   try {
-    const data = await CommunityService.getClubFeed(context.params.slug, user.userId, { cursor })
+    const data = await CommunityService.getClubFeed(slug, user.userId, { cursor })
     return NextResponse.json({ success: true, data })
   } catch (error) {
     if (error instanceof CommunityServiceError) {

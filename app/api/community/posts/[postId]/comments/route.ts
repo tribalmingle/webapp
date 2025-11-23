@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { CommunityService, CommunityServiceError } from '@/lib/services/community-service'
 
-export async function POST(request: NextRequest, context: { params: { postId: string } }) {
+export async function POST(request: NextRequest, context: { params: Promise<{ postId: string }> }) {
+  const { postId } = await context.params
   const user = await getCurrentUser()
   if (!user) {
     return NextResponse.json({ success: false, error: 'unauthorized' }, { status: 401 })
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest, context: { params: { postId: st
   const body = await request.json().catch(() => ({}))
 
   try {
-    const data = await CommunityService.addComment(user.userId, context.params.postId, {
+    const data = await CommunityService.addComment(user.userId, postId, {
       body: typeof body.body === 'string' ? body.body : undefined,
       richText: typeof body.richText === 'object' ? body.richText : undefined,
       parentCommentId: typeof body.parentCommentId === 'string' ? body.parentCommentId : undefined,

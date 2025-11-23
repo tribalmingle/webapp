@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
 import { CommunityService, CommunityServiceError } from '@/lib/services/community-service'
 
-export async function POST(request: NextRequest, context: { params: { postId: string } }) {
+export async function POST(request: NextRequest, context: { params: Promise<{ postId: string }> }) {
+  const { postId } = await context.params
   const user = await getCurrentUser()
   if (!user) {
     return NextResponse.json({ success: false, error: 'unauthorized' }, { status: 401 })
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest, context: { params: { postId: st
   const emoji = typeof body.emoji === 'string' ? body.emoji : 'heart'
 
   try {
-    const data = await CommunityService.toggleReaction(user.userId, context.params.postId, emoji)
+    const data = await CommunityService.toggleReaction(user.userId, postId, emoji)
     return NextResponse.json({ success: true, data })
   } catch (error) {
     if (error instanceof CommunityServiceError) {
