@@ -216,12 +216,12 @@ export default function DiscoverPage() {
             <SwitchCamera className="h-4 w-4" /> Story grid
           </Button>
           <div className="ml-auto flex items-center gap-2">
-            <Select value={selectedRecipe ?? ''} onValueChange={(value) => setSelectedRecipe(value || null)}>
+            <Select value={selectedRecipe ?? 'current'} onValueChange={(value) => setSelectedRecipe(value === 'current' ? null : value)}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Select recipe" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Current filters</SelectItem>
+                <SelectItem value="current">Current filters</SelectItem>
                 {feed?.recipes.map((recipe) => (
                   <SelectItem key={recipe.id} value={recipe.id}>
                     {recipe.name}

@@ -28,7 +28,8 @@ const mockBoostStrip = {
   upcoming: [],
 }
 
-test.describe.skip('Discovery surfaces (skipped: auth/session coupling pending)', () => {
+
+test.describe('Discovery surfaces', () => {
   test.beforeEach(async ({ page }) => {
     // Stub prompt for recipe naming.
     await page.addInitScript(() => {
@@ -47,19 +48,46 @@ test.describe.skip('Discovery surfaces (skipped: auth/session coupling pending)'
     page.on('pageerror', (err) => {
       console.log('[pageerror]', err.message)
     })
-    await page.goto('/discover')
-    // Inject session after first load, then reload so app picks it up.
-    await page.evaluate(({ state }) => {
+    // Mock auth: set dummy cookie + intercept /api/auth/me and seed session store before navigation.
+    await page.route('**/api/auth/me', (route) => {
+      route.fulfill({ json: { success: true, user: seedState().user } })
+    })
+    // Bypass locale redirect middleware by setting locale cookie early.
+    await page.context().addCookies([
+      {
+        name: 'tm_locale',
+        value: 'en',
+        domain: 'localhost',
+        path: '/',
+        httpOnly: false,
+        sameSite: 'Lax',
+      },
+    ])
+    await page.context().addCookies([
+      {
+        name: 'auth-token',
+        value: 'playwright-dummy-token',
+        domain: 'localhost',
+        path: '/',
+        httpOnly: false,
+        sameSite: 'Lax',
+      },
+    ])
+    await page.addInitScript(({ state }) => {
       window.localStorage.setItem('tm-member-session', JSON.stringify({ state, version: 0 }))
     }, { state: seedState() })
-    await page.reload()
+    await page.goto('/discover')
     await page.waitForLoadState('domcontentloaded')
-    await page.waitForLoadState('networkidle')
+    // Skip networkidle due to persistent flag streaming; use fixed small delay instead.
+    await page.waitForTimeout(800)
   })
 
   test('renders discovery mode toggles and allows switching', async ({ page }) => {
     const swipeButton = page.getByRole('button', { name: 'Swipe stack' })
     const storyButton = page.getByRole('button', { name: 'Story grid' })
+    console.log('PAGE_HTML_START')
+    console.log(await page.content())
+    console.log('PAGE_HTML_END')
     await expect(swipeButton).toBeVisible()
     await expect(storyButton).toBeVisible()
     await stableClick(storyButton)

@@ -220,3 +220,59 @@ export class AnalyticsService {
     });
   }
 }
+
+// --- Phase 7 Additions: Daily metric snapshots & lightweight realtime stats ---
+// These augment the event/session analytics above for dashboard rollups.
+
+export interface DailyMetricSnapshot {
+  date: string; // YYYY-MM-DD
+  activeUsers: number;
+  giftsSent: number;
+  coinSpent: number;
+  newSubscriptions: number;
+  referralSignups: number;
+  createdAt: Date;
+}
+
+interface RealtimeStats {
+  activeUsers: number;
+  onlineNow: number;
+  coinsSpentToday: number;
+  giftsSentToday: number;
+  subscriptionRenewalsToday: number;
+}
+
+// Minimal in-memory fallback if Mongo unavailable
+const inMemorySnapshots: DailyMetricSnapshot[] = [];
+
+export async function recordDailySnapshot(snapshot: Omit<DailyMetricSnapshot, 'createdAt'>) {
+  const row: DailyMetricSnapshot = { ...snapshot, createdAt: new Date() };
+  try {
+    const collection = await getCollection<DailyMetricSnapshot>('daily_metrics');
+    await collection.insertOne(row as any);
+  } catch {
+    inMemorySnapshots.push(row);
+  }
+  return row;
+}
+
+export async function listRecentSnapshots(limit = 30) {
+  try {
+    const collection = await getCollection<DailyMetricSnapshot>('daily_metrics');
+    return collection.find().sort({ date: -1 }).limit(limit).toArray();
+  } catch {
+    return inMemorySnapshots.slice(-limit).reverse();
+  }
+}
+
+export async function getRealtimeStats(): Promise<RealtimeStats> {
+  // Placeholder counts; replace with Redis/event counter aggregation later
+  const activeUsers = await AnalyticsService.getActiveUsers(10).catch(() => 0);
+  return {
+    activeUsers,
+    onlineNow: Math.max(1, Math.round(activeUsers * 0.25)),
+    coinsSpentToday: 560, // TODO: derive from wallet debits for today
+    giftsSentToday: 18, // TODO: count gift_sends today
+    subscriptionRenewalsToday: 3, // TODO: count subscription renewal events today
+  };
+}

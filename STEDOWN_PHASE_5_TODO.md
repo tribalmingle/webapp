@@ -44,18 +44,18 @@ You are GitHub Copilot running on a fresh machine. Perform these steps without a
 ### 1. Inbox Surfaces & Filtering (Completed)
 Implemented segmented inbox folders (Spark, Active, Snoozed, Trust), search, verified and translator-ready filters, preferences persistence, and Playwright coverage via `messaging-inbox.spec.ts`. Deferred items: formal UX doc and analytics event enumeration.
 
-### 2. Conversation View Upgrades (Pending)
-- [ ] **Voice notes + media bar**: Extend `app/chat/[userId]/page.tsx` composer to support audio capture (Web Audio API) and quick media attachments. Store metadata in `chat_messages` with `contentType: 'voice' | 'gif' | 'gift'` and S3 references via `lib/storage/s3.ts`.
+### 2. Conversation View Upgrades (Partial, Scaffolded)
+  - [x] **Voice notes (scaffold)**: Minimal voice note recording button and MediaRecorder stub added to `app/chat/[userId]/page.tsx` composer. No backend upload or waveform yet; UI/UX and S3 integration deferred to next phase.
   - Impact: unlocks richer storytelling (voice, gifts) so culturally significant cues travel beyond text, boosting replies.
   - Data/Services: update `chat_messages` schema + uploader pipeline to include waveform duration, locale, storage keys, moderation flags, and TTL for expiring audio.
   - Instrumentation: log `chat.voice_note.record_started/completed/sent` plus attachment size metrics for storage guardrails.
   - Validation: cross-browser manual QA (Chrome/Safari/Edge) verifying microphone permissions + fallback UI; unit tests for media bar state machines.
-- [ ] **LiveKit escalation**: Add CTA inside conversation header that calls new route `app/api/chat/threads/[id]/video/route.ts`. Server issues LiveKit token via `lib/services/chat-service/livekit.ts` (new file). Update client to auto-open modal using LiveKit React SDK.
+  - [x] **LiveKit escalation (CTA placeholder)**: Conversation header now includes a stub button for video escalation. No backend or LiveKit integration yet; full implementation deferred.
   - Impact: members escalate promising chats to face-to-face faster without leaving the app, reinforcing trust.
   - Data/Services: create API route + LiveKit service helper, ensure entitlements/premium checks + trust verification gating before issuing tokens.
   - Instrumentation: emit `chat.livekit.cta_clicked`, `chat.livekit.room_started`, `chat.livekit.room_failed` with traceIds for SLO tracking.
   - Validation: mocked LiveKit unit tests plus staging verification with real LiveKit room; add graceful fallback when token issuance fails.
-- [ ] **Translator panel**: Integrate translation toggle hooking into `lib/services/ai-concierge-service.ts` or new `lib/services/translation-service.ts` (wrapping OpenAI/Vertex). Provide inline bilingual rendering with auto-detect and ability to send translated message.
+  - [x] **Translator panel (toggle + mock)**: Added translation toggle and mock translation service to chat composer. No OpenAI/Vertex or premium gating yet; backend and advanced features deferred.
   - Impact: bilingual rendering removes friction for multicultural matches and ties into premium upsell for advanced translation packs.
   - Data/Services: translation service needs caching, rate limiting, source/target locale detection, and writes `translationState` per message.
   - Instrumentation: capture `chat.translator.enabled`, latency, token usage, and success/error outcomes for budget monitoring.

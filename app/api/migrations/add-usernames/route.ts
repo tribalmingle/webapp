@@ -20,7 +20,7 @@ export async function GET() {
 
     console.log(`Found ${usersWithoutUsername.length} users without usernames`)
 
-    const updates = []
+    const updates: Array<{ email?: string; name?: string; username: string }> = []
 
     for (const user of usersWithoutUsername) {
       // Generate unique username

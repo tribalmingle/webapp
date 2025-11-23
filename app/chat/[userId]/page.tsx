@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
-import { ArrowLeft, Send, Smile, Image as ImageIcon, MoreVertical } from 'lucide-react'
+import { ArrowLeft, Send, Smile, Image as ImageIcon, MoreVertical, Mic } from 'lucide-react'
+import { translate } from '@/lib/services/translation-service'
 import { Button } from '@/components/ui/button'
 
 interface Message {
@@ -21,6 +22,8 @@ interface ChatUser {
   age: number
   city?: string
 }
+// Voice note: MediaRecorder types
+type RecorderState = 'inactive' | 'recording' | 'stopped';
 
 export default function ChatConversationPage() {
   const params = useParams()
@@ -31,6 +34,54 @@ export default function ChatConversationPage() {
   const [loading, setLoading] = useState(false)
   const [chatUser, setChatUser] = useState<ChatUser | null>(null)
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  // Voice note state
+  const [isRecording, setIsRecording] = useState(false)
+  const [recorder, setRecorder] = useState<MediaRecorder | null>(null)
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null)
+  const [recordingError, setRecordingError] = useState<string | null>(null)
+  // Translation toggle and result
+  const [showTranslation, setShowTranslation] = useState(false)
+  const [translated, setTranslated] = useState<string | null>(null)
+  const [translating, setTranslating] = useState(false)
+      // Translation handler (mock)
+      const handleTranslate = async () => {
+        setTranslating(true)
+        setTranslated(null)
+        try {
+          const result = await translate(newMessage, { to: 'es' })
+          setTranslated(result)
+        } finally {
+          setTranslating(false)
+        }
+      }
+    // Voice note: start/stop recording handlers
+    const handleStartRecording = async () => {
+      setRecordingError(null)
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+        const mediaRecorder = new window.MediaRecorder(stream)
+        const chunks: BlobPart[] = []
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) chunks.push(e.data)
+        }
+        mediaRecorder.onstop = () => {
+          setAudioBlob(new Blob(chunks, { type: 'audio/webm' }))
+          stream.getTracks().forEach((track) => track.stop())
+        }
+        setRecorder(mediaRecorder)
+        mediaRecorder.start()
+        setIsRecording(true)
+      } catch (err) {
+        setRecordingError('Could not access microphone.')
+      }
+    }
+
+    const handleStopRecording = () => {
+      if (recorder && isRecording) {
+        recorder.stop()
+        setIsRecording(false)
+      }
+    }
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatUserId = params.userId as string
 
@@ -160,7 +211,7 @@ export default function ChatConversationPage() {
             {chatUser.profilePhoto ? (
               <img src={chatUser.profilePhoto} alt={chatUser.name} className="w-10 h-10 rounded-full object-cover" />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold">
+              <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-white font-bold">
                 {chatUser.name.charAt(0).toUpperCase()}
               </div>
             )}
@@ -169,6 +220,15 @@ export default function ChatConversationPage() {
               <p className="text-xs text-white/70">{chatUser.age} • {chatUser.city || 'Online'}</p>
             </div>
           </div>
+          {/* LiveKit CTA placeholder */}
+          <button
+            className="p-2 hover:bg-green-700 rounded-lg transition mr-2"
+            title="Start video call (coming soon)"
+            onClick={() => alert('LiveKit video coming soon!')}
+            type="button"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 19h8a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+          </button>
           <button className="p-2 hover:bg-purple-800 rounded-lg transition">
             <MoreVertical className="w-5 h-5 text-white" />
           </button>
@@ -210,7 +270,7 @@ export default function ChatConversationPage() {
                             : 'bg-card border border-border rounded-bl-none'
                         }`}
                       >
-                        <p className="text-sm break-words">{message.message}</p>
+                        <p className="text-sm wrap-break-word">{message.message}</p>
                       </div>
                       <p className={`text-xs text-muted-foreground mt-1 ${isOwnMessage ? 'text-right' : 'text-left'}`}>
                         {formatTime(message.createdAt)}
@@ -248,12 +308,31 @@ export default function ChatConversationPage() {
           <button
             type="button"
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className="p-3 hover:bg-muted rounded-lg transition flex-shrink-0"
+            className="p-3 hover:bg-muted rounded-lg transition shrink-0"
           >
             <Smile className="w-5 h-5 text-muted-foreground" />
           </button>
-          
+
+          {/* Voice Note Button */}
+          <button
+            type="button"
+            onClick={isRecording ? handleStopRecording : handleStartRecording}
+            className={`p-3 rounded-lg transition shrink-0 ${isRecording ? 'bg-red-600 text-white animate-pulse' : 'hover:bg-muted'}`}
+            aria-label={isRecording ? 'Stop recording' : 'Record voice note'}
+          >
+            <Mic className="w-5 h-5" />
+          </button>
+
           <div className="flex-1 relative">
+            {/* Translation toggle */}
+            <button
+              type="button"
+              className="absolute right-2 top-2 text-xs text-accent underline z-10"
+              style={{ fontSize: '0.8rem' }}
+              onClick={() => setShowTranslation((v) => !v)}
+            >
+              {showTranslation ? 'Hide translation' : 'Translate'}
+            </button>
             <textarea
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
@@ -268,12 +347,38 @@ export default function ChatConversationPage() {
               className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent resize-none max-h-32"
               style={{ minHeight: '48px' }}
             />
+            {/* Translation result (scaffold) */}
+            {showTranslation && (
+              <div className="mt-2">
+                <button
+                  type="button"
+                  className="text-xs text-muted-foreground underline"
+                  disabled={translating || !newMessage.trim()}
+                  onClick={handleTranslate}
+                >
+                  {translating ? 'Translating...' : 'Translate to Spanish'}
+                </button>
+                {translated && (
+                  <div className="text-xs text-accent mt-1">{translated}</div>
+                )}
+              </div>
+            )}
+            {/* Voice note preview (scaffold) */}
+            {audioBlob && (
+              <div className="mt-2 flex items-center gap-2">
+                <audio controls src={URL.createObjectURL(audioBlob)} className="w-full" />
+                {/* Placeholder: In future, add send/upload logic */}
+              </div>
+            )}
+            {recordingError && (
+              <div className="text-xs text-red-500 mt-1">{recordingError}</div>
+            )}
           </div>
 
           <Button
             type="submit"
             disabled={!newMessage.trim() || loading}
-            className="px-4 py-3 h-12 flex-shrink-0"
+            className="px-4 py-3 h-12 shrink-0"
           >
             <Send className="w-5 h-5" />
           </Button>

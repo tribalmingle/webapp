@@ -19,8 +19,8 @@ export async function GET(request: Request) {
   const education = searchParams.get('education') || ''
   const workType = searchParams.get('workType') || ''
     
-    let currentUserEmail = null
-    let currentUserId = null
+    let currentUserEmail: string | null = null
+    let currentUserId: string | null = null
     
     // Try to decode token to get current user
     if (token) {

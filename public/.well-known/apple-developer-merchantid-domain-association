@@ -1,0 +1,6 @@
+# Placeholder Apple Pay domain association file
+# Replace with the real content provided in Apple Developer account.
+# This must not contain comments in production; comments included here for stub clarity.
+merchantIdentifier=merchant.com.tribalmingle
+domainName=tribalmingle.com
+# End of stub
