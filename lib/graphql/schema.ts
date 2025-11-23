@@ -33,39 +33,6 @@ const ScoreBreakdown = new GraphQLObjectType({
     boost: { type: GraphQLFloat },
   },
 })
-    communityModerationQueue: {
-      type: new GraphQLObjectType({
-        name: 'CommunityModerationQueue',
-        fields: {
-          posts: { type: new GraphQLList(new GraphQLObjectType({
-            name: 'ModerationPost',
-            fields: {
-              id: { type: GraphQLString },
-              body: { type: GraphQLString },
-              safetyState: { type: GraphQLString, resolve: (p: any) => p.safety?.state },
-              authorId: { type: GraphQLString, resolve: (p: any) => p.author?.userId },
-            }
-          })) },
-          comments: { type: new GraphQLList(new GraphQLObjectType({
-            name: 'ModerationComment',
-            fields: {
-              id: { type: GraphQLString },
-              body: { type: GraphQLString },
-              safetyState: { type: GraphQLString, resolve: (c: any) => c.safety?.state },
-              authorId: { type: GraphQLString, resolve: (c: any) => c.author?.userId },
-            }
-          })) },
-        }
-      }),
-      resolve: async () => {
-        const svc = await import('@/lib/services/community-service').then(m => m.CommunityService)
-        const queue = await svc.listModerationQueue(50)
-        return {
-          posts: queue.posts,
-          comments: queue.comments,
-        }
-      }
-    }
 
 const DiscoveryCandidate = new GraphQLObjectType({
   name: 'DiscoveryCandidate',
@@ -81,24 +48,6 @@ const DiscoveryCandidate = new GraphQLObjectType({
     scoreBreakdown: { type: ScoreBreakdown },
   },
 })
-    moderateCommunityPost: {
-      type: new GraphQLObjectType({
-        name: 'ModeratePostResult',
-        fields: { success: { type: GraphQLBoolean } }
-      }),
-      args: {
-        postId: { type: new GraphQLNonNull(GraphQLString) },
-        action: { type: new GraphQLNonNull(GraphQLString) },
-        notes: { type: GraphQLString },
-      },
-      resolve: async (_s, args, ctx: GraphQLContext) => {
-        const svc = await import('@/lib/services/community-service').then(m => m.CommunityService)
-        const action = args.action === 'approve' ? 'approve' : args.action === 'reject' ? 'reject' : null
-        if (!action) throw new Error('Invalid action')
-        await svc.moderatePost(args.postId, ctx.userId, action, args.notes)
-        return { success: true }
-      }
-    }
 
 const MatchInsightType = new GraphQLObjectType({
   name: 'MatchInsight',
@@ -318,6 +267,40 @@ const QueryType = new GraphQLObjectType({
         const end = new Date(args.endDate)
         return await AnalyticsService.getFunnelData(args.steps, start, end)
       }
+    },
+    // Phase 6: Community moderation queue
+    communityModerationQueue: {
+      type: new GraphQLObjectType({
+        name: 'CommunityModerationQueue',
+        fields: {
+          posts: { type: new GraphQLList(new GraphQLObjectType({
+            name: 'ModerationPost',
+            fields: {
+              id: { type: GraphQLString },
+              body: { type: GraphQLString },
+              safetyState: { type: GraphQLString, resolve: (p: any) => p.safety?.state },
+              authorId: { type: GraphQLString, resolve: (p: any) => p.author?.userId },
+            }
+          })) },
+          comments: { type: new GraphQLList(new GraphQLObjectType({
+            name: 'ModerationComment',
+            fields: {
+              id: { type: GraphQLString },
+              body: { type: GraphQLString },
+              safetyState: { type: GraphQLString, resolve: (c: any) => c.safety?.state },
+              authorId: { type: GraphQLString, resolve: (c: any) => c.author?.userId },
+            }
+          })) },
+        }
+      }),
+      resolve: async () => {
+        const svc = await import('@/lib/services/community-service').then(m => m.CommunityService)
+        const queue = await svc.listModerationQueue(50)
+        return {
+          posts: queue.posts,
+          comments: queue.comments,
+        }
+      }
     }
   },
 })
@@ -363,6 +346,25 @@ const MutationType = new GraphQLObjectType({
           messageId: args.messageId,
           userId: ctx.userId,
         })
+      }
+    },
+    // Phase 6: Moderate community post
+    moderateCommunityPost: {
+      type: new GraphQLObjectType({
+        name: 'ModeratePostResult',
+        fields: { success: { type: GraphQLBoolean } }
+      }),
+      args: {
+        postId: { type: new GraphQLNonNull(GraphQLString) },
+        action: { type: new GraphQLNonNull(GraphQLString) },
+        notes: { type: GraphQLString },
+      },
+      resolve: async (_s, args, ctx: GraphQLContext) => {
+        const svc = await import('@/lib/services/community-service').then(m => m.CommunityService)
+        const action = args.action === 'approve' ? 'approve' : args.action === 'reject' ? 'reject' : null
+        if (!action) throw new Error('Invalid action')
+        await svc.moderatePost(args.postId, ctx.userId, action, args.notes)
+        return { success: true }
       }
     }
   },

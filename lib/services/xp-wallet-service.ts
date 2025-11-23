@@ -38,14 +38,15 @@ export class XpWalletService {
       let wallet = await collection.findOne({ userId: userObjectId })
       
       if (!wallet) {
-        wallet = {
+        const newWallet: XpWallet = {
           userId: userObjectId,
           balance: 0,
           totalEarned: 0,
           totalSpent: 0,
           lastUpdated: new Date(),
         }
-        await collection.insertOne(wallet)
+        await collection.insertOne(newWallet as any)
+        wallet = newWallet as any
       }
 
       return wallet

@@ -6,6 +6,7 @@
 import { getCollection } from '../db/mongodb';
 import { COLLECTIONS, AnalyticsEvent, UserSession } from '../db/collections';
 import { v4 as uuidv4 } from 'uuid';
+import { withSpan } from '../observability/tracing';
 
 export class AnalyticsService {
   /**
