@@ -7,6 +7,7 @@
 export const COLLECTIONS = {
   USERS: 'users',
   MESSAGES: 'messages',
+  CHAT_THREADS: 'chat_threads',
   LIKES: 'likes',
   PROFILE_VIEWS: 'profile_views',
   
@@ -82,6 +83,17 @@ export interface AnalyticsEvent {
     locale?: string;
     timezone?: string;
   };
+}
+
+export interface ChatThreadPreferences {
+  userId: string
+  filters: {
+    unreadOnly: boolean
+    verifiedOnly: boolean
+    translatorOnly: boolean
+    query: string
+  }
+  updatedAt: Date
 }
 
 // User Session Document

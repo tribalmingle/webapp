@@ -8,6 +8,16 @@ import { AnalyticsService } from '@/lib/services/analytics-service'
 
 export async function POST(request: NextRequest) {
   try {
+    // During E2E tests we may not have a live Mongo instance available.
+    // Short-circuit analytics session management when running under test mode.
+    if (process.env.PLAYWRIGHT_TEST === '1' || process.env.TEST_MODE === '1') {
+      const body = await request.json().catch(() => ({}))
+      const { action } = body as any
+      if (action === 'start') {
+        return NextResponse.json({ success: true, sessionId: 'test-session' })
+      }
+      return NextResponse.json({ success: true })
+    }
     const body = await request.json()
     const { action, sessionId, entryPage, exitPage } = body
 

@@ -6,8 +6,13 @@ import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+import { useSessionStore } from "@/lib/state/session-store"
+import { trackClientEvent } from "@/lib/analytics/client"
 
 const STORAGE_KEY = "tm-shell-notifications"
 
@@ -69,6 +74,8 @@ function hydrateNotifications(): NotificationItem[] {
 
 export function NotificationsMenu() {
   const [notifications, setNotifications] = useState<NotificationItem[]>(() => hydrateNotifications())
+  const { inboxPreferences, updateInboxPreferences, user } = useSessionStore()
+  const isPremium = user?.subscriptionPlan && user.subscriptionPlan !== "free"
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -95,16 +102,44 @@ export function NotificationsMenu() {
     setNotifications((items) => items.map((item) => (item.id === id ? { ...item, read: true } : item)))
   }
 
+  const persistFilters = async (filters: typeof inboxPreferences.filters) => {
+    try {
+      await fetch("/api/chat/threads/preferences", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filters }),
+        cache: "no-store",
+      })
+    } catch (error) {
+      console.debug("[chat-preferences] persistence skipped", error)
+    }
+  }
+
+  const commitFilters = (nextFilters: typeof inboxPreferences.filters) => {
+    updateInboxPreferences({ filters: nextFilters })
+    trackClientEvent("chat.inbox.filter_saved", nextFilters)
+    void persistFilters(nextFilters)
+  }
+
+  const handleFilterToggle = (key: keyof typeof inboxPreferences.filters, value: boolean) => {
+    commitFilters({ ...inboxPreferences.filters, [key]: value })
+  }
+
+  const handleFilterQuery = (value: string) => {
+    commitFilters({ ...inboxPreferences.filters, query: value })
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>
         <button
           type="button"
+          aria-label="Notifications menu"
           className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-border text-muted-foreground transition hover:text-foreground"
         >
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
-            <span className="absolute -right-0.5 -top-0.5 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-destructive px-1 text-[11px] font-semibold text-destructive-foreground">
+            <span className="absolute -right-0.5 -top-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[11px] font-semibold text-destructive-foreground">
               {unreadCount}
             </span>
           )}
@@ -122,6 +157,50 @@ export function NotificationsMenu() {
             </Button>
           )}
         </header>
+        <section className="border-b border-border/70 px-4 py-3 space-y-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Inbox filters</p>
+            <p className="text-xs text-muted-foreground">Search + prioritize sparks everywhere.</p>
+          </div>
+          <Input
+            value={inboxPreferences.filters.query}
+            onChange={(event) => handleFilterQuery(event.target.value)}
+            placeholder="Search by name or intention"
+            className="h-9 text-sm"
+          />
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-3">
+              <Label htmlFor="unread-only" className="text-xs text-muted-foreground">Unread only</Label>
+              <Switch
+                id="unread-only"
+                checked={inboxPreferences.filters.unreadOnly}
+                onCheckedChange={(checked) => handleFilterToggle("unreadOnly", checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <Label htmlFor="verified-only" className="text-xs text-muted-foreground">Verified profiles only</Label>
+              <Switch
+                id="verified-only"
+                checked={inboxPreferences.filters.verifiedOnly}
+                onCheckedChange={(checked) => handleFilterToggle("verifiedOnly", checked)}
+              />
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <Label htmlFor="translator-only" className="text-xs text-muted-foreground">Translator-ready</Label>
+                {!isPremium && (
+                  <p className="text-[11px] text-muted-foreground">Premium required</p>
+                )}
+              </div>
+              <Switch
+                id="translator-only"
+                checked={inboxPreferences.filters.translatorOnly && Boolean(isPremium)}
+                onCheckedChange={(checked) => handleFilterToggle("translatorOnly", Boolean(isPremium) && checked)}
+                disabled={!isPremium}
+              />
+            </div>
+          </div>
+        </section>
         <div className="max-h-80 divide-y divide-border/60 overflow-y-auto">
           {notifications.length === 0 ? (
             <div className="flex flex-col items-center gap-2 px-4 py-12 text-center text-muted-foreground">

@@ -304,7 +304,7 @@ function ProfileEditor({
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <Field label="Height" name="height" value={formData.height} onChange={onChange} component="input" placeholder="e.g., 5'10\"" />
+          <Field label="Height" name="height" value={formData.height} onChange={onChange} component="input" placeholder="e.g., 5 ft 10 in" />
           <SelectField
             label="Body type"
             name="bodyType"
