@@ -1,6 +1,7 @@
 import { withSpan } from '@/lib/observability/tracing'
 import { getMongoDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
+import { LeaderboardService } from './leaderboard-service'
 
 export type QuestDefinition = {
   id: string
@@ -87,7 +88,8 @@ export class GamificationService {
       if (state.claimedAt) return { success: true, xpAwarded: 0, alreadyClaimed: true }
       const now = new Date()
       await collection.updateOne({ _id: state._id }, { $set: { claimedAt: now, updatedAt: now } })
-      // TODO: integrate with wallet/XP balance service
+      // Integrate with leaderboard
+      await LeaderboardService.addXp(userId, quest.xp)
       return { success: true, xpAwarded: quest.xp }
     }, { userId, questId })
   }

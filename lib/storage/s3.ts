@@ -57,3 +57,15 @@ export async function createSignedUpload(contentType: string, prefix = 'onboardi
     expiresIn: 900,
   }
 }
+
+export function validateUploadConstraints(params: { sizeBytes: number; durationSeconds?: number }) {
+  const maxSize = Number(process.env.VOICE_NOTE_MAX_SIZE_BYTES ?? 5_000_000)
+  const maxDuration = Number(process.env.VOICE_NOTE_MAX_DURATION_SECONDS ?? 120)
+  if (params.sizeBytes > maxSize) {
+    return { allowed: false, reason: 'file_too_large' }
+  }
+  if ((params.durationSeconds ?? 0) > maxDuration) {
+    return { allowed: false, reason: 'duration_exceeded' }
+  }
+  return { allowed: true }
+}

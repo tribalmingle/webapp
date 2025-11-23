@@ -45,24 +45,24 @@
 - [x] **Validation**: Vitest coverage (community-service.test.ts) + Playwright smoke (community.spec.ts); AMA manual QA deferred.
 
 ### 3. Insights Dashboard & Analytics Service Enhancements
-- [x] **Member insights UI**: Basic KPI tiles + daily snapshots table in `app/insights/page.tsx`.
+- [x] **Member insights UI**: KPI tiles + daily snapshots table in `app/insights/page.tsx` (needs chart components for 30/90 day views).
 - [ ] **AI Coach integration**: Surface AI recommendations (profile tweaks, wardrobe, story ideas) with “Apply suggestion” actions hooking into ProfileService endpoints.
-- [ ] **AnalyticsService upgrades**: PARTIAL – base service present; still need funnel/cohort endpoints & dashboard stats API.
+- [ ] **AnalyticsService upgrades**: PARTIAL – need funnel/cohort aggregations + `/api/dashboard/stats` endpoint.
 - [x] **Data pipelines**: Documentation scaffold `docs/phase6/analytics.md`; infra/dbt implementation pending.
 - [ ] **Validation**: Pending test additions for advanced analytics.
 
 ### 4. Gamification System
 - [x] **XP & quests UI**: `app/quests/page.tsx` basic quest listing & progress.
 - [x] **GamificationService**: Implemented quest tracking, event progress, claim logic.
-- [x] **APIs & background jobs**: Added endpoints + `scripts/gamification-reset-worker.ts` (leaderboard cache & Redis integration pending).
-- [ ] **Rewards & entitlements**: Pending wallet/entitlements integration for XP redemption.
+- [x] **APIs & background jobs**: Added endpoints + `scripts/gamification-reset-worker.ts`; Redis leaderboard implemented (`leaderboard-service.ts`, API route + admin page).
+- [ ] **Rewards & entitlements**: Pending wallet/entitlements integration for XP redemption & premium boosts.
 - [x] **Validation**: Vitest coverage (gamification-service.test.ts) + Playwright smoke (gamification.spec.ts); load testing pending.
 
 ### 5. Admin & Ops Enablement
-- [x] **Admin dashboards**: Community moderation queue added; others pending.
+- [x] **Admin dashboards**: Community moderation queue + Gamification leaderboard added; events & insights dashboards pending.
 - [ ] **Backstage/Docs**: Update Backstage catalog entries and `docs/phase6/*` with runbooks, Terraform additions, monitoring dashboards.
-- [ ] **Feature flags & rollout**: Pending flag stubs & integration.
-- [ ] **Telemetry**: Partial spans; dashboard instrumentation pending.
+- [ ] **Feature flags & rollout**: Pending flag stubs & integration (flags: `community-beta`, `insights-ai-coach`, `gamification-v1`).
+- [ ] **Telemetry**: Partial spans; need additional spans for leaderboard & community realtime + Datadog dashboard doc.
 
 ### 6. QA, Compliance, and Rollout
 - [x] **Automation**: New Playwright specs added; CI wiring pending.

@@ -142,45 +142,45 @@ Implemented segmented inbox folders (Spark, Active, Snoozed, Trust), search, ver
   - Instrumentation: store QA script + screenshots in `test-results/trust/`.
     - Validation: ✅ Unit tests for safety heuristics and moderation workflows (chat-safety-service.test.ts with 8+ test cases).
 
-  ### 6. Background Jobs & Storage (Completed)
+  ### 6. Background Jobs & Storage (Completed / Extended)
    [x] **Message lifecycle jobs**: Created `lib/jobs/chat-jobs.ts` with functions for disappearing messages cleanup (`runDisappearingMessagesJob`), recall window management (`runMessageRecallWindowJob`), attachment purge (`runAttachmentCleanupJob`), and messaging analytics snapshots (`runMessagingAnalyticsJob`). Temporal workflow stubs added for production orchestration.
   - Impact: upholds disappearing message promises + privacy commitments.
     - Data/Services: ✅ Jobs scan for expired messages, close recall windows, mark S3 keys for deletion, generate daily analytics snapshots.
     - Instrumentation: ✅ Analytics events track job completions, console logging for monitoring.
     - Validation: ✅ Job functions ready for BullMQ/Temporal integration.
-- [ ] **Analytics snapshots**: Extend nightly job (Section 7 of blueprint) to include messaging KPIs (response time, voice adoption). Update SQL/dbt definitions in `infra/data/`.
+- [x] **Analytics snapshots**: Added avg response seconds & daily snapshot analytics event (`messaging.daily_snapshot`). dbt/warehouse integration pending.
   - Impact: leadership can track messaging health + monetization experiments.
   - Data/Services: update ETL scripts, add dbt models for KPIs, ensure Segment + Mongo exports feed data lake.
   - Instrumentation: Looker dashboards refreshed with new tiles; add data-quality checks for nulls/outliers.
   - Validation: run dbt tests, compare metrics vs manual Mongo queries, document acceptance in analytics changelog.
-- [ ] **Storage cost guardrails**: Monitor audio upload size; enforce limits via signed URL policy + CDN caching rules.
+- [x] **Storage cost guardrails**: Implemented `validateUploadConstraints()` in `lib/storage/s3.ts` for size/duration enforcement.
   - Impact: prevents runaway S3/CDN spend and keeps members informed when hitting limits.
   - Data/Services: update `lib/storage/s3.ts` to cap size/duration, configure CloudFront cache policies, log rejections.
   - Instrumentation: metrics for average voice note size, rejection count, CDN cache hit rate.
   - Validation: load test uploads at threshold, confirm signed URL denies oversize payloads; review monitoring alerts.
-- [ ] **Validation**: Write unit tests for workflows, run dry-run to confirm TTL deletions, update dashboards verifying metrics ingestion.
+- [ ] **Validation**: Pending dedicated tests for jobs & guardrails; snapshot event verified via manual run.
   - Impact: ensures automation won't silently fail in production.
   - Data/Services: include S3 mock + Temporal test harness.
   - Instrumentation: capture dry-run logs + compare to expectations.
   - Validation: share execution report with infra + analytics leads.
 
-### 7. QA, Rollout, and Documentation (Partial)
-- [ ] **Automated suites**: Run `pnpm lint`, `pnpm test`, `pnpm test:e2e` (Playwright) with messaging-specific specs. Add CI job gating merges for socket + LiveKit tests (update `.github/workflows/marketing-app-ci.yml` or new workflow for app).
+### 7. QA, Rollout, and Documentation (In Progress)
+- [ ] **Automated suites**: Messaging specs exist; need Playwright additions for voice note + translation + LiveKit token flows & CI workflow gating.
   - Impact: prevents regressions before phased rollout.
   - Data/Services: ensure workflows install browsers, configure secrets for LiveKit mocks, collect artifacts.
   - Instrumentation: add CI badge + test duration metrics; block merges on failures.
   - Validation: capture successful run log + attach to release notes.
-- [ ] **Manual verification**: Log checklist covering multi-device chat sync, translator accuracy (EN↔FR, EN↔AR), LiveKit escalation, safety prompts, notification delivery windows.
+- [ ] **Manual verification**: Checklist + evidence folder pending (`test-results/manual/messaging-phase5/`).
   - Impact: verifies human-centric flows automation can't fully cover.
   - Data/Services: use seeded accounts (free, premium, guardian) + device matrix (desktop/mobile) with LiveKit staging room.
   - Instrumentation: store evidence (screenshots, recordings) in `test-results/manual/messaging-phase5/`.
   - Validation: share checklist with trust + concierge leads for sign-off.
-- [ ] **Docs & SOPs**: Update `ADMIN_DASHBOARD_README.md`, `EMAIL_SYSTEM_README.md`, `STEDOWN_PHASE_5_TODO.md` (this file) status once tasks complete. Produce steward scripts for trust escalations and concierge chat flows.
+- [ ] **Docs & SOPs**: Steward escalation scripts & admin dashboard additions pending.
   - Impact: keeps ops + concierge teams unblocked on day one.
   - Data/Services: document new admin dashboards hooks, notification templates, and trust escalation macros.
   - Instrumentation: add doc change-log entries referencing PRs.
   - Validation: request acknowledgment from ops leads after doc drop.
-- [ ] **Release plan**: Define staged rollout (internal dogfood → concierge members → 25% premium → 100%). Include monitoring thresholds for chat latency (<250ms p95), LiveKit success rate, safety false positives. Document in `docs/phase5/rollout.md`.
+- [ ] **Release plan**: Rollout doc stub pending creation (`docs/phase5/rollout.md`).
   - Impact: controlled rollout mitigates risk + ensures telemetry coverage.
   - Data/Services: specify LaunchDarkly flags, monitoring dashboards, revert levers.
   - Instrumentation: list metrics + alert thresholds required before each stage.

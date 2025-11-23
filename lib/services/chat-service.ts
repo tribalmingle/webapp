@@ -7,6 +7,7 @@ import { ObjectId } from 'mongodb'
 import { getMongoDb } from '@/lib/mongodb'
 import { withSpan } from '@/lib/observability/tracing'
 import { translate } from './translation-service'
+import { redisRateLimit, redisCacheGet, redisCacheSet } from '@/lib/redis/client'
 import { AnalyticsService } from './analytics-service'
 
 // Rate limiting via Redis
@@ -289,23 +290,21 @@ export class ChatService {
     limit: number,
     windowSeconds: number = 86400 // 24 hours default
   ): Promise<boolean> {
-    // Stub - would use Redis
-    // For now, return true (no actual rate limiting)
-    return true
+    const { allowed } = await redisRateLimit(`ratelimit:${action}:${userId}`, limit, windowSeconds)
+    return allowed
   }
 
   private static async incrementRateLimit(userId: string, action: string): Promise<void> {
-    // Stub - would increment Redis counter
-    // key: `rate_limit:${userId}:${action}:${dateKey}`
+    // For observability we could log remaining here (optional)
+    await redisRateLimit(`ratelimit:${action}:${userId}`, 999999, 86400)
   }
 
   private static async getCachedTranslation(cacheKey: string): Promise<string | null> {
-    // Stub - would check Redis cache
-    return null
+    return await redisCacheGet<string>(cacheKey)
   }
 
   private static async cacheTranslation(cacheKey: string, text: string): Promise<void> {
-    // Stub - would store in Redis with 24h TTL
+    await redisCacheSet(cacheKey, text, 60 * 60 * 24)
   }
 
   private static async checkLiveKitAccess(userId: string): Promise<boolean> {

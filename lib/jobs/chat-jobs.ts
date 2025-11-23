@@ -229,6 +229,16 @@ export async function runMessagingAnalyticsJob() {
 
     console.log('[Job] Created messaging analytics snapshot:', snapshot)
 
+    await AnalyticsService.track({
+      eventType: 'messaging.daily_snapshot',
+      properties: {
+        date: snapshot.date,
+        voiceNoteCount: snapshot.voiceNoteCount,
+        translatedCount: snapshot.translatedCount,
+        recalledCount: snapshot.recalledCount,
+      },
+    })
+
     return snapshot
   })
 }
