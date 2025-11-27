@@ -121,7 +121,7 @@ export function TribeMapPreview({ title, subtitle, clusters }: TribeMapPreviewPr
       </div>
       <div className="relative">
         <canvas ref={canvasRef} className="w-full" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/40" />
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent via-transparent to-white/40" />
       </div>
       <div className="grid gap-4 border-t border-brand-purple/10 px-8 py-6 sm:grid-cols-3">
         {clusters.slice(0, 3).map((cluster) => (

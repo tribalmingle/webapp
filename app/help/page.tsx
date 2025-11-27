@@ -1,11 +1,28 @@
 'use client'
 
-import { ChevronDown, Search } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { ChevronDown, Search, MessageSquare, Ticket } from 'lucide-react'
+import { useMemo, useState, useEffect } from 'react'
 
 import { MemberAppShell } from '@/components/layouts/member-app-shell'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
 
 type Faq = {
   id: number
@@ -70,6 +87,13 @@ export default function HelpPage() {
   const [query, setQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [openFaqId, setOpenFaqId] = useState<number | null>(null)
+  const [showTicketDialog, setShowTicketDialog] = useState(false)
+  const [tickets, setTickets] = useState<any[]>([])
+  const [ticketForm, setTicketForm] = useState({
+    category: 'general',
+    subject: '',
+    description: ''
+  })
 
   const categories = useMemo(() => ['All', ...new Set(FAQS.map((faq) => faq.category))], [])
 
@@ -79,16 +103,113 @@ export default function HelpPage() {
     return matchesCategory && matchesQuery
   })
 
+  useEffect(() => {
+    fetchTickets()
+  }, [])
+
+  const fetchTickets = async () => {
+    try {
+      // Mock user ID - in production, get from auth context
+      const userId = 'mock-user-id'
+      const res = await fetch(`/api/admin/support/tickets?userId=${userId}`)
+      const data = await res.json()
+      setTickets(data.tickets || [])
+    } catch (error) {
+      console.error('Error fetching tickets:', error)
+    }
+  }
+
+  const handleCreateTicket = async () => {
+    try {
+      const res = await fetch('/api/admin/support/tickets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: 'mock-user-id',
+          userEmail: 'user@example.com',
+          userName: 'Mock User',
+          ...ticketForm
+        })
+      })
+
+      if (res.ok) {
+        setShowTicketDialog(false)
+        setTicketForm({ category: 'general', subject: '', description: '' })
+        fetchTickets()
+      }
+    } catch (error) {
+      console.error('Error creating ticket:', error)
+    }
+  }
+
   return (
     <MemberAppShell
       title="Concierge help"
       description="Search FAQs, ping live chat, or open a trust ticket. We respond within minutes."
       actions={
         <div className="flex flex-wrap gap-2">
-          <Button variant="secondary">Live chat</Button>
-          <Button asChild>
-            <a href="mailto:help@tribalmingle.com">Email concierge</a>
+          <Button variant="secondary">
+            <MessageSquare className="h-4 w-4 mr-2" />
+            Live chat
           </Button>
+          <Dialog open={showTicketDialog} onOpenChange={setShowTicketDialog}>
+            <DialogTrigger asChild>
+              <Button>
+                <Ticket className="h-4 w-4 mr-2" />
+                Create ticket
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create support ticket</DialogTitle>
+                <DialogDescription>
+                  Our team will respond within 24 hours
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="category">Category</Label>
+                  <Select
+                    value={ticketForm.category}
+                    onValueChange={(value) => setTicketForm({ ...ticketForm, category: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="general">General</SelectItem>
+                      <SelectItem value="technical">Technical</SelectItem>
+                      <SelectItem value="billing">Billing</SelectItem>
+                      <SelectItem value="safety">Safety</SelectItem>
+                      <SelectItem value="account">Account</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="subject">Subject</Label>
+                  <Input
+                    id="subject"
+                    value={ticketForm.subject}
+                    onChange={(e) => setTicketForm({ ...ticketForm, subject: e.target.value })}
+                    placeholder="Brief summary of your issue"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={ticketForm.description}
+                    onChange={(e) => setTicketForm({ ...ticketForm, description: e.target.value })}
+                    placeholder="Please provide details about your issue"
+                    rows={5}
+                  />
+                </div>
+                <Button onClick={handleCreateTicket} className="w-full">
+                  Submit ticket
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       }
     >
@@ -133,7 +254,7 @@ export default function HelpPage() {
           )}
         </section>
 
-        <section className="rounded-3xl border border-border bg-gradient-to-r from-blue-50 to-purple-50 p-8 text-center">
+        <section className="rounded-3xl border border-border bg-linear-to-r from-blue-50 to-purple-50 p-8 text-center">
           <h2 className="text-2xl font-semibold">Need more help?</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Concierge responds within 5 minutes during peak hours and under 30 minutes overnight.

@@ -30,8 +30,12 @@ export async function purchaseBoost(userId: string, type: BoostSession['type'], 
 }
 
 export async function listActiveBoosts(userId: string): Promise<BoostSession[]> {
-  const list = (boosts.get(userId) || []).map(b => ({ ...b, status: b.expiresAt < now() ? 'expired' : 'active' }))
-  return list.filter(b => b.status === 'active')
+  const list = boosts.get(userId) || []
+  const updated: BoostSession[] = list.map(b => {
+    const status: BoostSession['status'] = b.expiresAt < now() ? 'expired' : 'active'
+    return { ...b, status }
+  })
+  return updated.filter(b => b.status === 'active')
 }
 
 export async function cleanupExpired(userId: string) {

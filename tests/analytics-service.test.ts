@@ -3,7 +3,7 @@
  * Tests for event counting and funnel conversion analytics
  */
 
-import { describe, it, expect, beforeAll, afterAll } from '@jest/globals'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { AnalyticsService } from '@/lib/services/analytics-service'
 import { getCollection } from '@/lib/db/mongodb'
 import { COLLECTIONS, AnalyticsEvent } from '@/lib/db/collections'

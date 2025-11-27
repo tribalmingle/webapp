@@ -1,5 +1,6 @@
 // Phase 7: SubscriptionService skeleton
 // Handles subscription lifecycle operations (stubbed) prior to Stripe integration.
+import Stripe from 'stripe'
 
 export type SubscriptionPlan = 'free' | 'concierge' | 'guardian' | 'premium_plus'
 
@@ -100,7 +101,6 @@ export async function startTrial(userId: string, plan: SubscriptionPlan = 'conci
   try {
     const key = process.env.STRIPE_SECRET_KEY
     if (key) {
-      const [{ default: Stripe }] = await Promise.all([import('stripe')])
       const stripe = new Stripe(key, { apiVersion: '2024-06-20' })
       // We do not have email here; leave placeholder or fetch from users collection later.
       const customer = await stripe.customers.create({ metadata: { userId } })
@@ -158,7 +158,6 @@ export async function activateSubscription(userId: string, plan: SubscriptionPla
     }
     const priceId = priceMap[plan]
     if (key && priceId) {
-      const [{ default: Stripe }] = await Promise.all([import('stripe')])
       const stripe = new Stripe(key, { apiVersion: '2024-06-20' })
       // Ensure customer
       let customerId = rec.stripeCustomerId
@@ -186,7 +185,6 @@ export async function cancelSubscription(userId: string): Promise<SubscriptionRe
   try {
     const key = process.env.STRIPE_SECRET_KEY
     if (key && rec.stripeSubscriptionId) {
-      const [{ default: Stripe }] = await Promise.all([import('stripe')])
       const stripe = new Stripe(key, { apiVersion: '2024-06-20' })
       await stripe.subscriptions.update(rec.stripeSubscriptionId, { cancel_at_period_end: false })
       await stripe.subscriptions.cancel(rec.stripeSubscriptionId)
@@ -218,7 +216,6 @@ export async function downgradeToFree(userId: string): Promise<SubscriptionRecor
   try {
     const key = process.env.STRIPE_SECRET_KEY
     if (key && rec.stripeSubscriptionId) {
-      const [{ default: Stripe }] = await Promise.all([import('stripe')])
       const stripe = new Stripe(key, { apiVersion: '2024-06-20' })
       await stripe.subscriptions.cancel(rec.stripeSubscriptionId)
       rec.stripeSubscriptionId = undefined

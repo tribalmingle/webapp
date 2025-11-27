@@ -1,0 +1,720 @@
+openapi: 3.1.0
+info:
+  title: TribalMingle Admin API
+  version: "1.0.0"
+  description: >-
+    Phase 8 Admin endpoints for internal operational tooling. All routes require
+    admin authentication and RBAC role `admin`. Responses follow JSON format.
+servers:
+  - url: https://api.tribalmingle.com
+    description: Production
+  - url: https://staging.api.tribalmingle.com
+    description: Staging
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        id: { type: string }
+        email: { type: string }
+        name: { type: string }
+        subscriptionStatus: { type: string, enum: [trial, active, canceled, past_due] }
+        createdAt: { type: string, format: date-time }
+    CRMNote:
+      type: object
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        content: { type: string }
+        category: { type: string, enum: [support, trust, growth, general] }
+        createdBy: { type: string }
+        createdAt: { type: string, format: date-time }
+    CRMTask:
+      type: object
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        title: { type: string }
+        description: { type: string }
+        priority: { type: string, enum: [low, medium, high, urgent] }
+        status: { type: string, enum: [open, in_progress, blocked, done] }
+        dueDate: { type: string, format: date-time }
+        assignedTo: { type: string }
+        createdBy: { type: string }
+        createdAt: { type: string, format: date-time }
+    SupportTicket:
+      type: object
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        subject: { type: string }
+        description: { type: string }
+        priority: { type: string, enum: [low, medium, high, urgent] }
+        status: { type: string, enum: [open, pending_user, in_progress, resolved, closed] }
+        category: { type: string, enum: [account, billing, technical, trust, other] }
+        assignedTo: { type: string }
+        createdAt: { type: string, format: date-time }
+        sla: { $ref: '#/components/schemas/SLAInfo' }
+    SLAInfo:
+      type: object
+      properties:
+        firstResponseDue: { type: string, format: date-time }
+        resolutionDue: { type: string, format: date-time }
+        firstResponseBreached: { type: boolean }
+        resolutionBreached: { type: boolean }
+    SupportMessage:
+      type: object
+      properties:
+        id: { type: string }
+        ticketId: { type: string }
+        senderId: { type: string }
+        senderType: { type: string, enum: [user, agent] }
+        content: { type: string }
+        createdAt: { type: string, format: date-time }
+    TrustReport:
+      type: object
+      properties:
+        id: { type: string }
+        reporterId: { type: string }
+        reportedUserId: { type: string }
+        category: { type: string, enum: [harassment, scam, fake_profile, inappropriate_content] }
+        priority: { type: string, enum: [low, medium, high, urgent] }
+        status: { type: string, enum: [open, in_progress, resolved] }
+        evidence: { type: array, items: { type: string } }
+        createdAt: { type: string, format: date-time }
+    ModerationAction:
+      type: object
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        type: { type: string, enum: [approve_content, reject_content, warn_user, ban_user] }
+        reason: { type: string }
+        durationDays: { type: integer }
+        createdBy: { type: string }
+        createdAt: { type: string, format: date-time }
+    Segment:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        rules: { type: array, items: { $ref: '#/components/schemas/SegmentRule' } }
+        createdAt: { type: string, format: date-time }
+    SegmentRule:
+      type: object
+      properties:
+        field: { type: string }
+        operator: { type: string, enum: [eq, neq, gt, gte, lt, lte, in, nin] }
+        value: {}
+    Campaign:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        triggerType: { type: string, enum: [event, date, segment] }
+        actionType: { type: string, enum: [email, push, sms] }
+        status: { type: string, enum: [draft, scheduled, sending, completed, canceled] }
+        scheduledAt: { type: string, format: date-time }
+        metrics: { $ref: '#/components/schemas/CampaignMetrics' }
+    CampaignMetrics:
+      type: object
+      properties:
+        sent: { type: integer }
+        delivered: { type: integer }
+        opened: { type: integer }
+        clicked: { type: integer }
+        converted: { type: integer }
+    Event:
+      type: object
+      properties:
+        id: { type: string }
+        title: { type: string }
+        description: { type: string }
+        startAt: { type: string, format: date-time }
+        endAt: { type: string, format: date-time }
+        locationType: { type: string, enum: [virtual, in_person] }
+        capacity: { type: integer }
+        ticketPriceCents: { type: integer }
+        visibility: { type: string, enum: [public, tribe_only, private] }
+    Registration:
+      type: object
+      properties:
+        id: { type: string }
+        eventId: { type: string }
+        userId: { type: string }
+        status: { type: string, enum: [registered, waitlisted, canceled, checked_in] }
+        checkedInAt: { type: string, format: date-time }
+    FeatureFlag:
+      type: object
+      properties:
+        key: { type: string }
+        name: { type: string }
+        description: { type: string }
+        enabled: { type: boolean }
+        rolloutPercentage: { type: integer, minimum: 0, maximum: 100 }
+        variants: { type: array, items: { $ref: '#/components/schemas/FlagVariant' } }
+        targetSegments: { type: array, items: { type: string } }
+    FlagVariant:
+      type: object
+      properties:
+        key: { type: string }
+        name: { type: string }
+        weight: { type: integer }
+    ExperimentResult:
+      type: object
+      properties:
+        flagKey: { type: string }
+        variants: { type: array, items: { $ref: '#/components/schemas/VariantStats' } }
+        probabilitySuperior: { type: number }
+        significant: { type: boolean }
+    VariantStats:
+      type: object
+      properties:
+        key: { type: string }
+        conversions: { type: integer }
+        conversionRate: { type: number }
+        credibleIntervalLow: { type: number }
+        credibleIntervalHigh: { type: number }
+    HealthCheck:
+      type: object
+      properties:
+        service: { type: string }
+        status: { type: string, enum: [healthy, degraded, down] }
+        latencyMs: { type: integer }
+        message: { type: string }
+    AuditLogEntry:
+      type: object
+      properties:
+        id: { type: string }
+        action: { type: string }
+        userId: { type: string }
+        targetId: { type: string }
+        createdAt: { type: string, format: date-time }
+    MetricPoint:
+      type: object
+      properties:
+        timestamp: { type: string, format: date-time }
+        value: { type: number }
+        group: { type: string }
+    FunnelStep:
+      type: object
+      properties:
+        step: { type: integer }
+        name: { type: string }
+        count: { type: integer }
+        dropoffPct: { type: number }
+        conversionRatePct: { type: number }
+    CohortPoint:
+      type: object
+      properties:
+        cohort: { type: string }
+        period: { type: integer }
+        retentionPct: { type: number }
+paths:
+  /api/admin/crm/search:
+    get:
+      summary: Search users
+      parameters:
+        - in: query
+          name: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: User search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/User' }
+  /api/admin/crm/notes:
+    post:
+      summary: Add note to user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, content, category, createdBy]
+              properties:
+                userId: { type: string }
+                content: { type: string }
+                category: { type: string }
+                createdBy: { type: string }
+      responses:
+        '200':
+          description: Note created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  noteId: { type: string }
+  /api/admin/support/tickets:
+    get:
+      summary: List support tickets
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string }
+        - in: query
+          name: priority
+          schema: { type: string }
+      responses:
+        '200':
+          description: Ticket list
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/SupportTicket' }
+    post:
+      summary: Create support ticket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, subject, description, priority, category]
+              properties:
+                userId: { type: string }
+                subject: { type: string }
+                description: { type: string }
+                priority: { type: string }
+                category: { type: string }
+      responses:
+        '200':
+          description: Ticket created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticketId: { type: string }
+  /api/admin/support/tickets/{id}/messages:
+    post:
+      summary: Add message to ticket
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content, senderId, senderType]
+              properties:
+                content: { type: string }
+                senderId: { type: string }
+                senderType: { type: string }
+      responses:
+        '200':
+          description: Message added
+  /api/admin/trust/reports:
+    get:
+      summary: List trust reports
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string }
+      responses:
+        '200':
+          description: Reports list
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/TrustReport' }
+    post:
+      summary: Create trust report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reporterId, reportedUserId, category, priority]
+              properties:
+                reporterId: { type: string }
+                reportedUserId: { type: string }
+                category: { type: string }
+                priority: { type: string }
+                evidence: { type: array, items: { type: string } }
+      responses:
+        '200':
+          description: Report created
+  /api/admin/trust/actions:
+    post:
+      summary: Apply moderation action
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, type, reason]
+              properties:
+                userId: { type: string }
+                type: { type: string }
+                reason: { type: string }
+                durationDays: { type: integer }
+      responses:
+        '200': { description: Action applied }
+  /api/admin/growth/segments:
+    get:
+      summary: List segments
+      responses:
+        '200':
+          description: Segment list
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Segment' }
+    post:
+      summary: Create segment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, rules]
+              properties:
+                name: { type: string }
+                rules: { type: array, items: { $ref: '#/components/schemas/SegmentRule' } }
+      responses:
+        '200': { description: Segment created }
+  /api/admin/growth/campaigns:
+    get:
+      summary: List campaigns
+      responses:
+        '200':
+          description: Campaign list
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Campaign' }
+    post:
+      summary: Create campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, triggerType, actionType]
+              properties:
+                name: { type: string }
+                triggerType: { type: string }
+                actionType: { type: string }
+                segmentId: { type: string }
+                scheduledAt: { type: string, format: date-time }
+      responses:
+        '200': { description: Campaign created }
+  /api/admin/events:
+    post:
+      summary: Create event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, startAt, endAt, locationType]
+              properties:
+                title: { type: string }
+                description: { type: string }
+                startAt: { type: string, format: date-time }
+                endAt: { type: string, format: date-time }
+                locationType: { type: string }
+                capacity: { type: integer }
+                ticketPriceCents: { type: integer }
+                visibility: { type: string }
+      responses:
+        '200': { description: Event created }
+  /api/admin/events/{eventId}/registrations:
+    get:
+      summary: List event registrations
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Registrations list
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Registration' }
+  /api/admin/events/registrations/{registrationId}/checkin:
+    post:
+      summary: Check-in registration
+      parameters:
+        - in: path
+          name: registrationId
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Checked in }
+  /api/admin/billing/ltv:
+    get:
+      summary: Cohort LTV metrics
+      responses:
+        '200':
+          description: Cohort LTV array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    cohort: { type: string }
+                    ltv6m: { type: number }
+                    ltv12m: { type: number }
+                    ltv24m: { type: number }
+                    memberCount: { type: integer }
+  /api/admin/billing/refunds:
+    get:
+      summary: Refund analytics
+      responses:
+        '200':
+          description: Refund stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reasons: { type: object }
+                  trend: { type: array, items: { type: object } }
+  /api/admin/billing/arpu:
+    get:
+      summary: ARPU trend
+      responses:
+        '200':
+          description: ARPU monthly points
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    month: { type: string }
+                    arpu: { type: number }
+  /api/admin/labs/flags:
+    get:
+      summary: List feature flags
+      responses:
+        '200':
+          description: Flags list
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/FeatureFlag' }
+    post:
+      summary: Create feature flag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [key, name]
+              properties:
+                key: { type: string }
+                name: { type: string }
+                description: { type: string }
+                rolloutPercentage: { type: integer }
+      responses:
+        '200': { description: Flag created }
+  /api/admin/labs/flags/{key}:
+    get:
+      summary: Get feature flag
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Flag detail
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FeatureFlag' }
+    patch:
+      summary: Update/toggle flag
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200': { description: Updated }
+    delete:
+      summary: Delete flag
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Deleted }
+  /api/admin/labs/experiments/{key}:
+    get:
+      summary: Get experiment results
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Experiment stats
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ExperimentResult' }
+  /api/admin/system/health:
+    get:
+      summary: System health checks
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string }
+                  checkedAt: { type: string, format: date-time }
+                  checks:
+                    type: array
+                    items: { $ref: '#/components/schemas/HealthCheck' }
+  /api/admin/system/audit:
+    get:
+      summary: Audit log entries
+      parameters:
+        - in: query
+          name: action
+          schema: { type: string }
+        - in: query
+          name: userId
+          schema: { type: string }
+      responses:
+        '200':
+          description: Audit entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/AuditLogEntry' }
+  /api/admin/analytics/metrics:
+    post:
+      summary: Query metrics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startDate: { type: string, format: date-time }
+                endDate: { type: string, format: date-time }
+                aggregation: { type: string }
+                groupBy: { type: string }
+                filters: { type: array, items: { type: object } }
+      responses:
+        '200':
+          description: Metric points
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/MetricPoint' }
+  /api/admin/analytics/funnel:
+    post:
+      summary: Funnel analysis
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [steps]
+              properties:
+                steps: { type: array, items: { type: string } }
+                startDate: { type: string, format: date-time }
+                endDate: { type: string, format: date-time }
+      responses:
+        '200':
+          description: Funnel steps
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/FunnelStep' }
+  /api/admin/analytics/cohort:
+    post:
+      summary: Cohort analysis
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [cohortDate]
+              properties:
+                cohortDate: { type: string, format: date }
+                metric: { type: string }
+                periods: { type: integer }
+      responses:
+        '200':
+          description: Cohort points
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/CohortPoint' }
+  /api/admin/analytics/ingest:
+    post:
+      summary: Batch ingest events
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [events]
+              properties:
+                events:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type: { type: string }
+                      userId: { type: string }
+                      timestamp: { type: string, format: date-time }
+                      properties: { type: object }
+      responses:
+        '200': { description: Ingestion accepted }

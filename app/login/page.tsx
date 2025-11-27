@@ -40,41 +40,47 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-background to-purple-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md max-h-[95vh] bg-white rounded-2xl shadow-lg overflow-y-auto">
-        {/* Dark Purple Header Section */}
-        <div className="bg-purple-900 px-6 py-3">
+    <div className="h-screen overflow-hidden bg-background-primary flex items-center justify-center p-4 relative">
+      {/* Animated gradient orbs */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-20 w-96 h-96 bg-purple-royal/30 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gold-warm/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
+      
+      <div className="w-full max-w-md max-h-[95vh] bg-bg-secondary/60 backdrop-blur-xl rounded-2xl shadow-premium border border-border-gold/30 overflow-y-auto relative z-10">
+        {/* Premium Header Section */}
+        <div className="bg-purple-gradient px-6 py-8">
           {/* Logo */}
           <div className="flex items-center justify-center">
             <img src="/triballogo.png" alt="Tribal Mingle" className="w-32 h-32 md:w-40 md:h-40 object-contain" />
           </div>
-          <h2 className="text-lg md:text-xl font-bold text-center text-white mt-1">Sign in to your account</h2>
+          <h2 className="text-lg md:text-xl font-bold text-center text-white mt-2 font-display">Sign in to your account</h2>
         </div>
 
-        {/* White Form Section */}
-        <div className="p-5">
+        {/* Form Section */}
+        <div className="p-6">
 
         {error && (
-          <div className="mb-3 p-2 bg-red-100 border border-red-400 text-red-700 rounded-lg text-xs">
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg text-sm">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-3 mb-3">
+        <form onSubmit={handleSubmit} className="space-y-4 mb-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Email Address</label>
+            <label className="block text-sm font-semibold mb-2 text-text-primary">Email Address</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
-              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-sm"
+              className="w-full px-4 py-3 border-2 border-border-gold/30 bg-bg-tertiary text-text-primary rounded-lg focus:outline-none focus:border-gold-warm focus:ring-4 focus:ring-gold-warm/20 transition-all placeholder:text-text-tertiary"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
+            <label className="block text-sm font-semibold mb-2 text-text-primary">Password</label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -82,14 +88,14 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Your password"
                 required
-                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-sm"
+                className="w-full px-4 py-3 pr-12 border-2 border-border-gold/30 bg-bg-tertiary text-text-primary rounded-lg focus:outline-none focus:border-gold-warm focus:ring-4 focus:ring-gold-warm/20 transition-all placeholder:text-text-tertiary"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2.5 text-muted-foreground"
+                className="absolute right-4 top-3.5 text-text-secondary hover:text-text-primary transition-colors"
               >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
           </div>
@@ -97,21 +103,21 @@ export default function LoginPage() {
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full px-4 py-2.5 bg-accent text-accent-foreground rounded-lg font-bold hover:opacity-90 transition disabled:opacity-50 text-sm mt-4"
+            className="w-full px-4 py-3 bg-gold-gradient text-bg-primary rounded-lg font-bold shadow-glow-gold hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
           >
             {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 
-        <div className="text-center mb-3">
-          <Link href="#" className="text-accent text-sm font-semibold hover:underline">
+        <div className="text-center mb-4">
+          <Link href="#" className="text-gold-warm text-sm font-semibold hover:text-gold-warm-light transition-colors">
             Forgot Password?
           </Link>
         </div>
 
-        <div className="border-t border-border pt-3">
-          <p className="text-center text-xs text-muted-foreground">
-            Don't have an account? <Link href="/sign-up" className="text-accent font-semibold hover:underline">Sign up</Link>
+        <div className="border-t border-border-gold/20 pt-4">
+          <p className="text-center text-sm text-text-secondary">
+            Don't have an account? <Link href="/sign-up" className="text-gold-warm font-semibold hover:text-gold-warm-light transition-colors">Sign up</Link>
           </p>
         </div>
         </div>

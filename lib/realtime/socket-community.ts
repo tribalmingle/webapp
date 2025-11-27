@@ -5,6 +5,9 @@
 import type { Server as HTTPServer } from 'http'
 import { Server as SocketIOServer, Socket } from 'socket.io'
 
+interface ClubPayload { clubId: string }
+interface PollVotePayload { clubId: string; postId: string; optionId: string }
+
 let io: SocketIOServer | null = null
 
 export function initializeCommunitySocket(server: HTTPServer) {
@@ -17,7 +20,7 @@ export function initializeCommunitySocket(server: HTTPServer) {
     },
   })
 
-  io.use((socket, next) => {
+  io.use((socket: Socket, next: (err?: Error) => void) => {
     const userId = socket.handshake.auth.userId
     if (!userId) return next(new Error('Authentication required'))
     socket.data.userId = userId
@@ -31,17 +34,20 @@ export function initializeCommunitySocket(server: HTTPServer) {
     // Join personal room for targeted updates (e.g., moderation decisions impacting user's content)
     socket.join(`user:${userId}`)
 
-    socket.on('club:join', ({ clubId }) => {
+    socket.on('club:join', (payload: ClubPayload) => {
+      const { clubId } = payload
       socket.join(`club:${clubId}`)
       namespace.to(socket.id).emit('club:joined', { clubId })
     })
 
-    socket.on('club:leave', ({ clubId }) => {
+    socket.on('club:leave', (payload: ClubPayload) => {
+      const { clubId } = payload
       socket.leave(`club:${clubId}`)
       namespace.to(socket.id).emit('club:left', { clubId })
     })
 
-    socket.on('poll:vote', ({ clubId, postId, optionId }) => {
+    socket.on('poll:vote', (payload: PollVotePayload) => {
+      const { clubId, postId, optionId } = payload
       // Broadcast vote increment event (client will refetch or optimistically update)
       namespace.to(`club:${clubId}`).emit('poll:vote', { postId, optionId, actorId: userId, ts: Date.now() })
     })

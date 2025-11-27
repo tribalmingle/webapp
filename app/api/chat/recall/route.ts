@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '@/lib/auth/session'
+import { getAuthUser } from '../../../../lib/auth/session'
 import { ChatService } from '@/lib/services/chat-service'
 
 export async function POST(request: NextRequest) {

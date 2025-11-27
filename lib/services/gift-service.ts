@@ -1,7 +1,8 @@
 // Phase 7: Gift sending service (stub + wallet debit integration)
-import { getMongoDb } from '../db/mongo'
+// Fixed imports: use shared mongodb helper + correct wallet debit function name.
+import { getMongoDb } from '@/lib/mongodb'
 import { getGift } from '../config/gift-catalog'
-import { debitWallet } from './wallet-service'
+import { debit } from './wallet-service'
 
 export interface SentGiftRecord {
   _id?: string
@@ -19,7 +20,7 @@ export async function sendGift(params: { senderUserId: string, recipientUserId: 
   const gift = getGift(params.giftId)
   if (!gift) throw new Error('UNKNOWN_GIFT')
   // Debit wallet first (atomic intention); no DB transaction yet (Mongo serverless constraints)
-  await debitWallet({ userId: params.senderUserId, amount: gift.coinCost, reason: `gift:${gift.id}`, idempotencyKey: params.idempotencyKey })
+  await debit(params.senderUserId, gift.coinCost, `gift:${gift.id}`, params.idempotencyKey)
   const record: SentGiftRecord = {
     giftId: gift.id,
     senderUserId: params.senderUserId,

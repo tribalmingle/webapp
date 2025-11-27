@@ -9,10 +9,14 @@ import {
   UserCheck, UserX, Image, Flag, Ban, UnlockKeyhole, Lock, ArrowUpRight,
   ArrowDownRight, RefreshCw, FileText, Bell, Clock, MapPin, Briefcase,
   Award, Gift, Target, TrendingDown, Zap, Phone, Globe, Smartphone, Quote,
-  WalletCards, X
+  WalletCards, X, Sparkles
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { StatCard } from '@/components/premium/stat-card'
+import { StaggerGrid, FadeIn, SlideUp } from '@/components/motion'
 import { BOOST_AUCTION_LOCALES, BOOST_AUCTION_PLACEMENTS, type AuctionLocale, type AuctionPlacement } from '@/lib/boost/auction-constants'
 import type { TrustAutomationSnapshot, TrustLivenessQueueItem } from '@/lib/trust/trust-automation-service'
 import { retentionExperimentCatalog } from '@/lib/experiments/retention-suite'
@@ -1112,8 +1116,11 @@ export default function AdminDashboard() {
 
   if (loading || !isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen bg-background-primary flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-purple-royal border-t-gold-warm rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-text-secondary">Loading admin dashboard...</p>
+        </div>
       </div>
     )
   }
@@ -1128,14 +1135,18 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <div className="w-64 bg-white border-r border-gray-200 fixed h-full overflow-y-auto">
-        <div className="bg-purple-900 p-6">
+    <div className="min-h-screen bg-background-primary flex">
+      {/* Premium Sidebar */}
+      <div className="w-64 bg-background-secondary border-r border-border-gold/20 fixed h-full overflow-y-auto">
+        <div className="bg-linear-to-br from-purple-royal to-purple-royal/80 p-6">
           <div className="flex flex-col items-center mb-8">
             <img src="/triballogo.png" alt="Tribal Mingle" className="w-full h-auto mb-0" />
-            <h1 className="text-xl font-bold text-white">Admin Panel</h1>
-            <p className="mt-1 text-xs text-purple-200 text-center">Restricted area for trusted Tribal Mingle staff.</p>
+            <h1 className="text-xl font-bold text-white font-display">Admin Panel</h1>
+            <Badge variant="gold" className="mt-2">
+              <Crown className="w-3 h-3 mr-1" />
+              Premium Access
+            </Badge>
+            <p className="mt-2 text-xs text-white/70 text-center">Trusted staff only</p>
           </div>
         </div>
         <div className="p-6">
@@ -1160,10 +1171,10 @@ export default function AdminDashboard() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as ActiveTab)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${
                     activeTab === tab.id
-                      ? 'bg-purple-100 text-purple-900 font-semibold'
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? 'bg-purple-royal/20 text-purple-royal font-semibold border border-purple-royal/40'
+                      : 'text-text-secondary hover:bg-background-tertiary hover:text-text-primary'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -1174,17 +1185,17 @@ export default function AdminDashboard() {
           </nav>
         </div>
 
-        <div className="p-6 border-t border-gray-200 space-y-2">
+        <div className="p-6 border-t border-border-gold/20 space-y-2">
           <button
             onClick={() => router.push('/dashboard-spa')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+            className="w-full flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-background-tertiary hover:text-text-primary rounded-lg transition-all"
           >
             <Users className="w-5 h-5" />
             User Dashboard
           </button>
           <button
             onClick={handleAdminLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition"
+            className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
           >
             <LogOut className="w-5 h-5" />
             Logout
@@ -1193,107 +1204,87 @@ export default function AdminDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="ml-64 flex-1 p-8">
+      <div className="ml-64 flex-1 p-8 bg-background-primary">
         {/* DASHBOARD VIEW */}
         {activeTab === 'dashboard' && (
           <div>
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
-                <p className="text-gray-600 mt-1">Monitor your platform performance</p>
+            <SlideUp>
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h1 className="text-display-sm font-display text-text-primary">Dashboard Overview</h1>
+                  <p className="text-body text-text-secondary mt-1">Monitor your platform performance</p>
+                </div>
+                <Button onClick={fetchDashboardData} variant="outline">
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Refresh
+                </Button>
               </div>
-              <Button onClick={fetchDashboardData} variant="outline">
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Refresh
-              </Button>
-            </div>
+            </SlideUp>
 
             {/* Key Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {[
-                {
-                  label: 'Total Users',
-                  value: stats.totalUsers.toLocaleString(),
-                  change: `+${stats.newUsersToday}`,
-                  changeLabel: 'today',
-                  icon: Users,
-                  color: 'bg-blue-500',
-                  trend: 'up'
-                },
-                {
-                  label: 'Monthly Revenue',
-                  value: `£${stats.monthlyRevenue.toLocaleString()}`,
-                  change: '+12%',
-                  changeLabel: 'vs last month',
-                  icon: DollarSign,
-                  color: 'bg-green-500',
-                  trend: 'up'
-                },
-                {
-                  label: 'Active Users',
-                  value: stats.activeUsers.toLocaleString(),
-                  change: `${((stats.activeUsers / stats.totalUsers) * 100).toFixed(1)}%`,
-                  changeLabel: 'engagement',
-                  icon: Activity,
-                  color: 'bg-purple-500',
-                  trend: 'up'
-                },
-                {
-                  label: 'Pending Reports',
-                  value: stats.reportedProfiles.toString(),
-                  change: stats.reportedProfiles > 5 ? 'Needs attention' : 'Under control',
-                  changeLabel: '',
-                  icon: AlertTriangle,
-                  color: stats.reportedProfiles > 5 ? 'bg-red-500' : 'bg-yellow-500',
-                  trend: stats.reportedProfiles > 5 ? 'down' : 'up'
-                }
-              ].map((stat, index) => {
-                const Icon = stat.icon
-                const TrendIcon = stat.trend === 'up' ? ArrowUpRight : ArrowDownRight
-                return (
-                  <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className={`${stat.color} p-3 rounded-lg`}>
-                        <Icon className="w-6 h-6 text-white" />
-                      </div>
-                      <TrendIcon className={`w-5 h-5 ${stat.trend === 'up' ? 'text-green-500' : 'text-red-500'}`} />
-                    </div>
-                    <div className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                    <div className="text-sm text-gray-600">{stat.label}</div>
-                    <div className="text-xs text-gray-500 mt-2">{stat.change} {stat.changeLabel}</div>
-                  </div>
-                )
-              })}
-            </div>
+            <StaggerGrid columns={4}>
+              <StatCard
+                icon={<Users className="w-5 h-5" />}
+                title="Total Users"
+                value={stats.totalUsers}
+                trend={stats.newUsersToday > 0 ? ((stats.newUsersToday / stats.totalUsers) * 100) : 0}
+                trendLabel={`+${stats.newUsersToday} today`}
+                variant="glass"
+              />
+              <StatCard
+                icon={<DollarSign className="w-5 h-5" />}
+                title="Monthly Revenue"
+                value={stats.monthlyRevenue}
+                prefix="£"
+                trend={12}
+                trendLabel="vs last month"
+                variant="glass"
+              />
+              <StatCard
+                icon={<Activity className="w-5 h-5" />}
+                title="Active Users"
+                value={stats.activeUsers}
+                trend={((stats.activeUsers / stats.totalUsers) * 100)}
+                trendLabel="engagement rate"
+                variant="glass"
+              />
+              <StatCard
+                icon={<AlertTriangle className="w-5 h-5" />}
+                title="Pending Reports"
+                value={stats.reportedProfiles}
+                trend={stats.reportedProfiles > 5 ? -10 : 5}
+                trendLabel={stats.reportedProfiles > 5 ? 'Needs attention' : 'Under control'}
+                variant="glass"
+              />
+            </StaggerGrid>
 
             {/* Additional Metrics */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Subscription Breakdown</h3>
-                <div className="space-y-4">
-                  {[
-                    { plan: 'Free', count: stats.freeUsers, color: 'bg-gray-400', percentage: (stats.freeUsers / stats.totalUsers) * 100 },
-                    { plan: 'Monthly', count: Math.floor(stats.premiumUsers * 0.4), color: 'bg-blue-500', percentage: (Math.floor(stats.premiumUsers * 0.4) / stats.totalUsers) * 100 },
-                    { plan: '3 Months', count: Math.floor(stats.premiumUsers * 0.35), color: 'bg-purple-500', percentage: (Math.floor(stats.premiumUsers * 0.35) / stats.totalUsers) * 100 },
-                    { plan: '6 Months', count: Math.floor(stats.premiumUsers * 0.25), color: 'bg-orange-500', percentage: (Math.floor(stats.premiumUsers * 0.25) / stats.totalUsers) * 100 }
-                  ].map((item, index) => (
-                    <div key={index}>
-                      <div className="flex items-center justify-between text-sm mb-2">
-                        <span className="text-gray-700 font-medium">{item.plan}</span>
-                        <span className="text-gray-900 font-semibold">{item.count} ({item.percentage.toFixed(1)}%)</span>
+            <FadeIn delay={0.3}>
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8 mt-8">
+                <Card variant="glass" className="p-6">
+                  <h3 className="text-h3 font-display text-text-primary mb-4">Subscription Breakdown</h3>
+                  <div className="space-y-4">{[
+                      { plan: 'Free', count: stats.freeUsers, color: 'bg-text-tertiary', percentage: (stats.freeUsers / stats.totalUsers) * 100 },
+                      { plan: 'Monthly', count: Math.floor(stats.premiumUsers * 0.4), color: 'bg-blue-500', percentage: (Math.floor(stats.premiumUsers * 0.4) / stats.totalUsers) * 100 },
+                      { plan: '3 Months', count: Math.floor(stats.premiumUsers * 0.35), color: 'bg-purple-royal', percentage: (Math.floor(stats.premiumUsers * 0.35) / stats.totalUsers) * 100 },
+                      { plan: '6 Months', count: Math.floor(stats.premiumUsers * 0.25), color: 'bg-gold-warm', percentage: (Math.floor(stats.premiumUsers * 0.25) / stats.totalUsers) * 100 }
+                    ].map((item, index) => (
+                      <div key={index}>
+                        <div className="flex items-center justify-between text-sm mb-2">
+                          <span className="text-text-secondary font-medium">{item.plan}</span>
+                          <span className="text-text-primary font-semibold">{item.count} ({item.percentage.toFixed(1)}%)</span>
+                        </div>
+                        <div className="w-full bg-background-tertiary rounded-full h-2">
+                          <div className={`${item.color} h-2 rounded-full transition-all duration-1000`} style={{ width: `${item.percentage}%` }}></div>
+                        </div>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className={`${item.color} h-2 rounded-full`} style={{ width: `${item.percentage}%` }}></div>
-                      </div>
-                    </div>
                   ))}
                 </div>
-              </div>
+              </Card>
 
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Platform Activity</h3>
-                <div className="space-y-3">
-                  {[
+              <Card variant="glass" className="p-6">
+                <h3 className="text-h3 font-display text-text-primary mb-4">Platform Activity</h3>
+                <div className="space-y-3">{[
                     { label: 'Total Matches', value: stats.totalMatches, icon: Heart, color: 'text-red-500' },
                     { label: 'Messages Sent', value: stats.totalMessages, icon: MessageCircle, color: 'text-blue-500' },
                     { label: 'Verified Users', value: stats.verifiedUsers, icon: CheckCircle, color: 'text-green-500' },
@@ -1312,9 +1303,10 @@ export default function AdminDashboard() {
                     )
                   })}
                 </div>
-              </div>
+              </Card>
               <QueueMonitorCard />
             </div>
+            </FadeIn>
 
             {/* Recent Activity */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -1326,7 +1318,7 @@ export default function AdminDashboard() {
                       {user.profilePhoto ? (
                         <img src={user.profilePhoto} alt={user.name} className="w-10 h-10 rounded-full object-cover" />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+                        <div className="w-10 h-10 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
                           {user.name.charAt(0)}
                         </div>
                       )}
@@ -1455,7 +1447,7 @@ export default function AdminDashboard() {
                             {user.profilePhoto ? (
                               <img src={user.profilePhoto} alt={user.name} className="w-10 h-10 rounded-full object-cover" />
                             ) : (
-                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+                              <div className="w-10 h-10 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
                                 {user.name.charAt(0)}
                               </div>
                             )}
@@ -1753,7 +1745,7 @@ export default function AdminDashboard() {
                         value={walletConfigForm.notes}
                         onChange={(e) => updateWalletConfigField('notes', e.target.value)}
                         maxLength={500}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg min-h-[80px]"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg min-h-20"
                         placeholder="Internal notes about rollout, PSP approvals, etc."
                       />
                     </div>
@@ -2079,7 +2071,7 @@ export default function AdminDashboard() {
                       key={t._id}
                       className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex items-start gap-3"
                     >
-                      <div className="flex-shrink-0">
+                      <div className="shrink-0">
                         {t.profilePhoto ? (
                           <img
                             src={t.profilePhoto}
@@ -3327,7 +3319,7 @@ export default function AdminDashboard() {
                       <span className="text-gray-900 font-semibold">{stage.count.toLocaleString()} ({stage.percentage}%)</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-3">
-                      <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-500" style={{ width: `${stage.percentage}%` }}></div>
+                      <div className="bg-linear-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-500" style={{ width: `${stage.percentage}%` }}></div>
                     </div>
                   </div>
                 ))}
@@ -3829,7 +3821,7 @@ function EmailUsersSection({ users }: { users: User[] }) {
           </div>
 
           {/* Email Preview */}
-          <div className="bg-gradient-to-br from-purple-50 to-orange-50 rounded-xl p-6 border border-purple-200">
+          <div className="bg-linear-to-br from-purple-50 to-orange-50 rounded-xl p-6 border border-purple-200">
             <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
               <Eye className="w-5 h-5 text-purple-600" />
               Email Preview
@@ -3953,7 +3945,7 @@ function EmailUsersSection({ users }: { users: User[] }) {
                     {user.profilePhoto ? (
                       <img src={user.profilePhoto} alt={user.name} className="w-10 h-10 rounded-full object-cover" />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-orange-500 flex items-center justify-center text-white font-bold">
+                      <div className="w-10 h-10 rounded-full bg-linear-to-br from-purple-500 to-orange-500 flex items-center justify-center text-white font-bold">
                         {user.name.charAt(0).toUpperCase()}
                       </div>
                     )}

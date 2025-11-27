@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { NextRequest } from 'next/server'
 import { POST as stripeIntentPost } from '@/app/api/payments/stripe/intent/route'
 import { POST as paystackInitPost } from '@/app/api/payments/paystack/initialize/route'
 import { GET as paystackVerifyGet } from '@/app/api/payments/paystack/verify/[reference]/route'
@@ -10,8 +11,13 @@ import { GET as googleConfigGet } from '@/app/api/payments/google-pay/config/rou
 // We rely on existing auth util; if it throws due to missing env, tests should be adjusted.
 
 function mockRequest(method: string, body?: any, headers?: Record<string,string>) {
-  const init: RequestInit = { method, headers: { 'content-type': 'application/json', ...(headers||{}) }, body: body ? JSON.stringify(body) : undefined }
-  return new Request('http://localhost/test', init)
+  const url = 'http://localhost/test'
+  const init: RequestInit & { duplex?: 'half' } = { 
+    method, 
+    headers: { 'content-type': 'application/json', ...(headers||{}) }, 
+    body: body ? JSON.stringify(body) : undefined
+  }
+  return new NextRequest(url, init as any)
 }
 
 // NOTE: These tests run in stub mode (no Stripe/Paystack keys expected in CI unit context)
@@ -51,7 +57,7 @@ describe('payment route stubs', () => {
   })
 
   it('provides google pay config stub', async () => {
-    const req = new Request('http://localhost/test', { method: 'GET' })
+    const req = new NextRequest('http://localhost/test', { method: 'GET' })
     const res = await googleConfigGet(req)
     const json = await res.json()
     expect(json.config.allowedPaymentMethods[0].tokenizationSpecification.parameters.gateway).toBeDefined()

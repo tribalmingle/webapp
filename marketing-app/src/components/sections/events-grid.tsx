@@ -27,7 +27,7 @@ export function EventsGrid({ title, items }: EventsGridProps) {
       </div>
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         {items.map((event) => (
-          <article key={`${event.city}-${event.date}`} className="flex h-full flex-col rounded-2xl border border-brand-purple/10 bg-gradient-to-br from-brand-sand/30 via-white to-brand-sand/30 p-5">
+          <article key={`${event.city}-${event.date}`} className="flex h-full flex-col rounded-2xl border border-brand-purple/10 bg-linear-to-br from-brand-sand/30 via-white to-brand-sand/30 p-5">
             <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-brand-purple">
               <span>{event.date}</span>
               {event.status ? (

@@ -95,7 +95,7 @@ export function HeroSection({ eyebrow, headline, body, primaryCta, secondaryCta,
   }
 
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-brand-purple/10 bg-gradient-to-br from-brand-purple/10 via-white to-brand-sand/70 px-6 py-16 shadow-lg sm:px-12">
+    <section className="relative overflow-hidden rounded-3xl border border-brand-purple/10 bg-linear-to-br from-brand-purple/10 via-white to-brand-sand/70 px-6 py-16 shadow-lg sm:px-12">
       <p className="text-sm font-semibold uppercase tracking-[0.3em] text-brand-purple/70">{resolvedCopy.eyebrow}</p>
       <div className="mt-4 space-y-6 lg:flex lg:items-center lg:gap-10 lg:space-y-0">
         <div className="lg:w-2/3">

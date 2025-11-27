@@ -18,7 +18,7 @@ import { ChatSafetyService } from '@/lib/services/chat-safety-service'
 import { getSubscription } from '@/lib/services/subscription-service'
 import { getSnapshot } from '@/lib/services/wallet-service'
 import { getReferralProgress, generateOrGetExistingCode } from '@/lib/services/referral-service'
-import { getRealtimeStats, listRecentSnapshots, AnalyticsService } from '@/lib/services/analytics-service'
+import { getRealtimeStats, listRecentSnapshots, AnalyticsService, getReferralFunnelData } from '@/lib/services/analytics-service'
 
 interface GraphQLContext {
   userId: string
@@ -266,6 +266,20 @@ const QueryType = new GraphQLObjectType({
         const start = new Date(args.startDate)
         const end = new Date(args.endDate)
         return await AnalyticsService.getFunnelData(args.steps, start, end)
+      }
+    },
+    // Phase 7: Referral conversion funnel
+    referralFunnel: {
+      type: new GraphQLList(new GraphQLObjectType({
+        name: 'ReferralFunnelStep',
+        fields: {
+          step: { type: GraphQLString },
+          count: { type: GraphQLFloat },
+          conversionRate: { type: GraphQLFloat },
+        }
+      })),
+      resolve: async () => {
+        return await getReferralFunnelData()
       }
     },
     // Phase 6: Community moderation queue

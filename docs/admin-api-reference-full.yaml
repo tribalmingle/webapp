@@ -1,0 +1,178 @@
+openapi: 3.1.0
+info:
+  title: TribalMingle Admin API (Full)
+  version: 1.0.0
+  description: Complete set of Phase 8 admin endpoints including authentication, overview, CRM, support, trust, growth, events, billing, labs, system, analytics and utility routes.
+servers:
+  - url: https://api.tribalmingle.com
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  /api/admin/login:
+    post:
+      summary: Admin login
+      responses:
+        '200': { description: Logged in }
+  /api/admin/logout:
+    post:
+      summary: Admin logout
+      responses:
+        '200': { description: Logged out }
+  /api/admin/overview/metrics:
+    get:
+      summary: Dashboard metrics snapshot
+      responses:
+        '200': { description: Metrics }
+  /api/admin/overview/experiments:
+    get:
+      summary: Active experiments summary
+      responses:
+        '200': { description: Experiments }
+  /api/admin/overview/alerts:
+    get:
+      summary: Recent system alerts
+      responses:
+        '200': { description: Alerts }
+  /api/admin/crm/members:
+    get:
+      summary: List/search members
+      parameters:
+        - in: query
+          name: q
+          schema: { type: string }
+      responses:
+        '200': { description: Member list }
+  /api/admin/crm/members/{id}:
+    get:
+      summary: Get member profile
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Member profile }
+  /api/admin/crm/notes:
+    post:
+      summary: Create CRM note
+      responses:
+        '200': { description: Note created }
+  /api/admin/crm/tasks:
+    get:
+      summary: List tasks
+      responses:
+        '200': { description: Tasks }
+    post:
+      summary: Create task
+      responses:
+        '200': { description: Task created }
+  /api/admin/crm/tasks/{id}:
+    patch:
+      summary: Update task
+      responses:
+        '200': { description: Task updated }
+  /api/admin/support/queue:
+    get:
+      summary: Ticket queue summary
+      responses:
+        '200': { description: Queue }
+  /api/admin/support/tickets:
+    get:
+      summary: List tickets
+      responses:
+        '200': { description: Tickets }
+    post:
+      summary: Create ticket
+      responses:
+        '200': { description: Ticket created }
+  /api/admin/support/tickets/{id}:
+    get:
+      summary: Ticket detail
+      responses:
+        '200': { description: Ticket detail }
+  /api/admin/support/tickets/{id}/messages:
+    post:
+      summary: Add ticket message
+      responses:
+        '200': { description: Message added }
+  /api/admin/support/tickets/{id}/assign:
+    post:
+      summary: Assign ticket
+      responses:
+        '200': { description: Assigned }
+  /api/admin/support/canned-responses:
+    get:
+      summary: List canned responses
+      responses:
+        '200': { description: Responses }
+  /api/admin/trust/reports:
+    get: { summary: List reports, responses: { '200': { description: Reports } } }
+    post: { summary: Create report, responses: { '200': { description: Report created } } }
+  /api/admin/trust/reports/{id}:
+    get: { summary: Report detail, responses: { '200': { description: Detail } } }
+    patch: { summary: Update report status, responses: { '200': { description: Updated } } }
+  /api/admin/trust/verification:
+    get: { summary: Photo verification queue, responses: { '200': { description: Queue } } }
+  /api/admin/trust/actions:
+    post: { summary: Moderation action, responses: { '200': { description: Applied } } }
+  /api/admin/trust/history/{userId}:
+    get: { summary: User trust history, responses: { '200': { description: History } } }
+  /api/admin/growth/segments:
+    get: { summary: List segments, responses: { '200': { description: Segments } } }
+    post: { summary: Create segment, responses: { '200': { description: Segment created } } }
+  /api/admin/growth/segments/{id}/count:
+    get: { summary: Segment member count, responses: { '200': { description: Count } } }
+  /api/admin/growth/campaigns:
+    get: { summary: List campaigns, responses: { '200': { description: Campaigns } } }
+    post: { summary: Create campaign, responses: { '200': { description: Campaign created } } }
+  /api/admin/growth/campaigns/{id}:
+    get: { summary: Campaign metrics, responses: { '200': { description: Metrics } } }
+  /api/admin/events:
+    post: { summary: Create event, responses: { '200': { description: Event created } } }
+  /api/admin/events/{eventId}/registrations:
+    get: { summary: List registrations, responses: { '200': { description: Registrations } } }
+  /api/admin/events/registrations/{registrationId}/checkin:
+    post: { summary: Registration check-in, responses: { '200': { description: Checked in } } }
+  /api/admin/billing/ltv:
+    get: { summary: LTV cohorts, responses: { '200': { description: LTV } } }
+  /api/admin/billing/refunds:
+    get: { summary: Refund analytics, responses: { '200': { description: Refunds } } }
+  /api/admin/billing/arpu:
+    get: { summary: ARPU trend, responses: { '200': { description: ARPU } } }
+  /api/admin/billing/stats:
+    get: { summary: Billing stats legacy, responses: { '200': { description: Stats } } }
+  /api/admin/labs/flags:
+    get: { summary: List feature flags, responses: { '200': { description: Flags } } }
+    post: { summary: Create flag, responses: { '200': { description: Flag created } } }
+  /api/admin/labs/flags/{key}:
+    get: { summary: Flag detail, responses: { '200': { description: Detail } } }
+    patch: { summary: Update/toggle flag, responses: { '200': { description: Updated } } }
+    delete: { summary: Delete flag, responses: { '200': { description: Deleted } } }
+  /api/admin/labs/experiments/{key}:
+    get: { summary: Experiment results, responses: { '200': { description: Results } } }
+  /api/admin/system/health:
+    get: { summary: Health checks, responses: { '200': { description: Health } } }
+  /api/admin/system/audit:
+    get: { summary: Audit log, responses: { '200': { description: Audit } } }
+  /api/admin/analytics/metrics:
+    post: { summary: Query metrics, responses: { '200': { description: Metrics } } }
+  /api/admin/analytics/funnel:
+    post: { summary: Funnel analysis, responses: { '200': { description: Funnel } } }
+  /api/admin/analytics/cohort:
+    post: { summary: Cohort analysis, responses: { '200': { description: Cohort } } }
+  /api/admin/analytics/ingest:
+    post: { summary: Batch ingest events, responses: { '200': { description: Ingested } } }
+  /api/admin/analytics/snapshots:
+    get: { summary: Analytics snapshots, responses: { '200': { description: Snapshots } } }
+  /api/admin/user-action:
+    post: { summary: Generic user action trigger, responses: { '200': { description: Action logged } } }
+  /api/admin/send-email:
+    post: { summary: Admin send transactional email, responses: { '200': { description: Sent } } }
+  /api/admin/impersonate:
+    post: { summary: Start user impersonation, responses: { '200': { description: Impersonation started } } }

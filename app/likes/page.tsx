@@ -254,7 +254,7 @@ function LikesGrid({
           {person.profilePhoto ? (
             <img src={person.profilePhoto} alt={person.name} className="h-64 w-full object-cover" />
           ) : (
-            <div className="flex h-64 w-full items-center justify-center bg-gradient-to-br from-primary to-accent text-5xl font-bold text-white">
+            <div className="flex h-64 w-full items-center justify-center bg-linear-to-br from-primary to-accent text-5xl font-bold text-white">
               {person.name.charAt(0).toUpperCase()}
             </div>
           )}
@@ -310,7 +310,7 @@ function ViewsList({ items }: { items: ViewData[] }) {
           {view.profilePhoto ? (
             <img src={view.profilePhoto} alt={view.name} className="h-20 w-20 rounded-2xl object-cover" />
           ) : (
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent text-2xl font-bold text-white">
+            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-linear-to-br from-primary to-accent text-2xl font-bold text-white">
               {view.name.charAt(0).toUpperCase()}
             </div>
           )}

@@ -6,6 +6,12 @@
 import type { Server as HTTPServer } from 'http'
 import { Server as SocketIOServer, Socket } from 'socket.io'
 
+// Payload type definitions
+interface TypingPayload { threadId: string; receiverId: string }
+interface TranslatorStatusPayload { messageId: string; status: 'translating' | 'translated' | 'failed'; receiverId: string }
+interface LiveKitInvitePayload { roomName: string; roomUrl: string; receiverId: string }
+interface RecalledPayload { messageId: string; threadId: string; receiverId: string }
+
 let io: SocketIOServer | null = null
 
 export function initializeSocketIO(server: HTTPServer) {
@@ -21,7 +27,7 @@ export function initializeSocketIO(server: HTTPServer) {
   })
 
   // Authentication middleware
-  io.use((socket, next) => {
+  io.use((socket: Socket, next: (err?: Error) => void) => {
     const userId = socket.handshake.auth.userId
     if (!userId) {
       return next(new Error('Authentication required'))
@@ -41,7 +47,8 @@ export function initializeSocketIO(server: HTTPServer) {
     socket.join(`user:${userId}`)
 
     // Typing indicator
-    socket.on('typing:start', ({ threadId, receiverId }) => {
+    socket.on('typing:start', (payload: TypingPayload) => {
+      const { threadId, receiverId } = payload
       chatNamespace.to(`user:${receiverId}`).emit('typing:indicator', {
         userId,
         threadId,
@@ -49,7 +56,8 @@ export function initializeSocketIO(server: HTTPServer) {
       })
     })
 
-    socket.on('typing:stop', ({ threadId, receiverId }) => {
+    socket.on('typing:stop', (payload: TypingPayload) => {
+      const { threadId, receiverId } = payload
       chatNamespace.to(`user:${receiverId}`).emit('typing:indicator', {
         userId,
         threadId,
@@ -58,7 +66,8 @@ export function initializeSocketIO(server: HTTPServer) {
     })
 
     // Translation status
-    socket.on('translator:status', ({ messageId, status, receiverId }) => {
+    socket.on('translator:status', (payload: TranslatorStatusPayload) => {
+      const { messageId, status, receiverId } = payload
       chatNamespace.to(`user:${receiverId}`).emit('translator:update', {
         messageId,
         status, // 'translating', 'translated', 'failed'
@@ -67,7 +76,8 @@ export function initializeSocketIO(server: HTTPServer) {
     })
 
     // LiveKit invite
-    socket.on('livekit:invite', ({ roomName, roomUrl, receiverId }) => {
+    socket.on('livekit:invite', (payload: LiveKitInvitePayload) => {
+      const { roomName, roomUrl, receiverId } = payload
       chatNamespace.to(`user:${receiverId}`).emit('livekit:incoming', {
         inviterId: userId,
         roomName,
@@ -77,7 +87,8 @@ export function initializeSocketIO(server: HTTPServer) {
     })
 
     // Message recalled
-    socket.on('message:recalled', ({ messageId, threadId, receiverId }) => {
+    socket.on('message:recalled', (payload: RecalledPayload) => {
+      const { messageId, threadId, receiverId } = payload
       chatNamespace.to(`user:${receiverId}`).emit('message:update', {
         messageId,
         threadId,

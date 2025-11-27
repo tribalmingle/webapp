@@ -239,7 +239,7 @@ export function TribeMap({ regions, tribes, locale, copy }: TribeMapProps) {
             aria-label="Interactive tribal regions map"
           />
         ) : (
-          <div className="flex h-[480px] flex-col items-center justify-center rounded-2xl border border-dashed border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50 p-6 text-center">
+          <div className="flex h-[480px] flex-col items-center justify-center rounded-2xl border border-dashed border-purple-200 bg-linear-to-br from-purple-50 to-blue-50 p-6 text-center">
             <p className="text-lg font-semibold text-foreground">{copy.fallbackTitle}</p>
             <p className="mt-2 text-sm text-muted-foreground">{copy.fallbackDescription}</p>
             <div className="mt-6 grid w-full gap-3 text-left md:grid-cols-2">
@@ -256,3 +256,4 @@ export function TribeMap({ regions, tribes, locale, copy }: TribeMapProps) {
     </div>
   )
 }
+

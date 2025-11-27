@@ -568,7 +568,7 @@ const rewindsDefinition: CollectionDefinition<typeof rewindSchema> = {
 const notificationSchema = withTimestamps({
 	_id: objectIdSchema.optional(),
 	userId: objectIdSchema,
-	category: z.enum(['growth', 'match', 'event', 'safety', 'billing']).default('growth'),
+	category: z.enum(['growth', 'match', 'event', 'safety', 'billing', 'message', 'call']).default('growth'),
 	type: z.string(),
 	channel: z.enum(['push', 'email', 'sms', 'in_app']).default('in_app'),
 	templateId: z.string(),
@@ -2019,3 +2019,6 @@ export const collectionRegistry = {
 export type CollectionRegistry = typeof collectionRegistry
 export type CollectionName = keyof CollectionRegistry
 export const collections: CollectionDefinition<any>[] = Object.values(collectionRegistry)
+
+// Export as const object for type-safe access
+export const COLLECTIONS = collectionRegistry

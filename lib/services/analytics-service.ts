@@ -197,7 +197,7 @@ export class AnalyticsService {
       }
 
       return stepCounts;
-    }, { steps, startDate: startDate.toISOString(), endDate: endDate.toISOString() })
+    }, { stepsCount: steps.length, startDate: startDate.toISOString(), endDate: endDate.toISOString() })
   }
 
   /**
@@ -225,6 +225,167 @@ export class AnalyticsService {
       lastActivityAt: { $gte: since },
       userId: { $exists: true }
     });
+  }
+
+  /**
+   * Phase 8: Query metrics with aggregation
+   */
+  static async queryMetrics(params: {
+    eventType?: string
+    userId?: string
+    startDate: Date
+    endDate: Date
+    aggregation: 'count' | 'sum' | 'average' | 'unique'
+    property?: string
+    groupBy?: string
+  }): Promise<any[]> {
+    return withSpan('analytics.queryMetrics', async () => {
+      const collection = await getCollection<AnalyticsEvent>(COLLECTIONS.ANALYTICS_EVENTS)
+      
+      const match: any = {
+        timestamp: { $gte: params.startDate, $lte: params.endDate },
+      }
+      
+      if (params.eventType) match.eventType = params.eventType
+      if (params.userId) match.userId = params.userId
+      
+      const pipeline: any[] = [{ $match: match }]
+      
+      if (params.groupBy) {
+        const groupId = params.groupBy === 'date' 
+          ? { $dateToString: { format: '%Y-%m-%d', date: '$timestamp' } }
+          : `$properties.${params.groupBy}`
+        
+        const groupStage: any = { _id: groupId }
+        
+        switch (params.aggregation) {
+          case 'count':
+            groupStage.value = { $sum: 1 }
+            break
+          case 'sum':
+            groupStage.value = { $sum: `$properties.${params.property}` }
+            break
+          case 'average':
+            groupStage.value = { $avg: `$properties.${params.property}` }
+            break
+          case 'unique':
+            groupStage.value = { $addToSet: `$properties.${params.property}` }
+            break
+        }
+        
+        pipeline.push({ $group: groupStage })
+        
+        if (params.aggregation === 'unique') {
+          pipeline.push({ $project: { _id: 1, value: { $size: '$value' } } })
+        }
+      }
+      
+      pipeline.push({ $sort: { _id: 1 } })
+      
+      return await collection.aggregate(pipeline).toArray()
+    })
+  }
+
+  /**
+   * Phase 8: Analyze funnel conversion
+   */
+  static async analyzeFunnel(params: {
+    steps: string[]
+    startDate: Date
+    endDate: Date
+  }): Promise<Array<{ step: string; users: number; conversionRate: number }>> {
+    return withSpan('analytics.analyzeFunnel', async () => {
+      const collection = await getCollection<AnalyticsEvent>(COLLECTIONS.ANALYTICS_EVENTS)
+      
+      const results = []
+      let previousUsers = 0
+      
+      for (let i = 0; i < params.steps.length; i++) {
+        const step = params.steps[i]
+        
+        const users = await collection.distinct('userId', {
+          eventType: step,
+          timestamp: { $gte: params.startDate, $lte: params.endDate },
+          userId: { $exists: true },
+        })
+        
+        const userCount = users.length
+        const conversionRate = i === 0 
+          ? 100 
+          : previousUsers > 0 
+          ? (userCount / previousUsers) * 100 
+          : 0
+        
+        results.push({
+          step,
+          users: userCount,
+          conversionRate,
+        })
+        
+        previousUsers = userCount
+      }
+      
+      return results
+    })
+  }
+
+  /**
+   * Phase 8: Track cohort over time
+   */
+  static async trackCohort(params: {
+    cohortStartDate: Date
+    cohortEndDate: Date
+    retentionPeriods: number[]
+  }): Promise<any> {
+    return withSpan('analytics.trackCohort', async () => {
+      const collection = await getCollection<AnalyticsEvent>(COLLECTIONS.ANALYTICS_EVENTS)
+      
+      const cohortUsers = await collection.distinct('userId', {
+        eventType: 'user.signup',
+        timestamp: { $gte: params.cohortStartDate, $lte: params.cohortEndDate },
+        userId: { $exists: true },
+      })
+      
+      const retention: any = {
+        cohortSize: cohortUsers.length,
+        periods: [],
+      }
+      
+      for (const days of params.retentionPeriods) {
+        const periodStart = new Date(params.cohortEndDate)
+        periodStart.setDate(periodStart.getDate() + days - 1)
+        
+        const periodEnd = new Date(periodStart)
+        periodEnd.setDate(periodEnd.getDate() + 1)
+        
+        const activeUsers = await collection.distinct('userId', {
+          userId: { $in: cohortUsers },
+          timestamp: { $gte: periodStart, $lt: periodEnd },
+        })
+        
+        retention.periods.push({
+          days,
+          activeUsers: activeUsers.length,
+          retentionRate: cohortUsers.length > 0 
+            ? (activeUsers.length / cohortUsers.length) * 100 
+            : 0,
+        })
+      }
+      
+      return retention
+    })
+  }
+
+  /**
+   * Phase 8: Batch insert events (for ingestion pipeline)
+   */
+  static async batchInsert(events: Omit<AnalyticsEvent, '_id'>[]): Promise<void> {
+    return withSpan('analytics.batchInsert', async () => {
+      if (events.length === 0) return
+      
+      const collection = await getCollection<AnalyticsEvent>(COLLECTIONS.ANALYTICS_EVENTS)
+      await collection.insertMany(events)
+    })
   }
 }
 
@@ -283,3 +444,54 @@ export async function getRealtimeStats(): Promise<RealtimeStats> {
     subscriptionRenewalsToday: 3, // TODO: count subscription renewal events today
   };
 }
+
+/**
+ * Get referral funnel analytics
+ * Phase 7: Referral conversion tracking
+ */
+export async function getReferralFunnelData(): Promise<Array<{ step: string; count: number; conversionRate: number }>> {
+  try {
+    const collection = await getCollection<any>('referral_events');
+    
+    // Aggregate event counts by type
+    const pipeline = [
+      {
+        $group: {
+          _id: '$type',
+          count: { $sum: 1 }
+        }
+      }
+    ];
+    
+    const results = await collection.aggregate(pipeline).toArray();
+    
+    const countByType: Record<string, number> = {};
+    results.forEach((r: any) => {
+      countByType[r._id] = r.count;
+    });
+    
+    const clicks = countByType['clicked'] || 0;
+    const signups = countByType['signed_up'] || 0;
+    const verified = countByType['verified'] || 0;
+    const rewards = countByType['reward_credited'] || 0;
+    
+    // Calculate conversion rates relative to clicks
+    const steps = [
+      { step: 'Clicks', count: clicks, conversionRate: 100 },
+      { step: 'Sign-ups', count: signups, conversionRate: clicks > 0 ? (signups / clicks) * 100 : 0 },
+      { step: 'Verified', count: verified, conversionRate: clicks > 0 ? (verified / clicks) * 100 : 0 },
+      { step: 'Rewards Credited', count: rewards, conversionRate: clicks > 0 ? (rewards / clicks) * 100 : 0 },
+    ];
+    
+    return steps;
+  } catch (error) {
+    // Return empty funnel on error
+    return [
+      { step: 'Clicks', count: 0, conversionRate: 100 },
+      { step: 'Sign-ups', count: 0, conversionRate: 0 },
+      { step: 'Verified', count: 0, conversionRate: 0 },
+      { step: 'Rewards Credited', count: 0, conversionRate: 0 },
+    ];
+  }
+}
+

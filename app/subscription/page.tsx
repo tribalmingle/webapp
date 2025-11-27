@@ -6,6 +6,25 @@ import { Check, Crown, Sparkles, Star, Zap } from 'lucide-react'
 import { MemberAppShell } from '@/components/layouts/member-app-shell'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/auth-context'
+import { useFeatureFlag } from '@/lib/hooks/use-feature-flag'
+
+function FeatureGate({ children }: { children: React.ReactNode }) {
+  const subscriptionEnabled = useFeatureFlag('subscription-v1')
+  
+  if (!subscriptionEnabled) {
+    return (
+      <MemberAppShell>
+        <div style={{ padding: 24, textAlign: 'center' }}>
+          <h1>Subscription Plans</h1>
+          <p>Premium subscriptions are currently in beta and not available for your account.</p>
+          <p>Check back soon for exclusive membership tiers!</p>
+        </div>
+      </MemberAppShell>
+    )
+  }
+  
+  return <>{children}</>
+}
 
 type MembershipPlan = {
   id: string
@@ -114,22 +133,23 @@ export default function SubscriptionPage() {
   }
 
   return (
-    <MemberAppShell
-      title="Membership"
-      description="Upgrade your concierge experience and unlock tribe-only perks."
-      actions={<Button variant="secondary">Manage billing</Button>}
-    >
-      <div className="space-y-10">
-        <section className="rounded-3xl border border-border bg-card/80 p-8 text-center">
-          <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Choose your ritual</p>
-          <h1 className="mt-2 text-4xl font-bold">Find the plan that matches your pace</h1>
-          <p className="mt-3 text-base text-muted-foreground">
-            Premium tiers open concierge boosts, curated intros, and guardian updates without limits.
-          </p>
-          <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-border/70 px-4 py-2 text-sm font-semibold">
-            Current plan: {MEMBERSHIP_PLANS.find((plan) => plan.id === currentPlan)?.name || 'Free'}
-          </div>
-        </section>
+    <FeatureGate>
+      <MemberAppShell
+        title="Membership"
+        description="Upgrade your concierge experience and unlock tribe-only perks."
+        actions={<Button variant="secondary">Manage billing</Button>}
+      >
+        <div className="space-y-10">
+          <section className="rounded-3xl border border-border bg-card/80 p-8 text-center">
+            <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Choose your ritual</p>
+            <h1 className="mt-2 text-4xl font-bold">Find the plan that matches your pace</h1>
+            <p className="mt-3 text-base text-muted-foreground">
+              Premium tiers open concierge boosts, curated intros, and guardian updates without limits.
+            </p>
+            <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-border/70 px-4 py-2 text-sm font-semibold">
+              Current plan: {MEMBERSHIP_PLANS.find((plan) => plan.id === currentPlan)?.name || 'Free'}
+            </div>
+          </section>
 
         {message && (
           <div
@@ -153,7 +173,7 @@ export default function SubscriptionPage() {
           ))}
         </section>
 
-        <section className="rounded-3xl bg-gradient-to-br from-primary/10 via-transparent to-accent/10 p-8">
+        <section className="rounded-3xl bg-linear-to-br from-primary/10 via-transparent to-accent/10 p-8">
           <h2 className="text-2xl font-semibold text-center">Why go premium?</h2>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
             {[
@@ -208,6 +228,7 @@ export default function SubscriptionPage() {
         </section>
       </div>
     </MemberAppShell>
+    </FeatureGate>
   )
 }
 
@@ -236,7 +257,7 @@ function MembershipPlanCard({
         </div>
       )}
 
-      <div className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${plan.color}`}>
+      <div className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br ${plan.color}`}>
         <Icon className="h-8 w-8 text-white" />
       </div>
       <h3 className="text-center text-2xl font-semibold">{plan.name}</h3>

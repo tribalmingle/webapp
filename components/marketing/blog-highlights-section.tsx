@@ -58,7 +58,7 @@ export function BlogHighlightsSection({ posts, locale, copy }: BlogHighlightsSec
                 />
               </div>
             ) : null}
-            <div className="rounded-2xl bg-gradient-to-br from-purple-50 to-blue-50 p-4 text-left">
+            <div className="rounded-2xl bg-linear-to-br from-purple-50 to-blue-50 p-4 text-left">
               <p className="text-xs font-semibold uppercase tracking-widest text-purple-500">{post.category || 'Editorial'}</p>
               <h3 className="mt-3 text-xl font-semibold text-foreground">{post.title}</h3>
               <p className="mt-3 text-sm text-muted-foreground">{post.excerpt}</p>
@@ -81,3 +81,4 @@ export function BlogHighlightsSection({ posts, locale, copy }: BlogHighlightsSec
     </div>
   )
 }
+

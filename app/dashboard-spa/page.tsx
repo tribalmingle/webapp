@@ -1059,7 +1059,7 @@ export default function UnifiedDashboard() {
             </div>
           </div>
 
-          <form onSubmit={handleBoostBidSubmit} className="rounded-2xl border border-slate-200/80 bg-gradient-to-b from-white to-amber-50/60 p-5 dark:border-slate-800 dark:from-slate-900 dark:to-slate-900/60">
+          <form onSubmit={handleBoostBidSubmit} className="rounded-2xl border border-slate-200/80 bg-linear-to-b from-white to-amber-50/60 p-5 dark:border-slate-800 dark:from-slate-900 dark:to-slate-900/60">
             <p className="text-lg font-semibold text-slate-900 dark:text-white">Place a bid</p>
             <p className="text-sm text-slate-500">Top {boostSummary?.window.maxWinners ?? 0} bidders secure the spotlight.</p>
 
@@ -1256,7 +1256,7 @@ export default function UnifiedDashboard() {
               </ul>
             </div>
 
-            <div className="rounded-xl border border-slate-200/80 bg-gradient-to-b from-white to-emerald-50/70 p-4 dark:border-slate-800 dark:from-slate-900 dark:to-slate-900/60">
+            <div className="rounded-xl border border-slate-200/80 bg-linear-to-b from-white to-emerald-50/70 p-4 dark:border-slate-800 dark:from-slate-900 dark:to-slate-900/60">
               <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">Next milestone</p>
               {nextTier ? (
                 <>
@@ -1915,7 +1915,7 @@ export default function UnifiedDashboard() {
                         {t.profilePhoto ? (
                           <img src={t.profilePhoto} alt={t.name} className="w-10 h-10 rounded-full object-cover" />
                         ) : (
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold">
+                          <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-white font-bold">
                             {t.name?.charAt(0).toUpperCase()}
                           </div>
                         )}
@@ -1950,7 +1950,7 @@ export default function UnifiedDashboard() {
               </div>
             )}
               {user?.subscriptionPlan && user.subscriptionPlan !== 'free' ? (
-                <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl p-4 md:p-6 shadow-lg">
+                <div className="bg-linear-to-r from-purple-500 to-pink-500 text-white rounded-xl p-4 md:p-6 shadow-lg">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex-1">
                       <h3 className="text-base md:text-xl font-bold mb-1 md:mb-2">{inspirationalMessages[currentMessageIndex].title}</h3>
@@ -1958,21 +1958,21 @@ export default function UnifiedDashboard() {
                     </div>
                     {(() => {
                       const Icon = inspirationalMessages[currentMessageIndex].icon
-                      return <Icon className="w-8 h-8 md:w-12 md:h-12 flex-shrink-0" />
+                      return <Icon className="w-8 h-8 md:w-12 md:h-12 shrink-0" />
                     })()}
                   </div>
                 </div>
               ) : (
                 <button 
                   onClick={() => setActiveView('subscription')}
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl p-4 md:p-6 text-left hover:shadow-lg transition hover:scale-[1.02] active:scale-[0.98] shadow-md"
+                  className="bg-linear-to-r from-purple-500 to-pink-500 text-white rounded-xl p-4 md:p-6 text-left hover:shadow-lg transition hover:scale-[1.02] active:scale-[0.98] shadow-md"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex-1">
                       <h3 className="text-base md:text-xl font-bold mb-1 md:mb-2">Upgrade to Premium</h3>
                       <p className="text-xs md:text-sm opacity-90">Get unlimited likes and advanced features</p>
                     </div>
-                    <Crown className="w-8 h-8 md:w-12 md:h-12 flex-shrink-0" />
+                    <Crown className="w-8 h-8 md:w-12 md:h-12 shrink-0" />
                   </div>
                 </button>
               )}
@@ -1997,7 +1997,7 @@ export default function UnifiedDashboard() {
                   {todayMatches.map(person => (
                     <div key={person._id} className="bg-card border border-border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
                       <div 
-                        className="w-full h-56 sm:h-64 bg-gradient-to-br from-primary to-accent relative cursor-pointer active:scale-[0.98] transition-transform"
+                        className="w-full h-56 sm:h-64 bg-linear-to-br from-primary to-accent relative cursor-pointer active:scale-[0.98] transition-transform"
                         onClick={() => {
                           trackProfileView(person.email)
                           setSelectedProfile(person)
@@ -2141,7 +2141,7 @@ export default function UnifiedDashboard() {
                   {discoverUsers.filter(person => person.email !== user?.email).map(person => (
                     <div key={person._id} className="bg-card border border-border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
                       <div 
-                        className="w-full h-56 sm:h-64 bg-gradient-to-br from-primary to-accent relative cursor-pointer active:scale-[0.98] transition-transform"
+                        className="w-full h-56 sm:h-64 bg-linear-to-br from-primary to-accent relative cursor-pointer active:scale-[0.98] transition-transform"
                         onClick={() => {
                           trackProfileView(person.email)
                           setSelectedProfile(person)
@@ -2476,7 +2476,7 @@ export default function UnifiedDashboard() {
                 {user.profilePhotos && user.profilePhotos[0] ? (
                   <img src={user.profilePhotos[0]} alt={user.name} className="w-24 h-24 rounded-full object-cover" />
                 ) : (
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-4xl font-bold">
+                  <div className="w-24 h-24 rounded-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-white text-4xl font-bold">
                     {user.name?.charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -2819,7 +2819,7 @@ export default function UnifiedDashboard() {
                             {person.profilePhoto ? (
                               <img src={person.profilePhoto} alt={person.name} className={`w-full h-64 object-cover ${shouldBlur ? 'blur-lg' : ''}`} />
                             ) : (
-                              <div className={`w-full h-64 bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-6xl font-bold ${shouldBlur ? 'blur-lg' : ''}`}>
+                              <div className={`w-full h-64 bg-linear-to-br from-primary to-accent flex items-center justify-center text-white text-6xl font-bold ${shouldBlur ? 'blur-lg' : ''}`}>
                                 {person.name.charAt(0).toUpperCase()}
                               </div>
                             )}
@@ -2886,7 +2886,7 @@ export default function UnifiedDashboard() {
                           {person.profilePhoto ? (
                             <img src={person.profilePhoto} alt={person.name} className="w-full h-64 object-cover" />
                           ) : (
-                            <div className="w-full h-64 bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-6xl font-bold">
+                            <div className="w-full h-64 bg-linear-to-br from-primary to-accent flex items-center justify-center text-white text-6xl font-bold">
                               {person.name.charAt(0).toUpperCase()}
                             </div>
                           )}
@@ -2939,7 +2939,7 @@ export default function UnifiedDashboard() {
                             {view.profilePhoto ? (
                               <img src={view.profilePhoto} alt={view.name} className={`w-20 h-20 rounded-full object-cover ${shouldBlur ? 'blur-lg' : ''}`} />
                             ) : (
-                              <div className={`w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-2xl font-bold ${shouldBlur ? 'blur-lg' : ''}`}>
+                              <div className={`w-20 h-20 rounded-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-white text-2xl font-bold ${shouldBlur ? 'blur-lg' : ''}`}>
                                 {view.name.charAt(0).toUpperCase()}
                               </div>
                             )}
@@ -3023,7 +3023,7 @@ export default function UnifiedDashboard() {
                               {firstConversation.avatar ? (
                                 <img src={firstConversation.avatar} alt={firstConversation.name} className="w-16 h-16 rounded-full object-cover" />
                               ) : (
-                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-xl font-bold">
+                                <div className="w-16 h-16 rounded-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-white text-xl font-bold">
                                   {firstConversation.name.charAt(0)}
                                 </div>
                               )}
@@ -3059,7 +3059,7 @@ export default function UnifiedDashboard() {
                                     {conversation.avatar ? (
                                       <img src={conversation.avatar} alt={conversation.name} className="w-16 h-16 rounded-full object-cover" />
                                     ) : (
-                                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-xl font-bold">
+                                      <div className="w-16 h-16 rounded-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-white text-xl font-bold">
                                         {conversation.name.charAt(0)}
                                       </div>
                                     )}
@@ -3103,7 +3103,7 @@ export default function UnifiedDashboard() {
                         {conversation.avatar ? (
                           <img src={conversation.avatar} alt={conversation.name} className="w-16 h-16 rounded-full object-cover" />
                         ) : (
-                          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-xl font-bold">
+                          <div className="w-16 h-16 rounded-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-white text-xl font-bold">
                             {conversation.name.charAt(0)}
                           </div>
                         )}
@@ -3143,7 +3143,7 @@ export default function UnifiedDashboard() {
                 {chatUser.profilePhoto ? (
                   <img src={chatUser.profilePhoto} alt={chatUser.name} className="w-12 h-12 rounded-full object-cover" />
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-lg font-bold">
+                  <div className="w-12 h-12 rounded-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-white text-lg font-bold">
                     {chatUser.name.charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -3429,7 +3429,7 @@ export default function UnifiedDashboard() {
                         MOST POPULAR
                       </div>
                     )}
-                    <div className={`bg-gradient-to-br ${plan.gradient} text-white p-6 text-center`}>
+                    <div className={`bg-linear-to-br ${plan.gradient} text-white p-6 text-center`}>
                       <Icon className="w-12 h-12 mx-auto mb-4" />
                       <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
                       <div className="text-4xl font-bold mb-1">{plan.price}</div>
@@ -3439,7 +3439,7 @@ export default function UnifiedDashboard() {
                       <ul className="space-y-3 mb-6">
                         {plan.features.map((feature, i) => (
                           <li key={i} className="flex items-start gap-2">
-                            <Check className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+                            <Check className="w-5 h-5 text-accent shrink-0 mt-0.5" />
                             <span className="text-sm">{feature}</span>
                           </li>
                         ))}
@@ -3633,14 +3633,14 @@ export default function UnifiedDashboard() {
                           alt={selectedProfile.name}
                           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
                         <div className="absolute top-6 left-6 bg-black/50 backdrop-blur-sm rounded-full px-4 py-2 text-white text-sm font-medium flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Eye className="w-4 h-4" />
                           View {photos.length} {photos.length === 1 ? 'Photo' : 'Photos'}
                         </div>
                         {selectedProfile.matchPercentage && (
                           <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-sm rounded-full px-5 py-2.5 shadow-2xl border border-white/20">
-                            <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                            <span className="text-xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                               {selectedProfile.matchPercentage}% Match
                             </span>
                           </div>
@@ -3665,7 +3665,7 @@ export default function UnifiedDashboard() {
                       </div>
                     ) : (
                       <div className="relative w-full" style={{ paddingBottom: '75%' }}>
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                        <div className="absolute inset-0 bg-linear-to-br from-primary to-accent flex items-center justify-center">
                           <span className="text-white text-9xl font-bold drop-shadow-2xl">
                             {selectedProfile.name.charAt(0).toUpperCase()}
                           </span>
@@ -3696,7 +3696,7 @@ export default function UnifiedDashboard() {
                 {selectedProfile.bio && (
                   <div className="bg-card border border-border rounded-2xl p-8 shadow-lg">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-linear-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
                         <UserIcon className="w-5 h-5 text-white" />
                       </div>
                       <h3 className="text-2xl font-bold">About Me</h3>
@@ -3709,7 +3709,7 @@ export default function UnifiedDashboard() {
                 {selectedProfile.interests && selectedProfile.interests.length > 0 && (
                   <div className="bg-card border border-border rounded-2xl p-8 shadow-lg">
                     <div className="flex items-center gap-3 mb-5">
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
                         <Heart className="w-5 h-5 text-white" />
                       </div>
                       <h3 className="text-2xl font-bold">Interests</h3>
@@ -3718,7 +3718,7 @@ export default function UnifiedDashboard() {
                       {selectedProfile.interests.map((interest: string, idx: number) => (
                         <span 
                           key={idx}
-                          className="px-5 py-2.5 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-full text-sm font-semibold border border-purple-200 hover:shadow-md transition-shadow"
+                          className="px-5 py-2.5 bg-linear-to-r from-purple-100 to-pink-100 text-purple-700 rounded-full text-sm font-semibold border border-purple-200 hover:shadow-md transition-shadow"
                         >
                           {interest}
                         </span>
@@ -3736,7 +3736,7 @@ export default function UnifiedDashboard() {
                     className={`w-full h-14 text-lg font-semibold rounded-xl ${
                       isUserLiked(selectedProfile.email) 
                         ? 'bg-gray-400 cursor-default hover:bg-gray-400' 
-                        : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl'
+                        : 'bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl'
                     }`}
                     onClick={async () => {
                       if (isUserLiked(selectedProfile.email)) return
@@ -3792,7 +3792,7 @@ export default function UnifiedDashboard() {
                 {/* Profile Details */}
                 <div className="bg-card border border-border rounded-2xl p-6 shadow-lg">
                   <div className="flex items-center gap-3 mb-5">
-                    <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-linear-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center">
                       <Briefcase className="w-5 h-5 text-white" />
                     </div>
                     <h3 className="text-xl font-bold">Details</h3>
@@ -3800,7 +3800,7 @@ export default function UnifiedDashboard() {
                   <div className="space-y-5">
                     {selectedProfile.height && (
                       <div className="flex items-start gap-3 pb-4 border-b border-border">
-                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
                           <span className="text-purple-600 text-xs font-bold">H</span>
                         </div>
                         <div>
@@ -3811,7 +3811,7 @@ export default function UnifiedDashboard() {
                     )}
                     {selectedProfile.education && (
                       <div className="flex items-start gap-3 pb-4 border-b border-border">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
                           <GraduationCap className="w-4 h-4 text-blue-600" />
                         </div>
                         <div>
@@ -3822,7 +3822,7 @@ export default function UnifiedDashboard() {
                     )}
                     {selectedProfile.occupation && (
                       <div className="flex items-start gap-3 pb-4 border-b border-border">
-                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center shrink-0">
                           <Briefcase className="w-4 h-4 text-green-600" />
                         </div>
                         <div>
@@ -3833,7 +3833,7 @@ export default function UnifiedDashboard() {
                     )}
                     {selectedProfile.religion && (
                       <div className="flex items-start gap-3 pb-4 border-b border-border">
-                        <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center shrink-0">
                           <span className="text-yellow-600 text-xs font-bold">✨</span>
                         </div>
                         <div>
@@ -3844,7 +3844,7 @@ export default function UnifiedDashboard() {
                     )}
                     {selectedProfile.maritalStatus && (
                       <div className="flex items-start gap-3 pb-4 border-b border-border">
-                        <div className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <div className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center shrink-0">
                           <Heart className="w-4 h-4 text-pink-600" />
                         </div>
                         <div>
@@ -3855,7 +3855,7 @@ export default function UnifiedDashboard() {
                     )}
                     {selectedProfile.lookingFor && (
                       <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center shrink-0">
                           <Search className="w-4 h-4 text-red-600" />
                         </div>
                         <div>
@@ -4021,7 +4021,7 @@ export default function UnifiedDashboard() {
                 <button
                   key={index}
                   onClick={() => setCurrentPhotoIndex(index)}
-                  className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                  className={`shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
                     index === currentPhotoIndex
                       ? 'border-white shadow-lg scale-110'
                       : 'border-white/30 opacity-60 hover:opacity-100'
@@ -4077,3 +4077,4 @@ function SpaViewSwitcher({ activeView, onNavigate }: { activeView: SpaNavKey; on
     </div>
   )
 }
+

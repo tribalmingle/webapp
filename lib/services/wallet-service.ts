@@ -85,7 +85,9 @@ export async function listTransactions(userId: string): Promise<WalletTransactio
   const mongoTx = await listTransactionsMongo(userId)
   if (mongoTx) return mongoTx
   ensureUser(userId)
-  return walletTransactions.get(userId) as WalletTransaction[]
+  const txs = walletTransactions.get(userId) as WalletTransaction[]
+  // Return in descending order by createdAt (most recent first)
+  return [...txs].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 }
 
 export async function credit(userId: string, amount: number, reference?: string, idempotencyKey?: string): Promise<number> {
@@ -120,6 +122,11 @@ export async function credit(userId: string, amount: number, reference?: string,
     return await getBalance(userId)
   }
   ensureUser(userId)
+  // Check for duplicate idempotency key in memory
+  if (idempotencyKey) {
+    const existing = walletTransactions.get(userId)!.find(t => t.idempotencyKey === idempotencyKey)
+    if (existing) return walletBalances.get(userId) as number // Already processed
+  }
   const balance = (walletBalances.get(userId) as number) + amount
   walletBalances.set(userId, balance)
   const tx: WalletTransaction = { id: crypto.randomUUID(), type: 'credit', amount, reference, idempotencyKey, createdAt: new Date() }
@@ -163,6 +170,11 @@ export async function debit(userId: string, amount: number, reference?: string, 
     return await getBalance(userId)
   }
   ensureUser(userId)
+  // Check for duplicate idempotency key in memory
+  if (idempotencyKey) {
+    const existing = walletTransactions.get(userId)!.find(t => t.idempotencyKey === idempotencyKey)
+    if (existing) return walletBalances.get(userId) as number // Already processed
+  }
   const current = walletBalances.get(userId) as number
   if (current < amount) throw new Error('Insufficient balance')
   const balance = current - amount

@@ -1,117 +1,264 @@
 'use client'
 
-import { Heart, Star, MessageCircle, Zap } from 'lucide-react'
+import { Heart, Star, MessageCircle, Zap, TrendingUp, Users, Crown, Sparkles, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
 import { MemberAppShell } from '@/components/layouts/member-app-shell'
 import { useAuth } from '@/contexts/auth-context'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { PremiumProfileCard, StatCard } from '@/components/premium'
+import { StaggerGrid, SlideUp, FadeIn } from '@/components/motion'
+import { PremiumLoader } from '@/components/ui/premium-loader'
 
 export default function Dashboard() {
   const { user, loading } = useAuth()
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading your dashboard...</p>
-        </div>
+      <div className="min-h-screen bg-background-primary flex items-center justify-center">
+        <PremiumLoader />
       </div>
     )
   }
 
   const userName = user?.name?.split(' ')[0] || 'there'
   
+  // Get time-based greeting
+  const getTimeOfDay = () => {
+    const hour = new Date().getHours()
+    if (hour < 12) return 'Morning'
+    if (hour < 18) return 'Afternoon'
+    return 'Evening'
+  }
+
+  // Mock data - replace with real API data
+  const stats = [
+    { 
+      icon: Heart, 
+      label: 'Likes Received', 
+      value: 12, 
+      trend: '+3 today',
+      gradient: 'from-red-500 to-pink-500'
+    },
+    { 
+      icon: MessageCircle, 
+      label: 'Active Chats', 
+      value: 5, 
+      trend: '2 unread',
+      gradient: 'from-blue-500 to-cyan-500'
+    },
+    { 
+      icon: Star, 
+      label: 'Profile Views', 
+      value: 28, 
+      trend: '+12 this week',
+      gradient: 'from-yellow-500 to-orange-500'
+    },
+    { 
+      icon: Zap, 
+      label: 'New Matches', 
+      value: 3, 
+      trend: 'See profiles',
+      gradient: 'from-purple-royal to-gold-warm'
+    }
+  ]
+
+  const dailyMatches = [
+    { 
+      name: 'Emma', 
+      age: 32, 
+      tribe: 'Igbo', 
+      location: 'Lagos, Nigeria',
+      bio: 'Love hiking, coffee, and meaningful conversations. Looking for someone to explore the city with.',
+      photo: '/woman-portrait.jpg',
+      verified: true,
+      interests: ['Hiking', 'Coffee', 'Travel', 'Art'],
+      matchScore: 94
+    },
+    { 
+      name: 'Jessica', 
+      age: 29, 
+      tribe: 'Ashanti', 
+      location: 'Accra, Ghana',
+      bio: 'Fitness enthusiast and entrepreneur. Love trying new restaurants and weekend adventures.',
+      photo: '/woman-fitness.png',
+      verified: true,
+      interests: ['Fitness', 'Food', 'Business', 'Music'],
+      matchScore: 88
+    },
+    { 
+      name: 'Lisa', 
+      age: 35, 
+      tribe: 'Ga', 
+      location: 'New York, USA',
+      bio: 'Artist and creative soul. Looking for deep connections and shared values.',
+      photo: '/woman-artist.jpg',
+      verified: false,
+      interests: ['Art', 'Photography', 'Culture', 'Yoga'],
+      matchScore: 85
+    }
+  ]
+  
   return (
     <MemberAppShell
-      title={`Hey ${userName}`}
-      description="Here is what your tribe has been up to."
+      title={`Good ${getTimeOfDay()}, ${userName} 👋`}
+      description={`You have ${stats[3].value} new matches waiting for you`}
     >
-      <div className="space-y-8">
-        <section className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {[
-            { icon: Heart, label: 'Likes', value: '12', color: 'text-red-500' },
-            { icon: MessageCircle, label: 'Messages', value: '5', color: 'text-blue-500' },
-            { icon: Star, label: 'Visits', value: '28', color: 'text-yellow-500' },
-            { icon: Zap, label: 'Matches', value: '3', color: 'text-purple-500' }
-          ].map(stat => {
-            const Icon = stat.icon
-            return (
-              <div key={stat.label} className="rounded-2xl border border-border bg-card/80 p-5 text-center shadow-sm">
-                <Icon className={`mx-auto mb-2 h-6 w-6 ${stat.color}`} />
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">{stat.label}</p>
-                <p className="text-2xl font-bold">{stat.value}</p>
-              </div>
-            )
-          })}
-        </section>
+      <div className="space-y-12">
+        {/* Premium Stats Grid with Animation */}
+        <SlideUp>
+          <StaggerGrid columns={4}>
+            {stats.map((stat) => (
+              <StatCard
+                key={stat.label}
+                icon={stat.icon}
+                label={stat.label}
+                value={stat.value}
+                trend={stat.trend}
+                gradient={stat.gradient}
+              />
+            ))}
+          </StaggerGrid>
+        </SlideUp>
 
-        <section className="space-y-4">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-wide text-muted-foreground">Daily spotlight</p>
-              <h2 className="text-2xl font-semibold">Today's matches for you</h2>
+        {/* Premium Match Carousel */}
+        <section>
+          <FadeIn delay={0.2}>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <Badge variant="gold" className="mb-2">
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  Daily Spotlight
+                </Badge>
+                <h2 className="text-h2 font-display text-text-primary">Handpicked Matches</h2>
+                <p className="text-body-sm text-text-secondary mt-1">
+                  Curated by AI based on your preferences and values
+                </p>
+              </div>
+              
+              <Link href="/discover">
+                <Button variant="ghost" className="group">
+                  See All
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </Link>
             </div>
-            <Link href="/discover" className="text-sm font-semibold text-accent hover:underline">
-              See all matches
-            </Link>
-          </div>
+          </FadeIn>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {[
-              { name: 'Emma', age: 32, tribe: 'Igbo', match: 94, image: '/woman-portrait.jpg' },
-              { name: 'Jessica', age: 29, tribe: 'Ashanti', match: 88, image: '/woman-fitness.png' },
-              { name: 'Lisa', age: 35, tribe: 'Ga', match: 85, image: '/woman-artist.jpg' }
-            ].map(match => (
-              <div key={match.name} className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
-                <img src={match.image || "/placeholder.svg"} alt={match.name} className="h-64 w-full object-cover" />
-                <div className="space-y-4 p-4">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold">{match.name}, {match.age}</h3>
-                      <p className="text-xs font-semibold uppercase tracking-wide text-accent">{match.tribe}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground">Match score</p>
-                      <p className="text-xl font-bold text-accent">{match.match}%</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="flex-1 rounded-xl border border-border px-3 py-2 text-sm font-semibold transition hover:bg-muted">
-                      Skip
-                    </button>
-                    <button className="flex-1 rounded-xl bg-accent px-3 py-2 text-sm font-semibold text-accent-foreground transition hover:opacity-90">
-                      Like
-                    </button>
-                  </div>
+          {/* Horizontal scroll carousel */}
+          <div className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+            {dailyMatches.map((match, index) => (
+              <FadeIn key={match.name} delay={0.3 + index * 0.1}>
+                <div className="shrink-0 w-80 snap-start">
+                  <PremiumProfileCard
+                    profile={{
+                      name: match.name,
+                      age: match.age,
+                      tribe: match.tribe,
+                      location: match.location,
+                      bio: match.bio,
+                      photo: match.photo,
+                      verified: match.verified,
+                      interests: match.interests
+                    }}
+                    matchScore={match.matchScore}
+                    onLike={() => console.log('Liked', match.name)}
+                    onPass={() => console.log('Passed', match.name)}
+                  />
                 </div>
-              </div>
+              </FadeIn>
             ))}
           </div>
         </section>
 
-        <section className="space-y-4">
-          <h2 className="text-2xl font-semibold">Who likes you</h2>
-          <div className="grid gap-4 md:grid-cols-2">
-            {[
-              { name: 'Michelle', tribe: 'Yoruba', bio: 'Love hiking and coffee' },
-              { name: 'Rachel', tribe: 'Zulu', bio: 'Artist and yoga enthusiast' }
-            ].map(liker => (
-              <div
-                key={liker.name}
-                className="flex items-center justify-between rounded-3xl border border-border bg-gradient-to-br from-primary/5 via-transparent to-accent/10 p-4"
-              >
-                <div>
-                  <h3 className="text-base font-semibold">{liker.name}</h3>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-accent">{liker.tribe}</p>
-                  <p className="text-xs text-muted-foreground">{liker.bio}</p>
-                </div>
-                <button className="rounded-xl bg-card px-4 py-2 text-sm font-semibold text-accent transition hover:bg-card/80">
-                  View
-                </button>
+        {/* Who Likes You - Premium Section */}
+        <section>
+          <FadeIn delay={0.5}>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <Badge variant="purple" className="mb-2">
+                  <Crown className="w-3 h-3 mr-1" />
+                  Premium Feature
+                </Badge>
+                <h2 className="text-h2 font-display text-text-primary">Who Likes You</h2>
+                <p className="text-body-sm text-text-secondary mt-1">
+                  See everyone who liked your profile
+                </p>
               </div>
+              
+              <Link href="/likes">
+                <Button variant="secondary" className="group">
+                  View All
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
+          </FadeIn>
+
+          <StaggerGrid columns={2}>
+            {[
+              { 
+                name: 'Michelle', 
+                age: 28,
+                tribe: 'Yoruba', 
+                bio: 'Love hiking and coffee',
+                location: 'Lagos, Nigeria',
+                photo: '/woman-portrait.jpg',
+                verified: true
+              },
+              { 
+                name: 'Rachel', 
+                age: 31,
+                tribe: 'Zulu', 
+                bio: 'Artist and yoga enthusiast',
+                location: 'Cape Town, South Africa',
+                photo: '/woman-fitness.png',
+                verified: false
+              }
+            ].map(liker => (
+              <Card key={liker.name} variant="glass" className="group cursor-pointer card-interactive">
+                <div className="flex items-center gap-4 p-6">
+                  <div className="relative">
+                    <div className="w-20 h-20 rounded-2xl overflow-hidden">
+                      <img 
+                        src={liker.photo || "/placeholder.svg"} 
+                        alt={liker.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-linear-to-br from-purple-royal to-gold-warm flex items-center justify-center border-2 border-background-primary">
+                      <Heart className="w-3 h-3 text-white" fill="currentColor" />
+                    </div>
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-h4 text-text-primary font-semibold">
+                        {liker.name}, {liker.age}
+                      </h3>
+                      {liker.verified && (
+                        <Badge variant="gold" className="px-1.5 py-0.5">
+                          <Crown className="w-3 h-3" />
+                        </Badge>
+                      )}
+                    </div>
+                    <Badge variant="purple" className="mb-2">
+                      {liker.tribe}
+                    </Badge>
+                    <p className="text-body-sm text-text-secondary line-clamp-1">{liker.bio}</p>
+                    <p className="text-body-xs text-text-tertiary mt-1">{liker.location}</p>
+                  </div>
+                  
+                  <Button variant="primary" size="sm" className="shrink-0">
+                    View
+                    <ArrowRight className="ml-1 w-4 h-4" />
+                  </Button>
+                </div>
+              </Card>
             ))}
-          </div>
+          </StaggerGrid>
         </section>
       </div>
     </MemberAppShell>

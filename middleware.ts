@@ -2,12 +2,18 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 import { parseAdminSession } from './lib/admin/auth'
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type AppLocale, isSupportedLocale } from './lib/i18n/locales'
+import { applySecurityHeaders, enforceHTTPS } from './lib/middleware/security-headers'
 
 const PUBLIC_FILE = /\.(.*)$/
 const MARKETING_ENTRY_POINTS = new Set(['/', '/home'])
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  const httpsRedirect = enforceHTTPS(request)
+  if (httpsRedirect) {
+    return httpsRedirect
+  }
 
   if (pathname.startsWith('/admin')) {
     if (pathname.startsWith('/admin/login')) {
@@ -20,10 +26,11 @@ export function middleware(request: NextRequest) {
     if (!session) {
       const loginUrl = request.nextUrl.clone()
       loginUrl.pathname = '/admin/login'
-      return NextResponse.redirect(loginUrl)
+      const redirectResponse = NextResponse.redirect(loginUrl)
+      return applySecurityHeaders(redirectResponse)
     }
 
-    return NextResponse.next()
+    return applySecurityHeaders(NextResponse.next())
   }
 
   if (
@@ -32,16 +39,16 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/static') ||
     PUBLIC_FILE.test(pathname)
   ) {
-    return NextResponse.next()
+    return applySecurityHeaders(NextResponse.next())
   }
 
   const pathnameLocale = pathname.split('/')[1]
   if (isSupportedLocale(pathnameLocale)) {
-    return NextResponse.next()
+    return applySecurityHeaders(NextResponse.next())
   }
 
   if (!MARKETING_ENTRY_POINTS.has(pathname)) {
-    return NextResponse.next()
+    return applySecurityHeaders(NextResponse.next())
   }
 
   const locale = pickLocale(request)
@@ -55,7 +62,7 @@ export function middleware(request: NextRequest) {
     path: '/',
     maxAge: 60 * 60 * 24 * 365,
   })
-  return response
+  return applySecurityHeaders(response)
 }
 
 function pickLocale(request: NextRequest): AppLocale {

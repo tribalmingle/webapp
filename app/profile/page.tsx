@@ -145,7 +145,7 @@ export default function ProfilePage() {
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-3xl font-bold text-white">
+                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-linear-to-br from-primary to-accent text-3xl font-bold text-white">
                   {formData.profilePhotos[0] ? (
                     <img src={formData.profilePhotos[0]} alt={`${user.name} profile photo`} className="h-full w-full rounded-full object-cover" />
                   ) : (

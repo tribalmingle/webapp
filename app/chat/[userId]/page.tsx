@@ -5,7 +5,8 @@ import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
 import { ArrowLeft, Send, Smile, Image as ImageIcon, MoreVertical, Mic, AlertTriangle, Info, XCircle } from 'lucide-react'
 import { translate } from '@/lib/services/translation-service'
-import { ChatSafetyService, type SafetyNudge } from '@/lib/services/chat-safety-service'
+import { type SafetyNudge } from '@/lib/services/chat-safety-service'
+import { checkMessageSafety } from '../actions'
 import { Button } from '@/components/ui/button'
 
 interface Message {

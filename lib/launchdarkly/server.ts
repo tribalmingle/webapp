@@ -11,21 +11,30 @@ export function getLaunchDarklyClient(): Promise<LDClient> {
     return ldClientPromise
   }
 
-  if (offline) {
+  if (offline || !sdkKey) {
+    console.log('[LaunchDarkly] Running in offline mode')
     const fakeClient = {
       variation: async (_: string, __: LDUser, defaultValue: string | boolean | number) => defaultValue,
-      waitForInitialization: async () => undefined,
+      waitForInitialization: async () => fakeClient,
       close: async () => undefined,
     } as unknown as LDClient
     ldClientPromise = Promise.resolve(fakeClient)
     return ldClientPromise
   }
 
-  ldClientPromise = init(sdkKey!, {
+  console.log('[LaunchDarkly] Initializing with SDK key')
+  ldClientPromise = init(sdkKey, {
     offline,
     application: {
       id: 'tribal-mingle-web',
       version: process.env.npm_package_version,
+    },
+    logger: {
+      // Suppress verbose info logs in development
+      debug: () => {},
+      info: () => {},
+      warn: (message: string) => console.warn('[LaunchDarkly]', message),
+      error: (message: string) => console.error('[LaunchDarkly]', message),
     },
   })
     .waitForInitialization()

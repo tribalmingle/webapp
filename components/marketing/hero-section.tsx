@@ -30,7 +30,7 @@ export function HeroSection({
       </div>
       <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
         {variant.title}{' '}
-        <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{variant.highlight}</span>
+        <span className="bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">{variant.highlight}</span>
       </h1>
       <p className="mt-6 text-lg text-muted-foreground">{variant.description}</p>
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -51,3 +51,4 @@ export function HeroSection({
     </div>
   )
 }
+

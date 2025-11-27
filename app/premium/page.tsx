@@ -53,7 +53,7 @@ export default function PremiumPage() {
       }
     >
       <div className="space-y-8">
-        <section className="rounded-3xl border border-border bg-gradient-to-r from-primary/90 to-accent/90 p-6 text-white">
+        <section className="rounded-3xl border border-border bg-linear-to-r from-primary/90 to-accent/90 p-6 text-white">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <p className="text-sm uppercase tracking-wide text-white/80">Current plan</p>

@@ -3,6 +3,7 @@ type OneSignalPayload = {
   content: string
   userIds: string[]
   url?: string
+  icon?: string
   data?: Record<string, unknown>
   ttlSeconds?: number
   deliveryTag?: string
@@ -30,6 +31,8 @@ export async function sendOneSignalNotification(payload: OneSignalPayload): Prom
     contents: { en: payload.content },
     data: payload.data,
     url: payload.url,
+    small_icon: payload.icon,
+    large_icon: payload.icon,
     ttl: payload.ttlSeconds,
     external_id: payload.deliveryTag,
     android_channel_id: process.env.ONESIGNAL_ANDROID_CHANNEL_ID || undefined,

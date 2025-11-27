@@ -1,10 +1,16 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Geist, Geist_Mono, Playfair_Display } from 'next/font/google'
 import { AppShellProviders } from '@/components/providers/app-shell-providers'
 import './globals.css'
 
 const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
+const playfairDisplay = Playfair_Display({ 
+  subsets: ["latin"], 
+  variable: "--font-playfair",
+  weight: ['400', '600', '700'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Tribal Mingle - Find Love With Your Tribe',
@@ -35,8 +41,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
+    <html lang="en" className="dark">
+      <body className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} font-sans antialiased`}>
         <AppShellProviders>{children}</AppShellProviders>
       </body>
     </html>

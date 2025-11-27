@@ -35,21 +35,18 @@ export class XpWalletService {
       const collection = db.collection<XpWallet>('xp_wallets')
       const userObjectId = new ObjectId(userId)
 
-      let wallet = await collection.findOne({ userId: userObjectId })
-      
-      if (!wallet) {
-        const newWallet: XpWallet = {
-          userId: userObjectId,
-          balance: 0,
-          totalEarned: 0,
-          totalSpent: 0,
-          lastUpdated: new Date(),
-        }
-        await collection.insertOne(newWallet as any)
-        wallet = newWallet as any
-      }
+      const existing = await collection.findOne({ userId: userObjectId }) as XpWallet | null
+      if (existing) return existing
 
-      return wallet
+      const newWallet: XpWallet = {
+        userId: userObjectId,
+        balance: 0,
+        totalEarned: 0,
+        totalSpent: 0,
+        lastUpdated: new Date(),
+      }
+      await collection.insertOne(newWallet as any)
+      return newWallet
     }, { userId })
   }
 

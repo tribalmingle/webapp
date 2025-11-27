@@ -14,7 +14,7 @@ export function MetricsGrid({ title, items }: MetricsGridProps) {
     <section className="space-y-6 rounded-3xl border border-brand-purple/10 bg-white/80 p-8 shadow">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold text-brand-night">{title}</h2>
-        <div className="h-px w-32 bg-gradient-to-r from-brand-purple/50 to-transparent" />
+        <div className="h-px w-32 bg-linear-to-r from-brand-purple/50 to-transparent" />
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((item) => (

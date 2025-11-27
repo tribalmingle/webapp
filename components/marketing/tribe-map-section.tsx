@@ -20,7 +20,7 @@ export async function TribeMapSection({ locale, copy }: TribeMapSectionProps) {
   const resolvedCopy: MapSectionCopy = { ...FALLBACK_COPY, ...copy }
 
   return (
-    <section id="tribes" className="bg-gradient-to-b from-white via-blue-50/50 to-purple-50/60 py-16">
+    <section id="tribes" className="bg-linear-to-b from-white via-blue-50/50 to-purple-50/60 py-16">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-purple-400">{resolvedCopy.title}</p>
@@ -36,3 +36,4 @@ export async function TribeMapSection({ locale, copy }: TribeMapSectionProps) {
     </section>
   )
 }
+

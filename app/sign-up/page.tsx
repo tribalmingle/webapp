@@ -659,7 +659,7 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-background to-purple-50 flex items-center justify-center p-4">
+    <div className="h-screen overflow-hidden bg-linear-to-br from-blue-50 via-background to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md max-h-[95vh] bg-white rounded-2xl shadow-lg overflow-y-auto">
         {/* Dark Purple Header Section */}
         <div className="bg-purple-900 px-6 py-3 sticky top-0 z-10">

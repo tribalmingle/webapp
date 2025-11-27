@@ -413,3 +413,78 @@ export class NotificationService {
     }, { userId: params.userId, alertType: params.alertType })
   }
 }
+
+/**
+ * Generic notification payload for background jobs
+ */
+export type NotificationPayload = {
+  userId: string
+  title: string
+  body: string
+  category: 'growth' | 'match' | 'event' | 'safety' | 'billing' | 'message' | 'call'
+  data?: Record<string, any>
+  channels?: ('push' | 'email' | 'sms' | 'in_app')[]
+}
+
+/**
+ * Send a generic notification (for background jobs)
+ */
+export async function sendNotification(payload: NotificationPayload) {
+  const db = await getMongoDb()
+  const notifications = db.collection<NotificationDocument>('notifications')
+
+  const now = new Date()
+
+  const doc: NotificationDocument = {
+    userId: new ObjectId(payload.userId),
+    category: payload.category,
+    type: 'generic',
+    channel: 'push',
+    templateId: 'generic_v1',
+    payload: {
+      heading: payload.title,
+      body: payload.body,
+      ...payload.data,
+    },
+    status: 'pending',
+    priority: 'normal',
+    createdAt: now,
+    updatedAt: now,
+  }
+
+  const { insertedId } = await notifications.insertOne(doc as any)
+
+  // Send via OneSignal if push is enabled
+  if (payload.channels?.includes('push')) {
+    try {
+      await sendOneSignalNotification({
+        heading: payload.title,
+        content: payload.body,
+        userIds: [payload.userId],
+      })
+
+      await notifications.updateOne(
+        { _id: insertedId },
+        {
+          $set: {
+            status: 'sent',
+            sentAt: new Date(),
+            updatedAt: new Date(),
+          },
+        }
+      )
+    } catch (error) {
+      await notifications.updateOne(
+        { _id: insertedId },
+        {
+          $set: {
+            status: 'failed',
+            updatedAt: new Date(),
+          },
+        }
+      )
+    }
+  }
+
+  return { ...doc, _id: insertedId }
+}

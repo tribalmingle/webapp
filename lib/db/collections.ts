@@ -21,6 +21,24 @@ export const COLLECTIONS = {
   USER_SESSIONS: 'user_sessions',
   FUNNELS: 'funnels',
   
+  // Phase 8: Admin Studio Collections
+  CRM_NOTES: 'crm_notes',
+  CRM_TASKS: 'crm_tasks',
+  SUPPORT_TICKETS: 'support_tickets',
+  SUPPORT_MESSAGES: 'support_messages',
+  CANNED_RESPONSES: 'canned_responses',
+  TRUST_REPORTS: 'trust_reports',
+  MODERATION_ACTIONS: 'moderation_actions',
+  PHOTO_VERIFICATION_SESSIONS: 'photo_verification_sessions',
+  SEGMENTS: 'segments',
+  CAMPAIGNS: 'campaigns',
+  FEATURE_FLAGS: 'feature_flags',
+  SUBSCRIPTIONS: 'subscriptions',
+  PAYMENTS: 'payments',
+  AUDIT_LOGS: 'audit_logs',
+  DATA_BREACHES: 'data_breaches',
+  PERFORMANCE_METRICS: 'performance_metrics',
+  
 } as const;
 
 // Short Link Document
