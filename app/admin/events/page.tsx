@@ -339,7 +339,7 @@ export default function EventsAdminPage() {
                       <div className="flex items-center gap-2">
                         <Badge>{reg.status}</Badge>
                         {reg.checkedInAt ? (
-                          <Badge className="bg-green-500 text-white">
+                          <Badge className="bg-gold-warm text-white">
                             <CheckCircle className="h-3 w-3 mr-1" />
                             Checked In
                           </Badge>

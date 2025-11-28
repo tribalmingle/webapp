@@ -2,9 +2,11 @@
 
 import Link from 'next/link'
 import { useMemo } from 'react'
+import { ArrowRight, Sparkles } from 'lucide-react'
 
 import type { MarketingBlogPost } from '@/lib/contentful'
 import { trackClientEvent } from '@/lib/analytics/client'
+import { Badge } from '@/components/ui/badge'
 
 export type BlogHighlightsCopy = {
   eyebrow: string
@@ -35,21 +37,28 @@ export function BlogHighlightsSection({ posts, locale, copy }: BlogHighlightsSec
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-      <div className="text-center">
-        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-purple-400">{copy.eyebrow}</p>
-        <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">{copy.title}</h2>
-        <p className="mt-3 text-sm text-muted-foreground">{copy.description}</p>
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="text-center mb-12">
+        <Badge variant="gold" className="mb-6 bg-gold-warm text-white border-transparent shadow-md">
+          <Sparkles className="w-3 h-3 mr-1" />
+          {copy.eyebrow}
+        </Badge>
+        <h2 className="text-h1 font-display text-neutral-900 mb-4">
+          {copy.title}
+        </h2>
+        <p className="text-body-lg text-neutral-600 max-w-3xl mx-auto">
+          {copy.description}
+        </p>
       </div>
 
-      <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {posts.map((post, index) => (
           <article
             key={post.id}
-            className="flex h-full flex-col rounded-3xl border border-purple-100 bg-white/80 p-6 shadow-sm"
+            className="flex h-full flex-col rounded-3xl border border-neutral-200 bg-neutral-50 p-6 shadow-lg card-lift hover:shadow-xl transition-all"
           >
             {post.heroImage ? (
-              <div className="relative mb-6 h-40 w-full overflow-hidden rounded-2xl border border-purple-50">
+              <div className="relative mb-6 h-48 w-full overflow-hidden rounded-2xl border border-neutral-100">
                 <img
                   src={post.heroImage}
                   alt={post.title}
@@ -58,22 +67,31 @@ export function BlogHighlightsSection({ posts, locale, copy }: BlogHighlightsSec
                 />
               </div>
             ) : null}
-            <div className="rounded-2xl bg-linear-to-br from-purple-50 to-blue-50 p-4 text-left">
-              <p className="text-xs font-semibold uppercase tracking-widest text-purple-500">{post.category || 'Editorial'}</p>
-              <h3 className="mt-3 text-xl font-semibold text-foreground">{post.title}</h3>
-              <p className="mt-3 text-sm text-muted-foreground">{post.excerpt}</p>
+            
+            <div className="rounded-2xl bg-white p-4 border border-neutral-100 shadow-sm">
+              <p className="text-label text-purple-royal font-bold mb-3 uppercase tracking-wider text-xs">
+                {post.category || 'Editorial'}
+              </p>
+              <h3 className="text-h3 text-neutral-900 mb-3 font-display">
+                {post.title}
+              </h3>
+              <p className="text-body-sm text-neutral-600 line-clamp-3">
+                {post.excerpt}
+              </p>
             </div>
-            <div className="mt-6 flex items-center justify-between text-xs text-muted-foreground">
+            
+            <div className="mt-6 flex items-center justify-between text-caption text-neutral-500 font-medium">
               <span>{dateFormatter.format(new Date(post.publishedAt))}</span>
               {post.readingTime ? <span>{post.readingTime} min read</span> : null}
             </div>
+            
             <Link
               href={`/blog/${post.slug}`}
-              className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-accent hover:opacity-80"
+              className="mt-6 inline-flex items-center gap-2 text-body-sm font-bold text-purple-royal hover:text-purple-royal-light transition-colors"
               onClick={() => handleClick(post, index)}
             >
               {copy.ctaLabel}
-              <span aria-hidden="true">→</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </article>
         ))}

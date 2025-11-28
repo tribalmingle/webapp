@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { ADMIN_COLORS } from '@/lib/constants/admin-theme'
 import {
   Search, UserCog, Plus, CheckCircle, Clock, AlertCircle,
   ArrowLeft, MessageSquare, Phone, Mail, Calendar
@@ -161,33 +162,29 @@ export default function CRMPage() {
   }
 
   const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'urgent': return 'bg-red-100 text-red-800'
-      case 'high': return 'bg-orange-100 text-orange-800'
-      case 'medium': return 'bg-yellow-100 text-yellow-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
+    const priorityKey = priority as keyof typeof ADMIN_COLORS.priority
+    return ADMIN_COLORS.priority[priorityKey] || ADMIN_COLORS.priority.low
   }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'completed': return <CheckCircle className="h-4 w-4 text-green-600" />
-      case 'in_progress': return <Clock className="h-4 w-4 text-blue-600" />
-      default: return <AlertCircle className="h-4 w-4 text-gray-600" />
+      case 'completed': return <CheckCircle className="h-4 w-4 text-gold-warm" />
+      case 'in_progress': return <Clock className="h-4 w-4 text-purple-royal" />
+      default: return <AlertCircle className="h-4 w-4 text-text-tertiary" />
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
+    <div className="min-h-screen bg-background-primary">
+      <header className="bg-background-secondary border-b border-border-gold/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
               <Button variant="ghost" size="sm" onClick={() => router.push('/admin/overview')}>
                 <ArrowLeft className="h-4 w-4" />
               </Button>
-              <UserCog className="h-6 w-6 text-purple-600" />
-              <h1 className="text-xl font-semibold text-gray-900">CRM</h1>
+              <UserCog className="h-6 w-6 text-purple-royal" />
+              <h1 className="text-xl font-semibold text-text-primary">CRM</h1>
             </div>
           </div>
         </div>
@@ -204,7 +201,7 @@ export default function CRMPage() {
             <CardContent>
               <div className="space-y-4">
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-text-tertiary" />
                   <Input
                     placeholder="Search by name or email"
                     className="pl-9"
@@ -218,9 +215,9 @@ export default function CRMPage() {
 
                 <div className="space-y-2 max-h-96 overflow-y-auto">
                   {loading ? (
-                    <p className="text-sm text-gray-500">Loading...</p>
+                    <p className="text-sm text-text-tertiary">Loading...</p>
                   ) : members.length === 0 ? (
-                    <p className="text-sm text-gray-500">No members found</p>
+                    <p className="text-sm text-text-tertiary">No members found</p>
                   ) : (
                     members.map((member) => (
                       <button
@@ -228,12 +225,12 @@ export default function CRMPage() {
                         onClick={() => loadMemberDetails(member._id)}
                         className={`w-full text-left p-3 rounded-lg border transition-colors ${
                           selectedMember?._id === member._id
-                            ? 'bg-purple-50 border-purple-200'
-                            : 'bg-white border-gray-200 hover:bg-gray-50'
+                            ? 'bg-purple-royal/20 border-purple-royal/40'
+                            : 'bg-background-secondary border-border-gold/20 hover:bg-background-tertiary'
                         }`}
                       >
                         <div className="font-medium text-sm">{member.name || member.email}</div>
-                        <div className="text-xs text-gray-500">{member.email}</div>
+                        <div className="text-xs text-text-tertiary">{member.email}</div>
                         {member.subscriptionPlan && (
                           <Badge variant="secondary" className="mt-1 text-xs">
                             {member.subscriptionPlan}
@@ -257,7 +254,7 @@ export default function CRMPage() {
             </CardHeader>
             <CardContent>
               {!selectedMember ? (
-                <p className="text-center text-gray-500 py-12">
+                <p className="text-center text-text-tertiary py-12">
                   Search and select a member to view their details
                 </p>
               ) : (
@@ -281,7 +278,7 @@ export default function CRMPage() {
                   {/* Notes */}
                   <div>
                     <div className="flex justify-between items-center mb-3">
-                      <h3 className="font-semibold text-gray-900">Notes</h3>
+                      <h3 className="font-semibold text-text-primary">Notes</h3>
                       <Button size="sm" onClick={() => setShowNoteForm(!showNoteForm)}>
                         <Plus className="h-4 w-4 mr-1" />
                         Add note
@@ -307,12 +304,12 @@ export default function CRMPage() {
 
                     <div className="space-y-3">
                       {memberDetails?.notes?.length === 0 ? (
-                        <p className="text-sm text-gray-500">No notes yet</p>
+                        <p className="text-sm text-text-tertiary">No notes yet</p>
                       ) : (
                         memberDetails?.notes?.map((note: Note) => (
-                          <div key={note._id} className="border rounded-lg p-3 bg-gray-50">
-                            <p className="text-sm text-gray-900">{note.content}</p>
-                            <p className="text-xs text-gray-500 mt-1">
+                          <div key={note._id} className="border rounded-lg p-3 bg-background-tertiary">
+                            <p className="text-sm text-text-primary">{note.content}</p>
+                            <p className="text-xs text-text-tertiary mt-1">
                               {note.authorName} · {new Date(note.createdAt).toLocaleString()}
                             </p>
                           </div>
@@ -324,7 +321,7 @@ export default function CRMPage() {
                   {/* Tasks */}
                   <div>
                     <div className="flex justify-between items-center mb-3">
-                      <h3 className="font-semibold text-gray-900">Related Tasks</h3>
+                      <h3 className="font-semibold text-text-primary">Related Tasks</h3>
                       <Button size="sm" onClick={() => setShowTaskForm(!showTaskForm)}>
                         <Plus className="h-4 w-4 mr-1" />
                         Create task
@@ -332,7 +329,7 @@ export default function CRMPage() {
                     </div>
 
                     {showTaskForm && (
-                      <div className="mb-4 space-y-3 border rounded-lg p-4 bg-gray-50">
+                      <div className="mb-4 space-y-3 border rounded-lg p-4 bg-background-tertiary">
                         <div className="grid grid-cols-2 gap-3">
                           <div>
                             <label className="text-sm font-medium">Type</label>
@@ -386,7 +383,7 @@ export default function CRMPage() {
 
                     <div className="space-y-2">
                       {memberDetails?.tasks?.length === 0 ? (
-                        <p className="text-sm text-gray-500">No tasks</p>
+                        <p className="text-sm text-text-tertiary">No tasks</p>
                       ) : (
                         memberDetails?.tasks?.map((task: Task) => (
                           <div key={task._id} className="border rounded-lg p-3 flex items-start gap-3">
@@ -395,7 +392,7 @@ export default function CRMPage() {
                               <div className="flex items-start justify-between">
                                 <div>
                                   <p className="font-medium text-sm">{task.title}</p>
-                                  <p className="text-xs text-gray-500">{task.type.replace('_', ' ')}</p>
+                                  <p className="text-xs text-text-tertiary">{task.type.replace('_', ' ')}</p>
                                 </div>
                                 <Badge className={getPriorityColor(task.priority)}>
                                   {task.priority}
@@ -432,7 +429,7 @@ export default function CRMPage() {
           <CardContent>
             <div className="space-y-2">
               {tasks.filter(t => t.status !== 'completed').length === 0 ? (
-                <p className="text-sm text-gray-500 text-center py-8">No pending tasks</p>
+                <p className="text-sm text-text-tertiary text-center py-8">No pending tasks</p>
               ) : (
                 tasks
                   .filter(t => t.status !== 'completed')
@@ -443,9 +440,9 @@ export default function CRMPage() {
                         <div className="flex items-start justify-between">
                           <div>
                             <p className="font-medium">{task.title}</p>
-                            <p className="text-sm text-gray-500">{task.type.replace('_', ' ')}</p>
+                            <p className="text-sm text-text-tertiary">{task.type.replace('_', ' ')}</p>
                             {task.dueDate && (
-                              <p className="text-xs text-gray-400 mt-1">
+                              <p className="text-xs text-text-tertiary mt-1">
                                 <Calendar className="h-3 w-3 inline mr-1" />
                                 Due {new Date(task.dueDate).toLocaleDateString()}
                               </p>
@@ -481,3 +478,4 @@ export default function CRMPage() {
     </div>
   )
 }
+

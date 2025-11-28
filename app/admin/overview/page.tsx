@@ -111,66 +111,66 @@ export default function AdminOverviewPage() {
           title: 'Daily Active Users',
           value: formatNumber(metrics.dau),
           trend: calculateTrend(metrics.trends.dau),
-          icon: <Users className="h-4 w-4 text-blue-600" />
+          icon: <Users className="h-4 w-4 text-purple-royal" />
         },
         {
           title: 'Monthly Active Users',
           value: formatNumber(metrics.mau),
           trend: 0,
-          icon: <Activity className="h-4 w-4 text-purple-600" />
+          icon: <Activity className="h-4 w-4 text-purple-royal-light" />
         },
         {
           title: 'Active Conversations',
           value: formatNumber(metrics.activeConversations),
           trend: calculateTrend(metrics.trends.conversations),
-          icon: <MessageCircle className="h-4 w-4 text-green-600" />
+          icon: <MessageCircle className="h-4 w-4 text-gold-warm" />
         },
         {
           title: 'Matches Today',
           value: formatNumber(metrics.matchesToday),
           trend: calculateTrend(metrics.trends.matches),
-          icon: <Heart className="h-4 w-4 text-pink-600" />
+          icon: <Heart className="h-4 w-4 text-gold-warm" />
         },
         {
           title: 'Revenue Today',
           value: formatCurrency(metrics.revenueToday),
           trend: calculateTrend(metrics.trends.revenue),
-          icon: <DollarSign className="h-4 w-4 text-emerald-600" />
+          icon: <DollarSign className="h-4 w-4 text-gold-warm" />
         }
       ]
     : []
 
   const moduleLinks = [
-    { href: '/admin/trust', label: 'Trust & Safety', icon: Shield, color: 'text-red-600' },
-    { href: '/admin/growth', label: 'Growth Lab', icon: Megaphone, color: 'text-blue-600' },
-    { href: '/admin/crm', label: 'CRM', icon: UserCog, color: 'text-purple-600' },
-    { href: '/admin/events', label: 'Events', icon: Calendar, color: 'text-orange-600' },
-    { href: '/admin/billing', label: 'Revenue', icon: BarChart3, color: 'text-green-600' },
-    { href: '/admin/labs', label: 'Labs', icon: Beaker, color: 'text-indigo-600' },
-    { href: '/admin/system', label: 'System', icon: Server, color: 'text-gray-600' },
-    { href: '/admin/support', label: 'Support', icon: MessageCircle, color: 'text-cyan-600' }
+    { href: '/admin/trust', label: 'Trust & Safety', icon: Shield, color: 'text-destructive' },
+    { href: '/admin/growth', label: 'Growth Lab', icon: Megaphone, color: 'text-purple-royal' },
+    { href: '/admin/crm', label: 'CRM', icon: UserCog, color: 'text-purple-royal-light' },
+    { href: '/admin/events', label: 'Events', icon: Calendar, color: 'text-gold-warm' },
+    { href: '/admin/billing', label: 'Revenue', icon: BarChart3, color: 'text-gold-warm' },
+    { href: '/admin/labs', label: 'Labs', icon: Beaker, color: 'text-purple-royal' },
+    { href: '/admin/system', label: 'System', icon: Server, color: 'text-text-secondary' },
+    { href: '/admin/support', label: 'Support', icon: MessageCircle, color: 'text-purple-royal-light' }
   ]
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background-primary flex items-center justify-center">
         <div className="text-center">
-          <Activity className="h-8 w-8 animate-spin mx-auto text-blue-600" />
-          <p className="mt-2 text-sm text-gray-600">Loading admin dashboard...</p>
+          <Activity className="h-8 w-8 animate-spin mx-auto text-purple-royal" />
+          <p className="mt-2 text-sm text-text-secondary">Loading admin dashboard...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background-primary">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-background-secondary border-b border-border-gold/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
-              <LayoutDashboard className="h-6 w-6 text-blue-600" />
-              <h1 className="text-xl font-semibold text-gray-900">Admin Studio</h1>
+              <LayoutDashboard className="h-6 w-6 text-purple-royal" />
+              <h1 className="text-xl font-semibold text-text-primary">Admin Studio</h1>
             </div>
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="sm" onClick={() => router.push('/admin/settings')}>
@@ -202,14 +202,14 @@ export default function AdminOverviewPage() {
                 {card.trend !== 0 && (
                   <div className="flex items-center mt-1 text-xs">
                     {card.trend > 0 ? (
-                      <TrendingUp className="h-3 w-3 text-green-600 mr-1" />
+                      <TrendingUp className="h-3 w-3 text-gold-warm mr-1" />
                     ) : (
-                      <TrendingDown className="h-3 w-3 text-red-600 mr-1" />
+                      <TrendingDown className="h-3 w-3 text-destructive mr-1" />
                     )}
-                    <span className={card.trend > 0 ? 'text-green-600' : 'text-red-600'}>
+                    <span className={card.trend > 0 ? 'text-gold-warm' : 'text-destructive'}>
                       {Math.abs(card.trend).toFixed(1)}%
                     </span>
-                    <span className="text-gray-500 ml-1">vs yesterday</span>
+                    <span className="text-text-tertiary ml-1">vs yesterday</span>
                   </div>
                 )}
               </CardContent>
@@ -300,7 +300,7 @@ export default function AdminOverviewPage() {
                       <span className={`px-2 py-1 text-xs rounded-full ${
                         exp.status === 'running' ? 'bg-green-100 text-green-800' :
                         exp.status === 'paused' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-gray-100 text-gray-800'
+                        'bg-background-tertiary text-text-primary'
                       }`}>
                         {exp.status}
                       </span>
@@ -354,3 +354,5 @@ export default function AdminOverviewPage() {
     </div>
   )
 }
+
+

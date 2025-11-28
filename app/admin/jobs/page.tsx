@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect } from 'react'
+import { ADMIN_COLORS } from '@/lib/constants/admin-theme'
 
 interface QueueMetrics {
   name: string
@@ -144,33 +145,33 @@ export default function AdminJobsPage() {
           {metrics.map((queue) => (
             <div
               key={queue.name}
-              className="bg-white rounded-lg shadow p-6 cursor-pointer hover:shadow-lg transition"
+              className="bg-background-secondary rounded-lg border border-border-gold/20 p-6 cursor-pointer hover:border-border-gold/40 transition"
               onClick={() => setSelectedQueue(queue.name)}
             >
-              <h3 className="font-semibold text-lg mb-4 capitalize">
+              <h3 className="font-semibold text-lg mb-4 capitalize text-purple-royal">
                 {queue.name.replace(/-/g, ' ')}
               </h3>
 
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Waiting</span>
-                  <span className="font-medium text-yellow-600">{queue.waiting}</span>
+                  <span className="text-text-tertiary">Waiting</span>
+                  <span className="font-medium text-purple-royal-light">{queue.waiting}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Active</span>
-                  <span className="font-medium text-blue-600">{queue.active}</span>
+                  <span className="text-text-tertiary">Active</span>
+                  <span className="font-medium text-purple-royal">{queue.active}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Completed</span>
-                  <span className="font-medium text-green-600">{queue.completed}</span>
+                  <span className="text-text-tertiary">Completed</span>
+                  <span className="font-medium text-gold-warm">{queue.completed}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Failed</span>
-                  <span className="font-medium text-red-600">{queue.failed}</span>
+                  <span className="text-text-tertiary">Failed</span>
+                  <span className="font-medium text-destructive">{queue.failed}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Delayed</span>
-                  <span className="font-medium text-gray-600">{queue.delayed}</span>
+                  <span className="text-text-tertiary">Delayed</span>
+                  <span className="font-medium text-text-secondary">{queue.delayed}</span>
                 </div>
               </div>
 
@@ -180,7 +181,7 @@ export default function AdminJobsPage() {
                     e.stopPropagation()
                     pauseQueue(queue.name)
                   }}
-                  className="px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200"
+                  className="px-3 py-1 text-sm bg-purple-royal-light/20 text-purple-royal-light rounded hover:bg-purple-royal-light/30 border border-purple-royal-light/30"
                 >
                   Pause
                 </button>
@@ -189,7 +190,7 @@ export default function AdminJobsPage() {
                     e.stopPropagation()
                     resumeQueue(queue.name)
                   }}
-                  className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
+                  className="px-3 py-1 text-sm bg-gold-warm/20 text-gold-warm rounded hover:bg-gold-warm/30 border border-gold-warm/30"
                 >
                   Resume
                 </button>
@@ -198,7 +199,7 @@ export default function AdminJobsPage() {
                     e.stopPropagation()
                     drainQueue(queue.name)
                   }}
-                  className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
+                  className="px-3 py-1 text-sm bg-destructive/20 text-destructive rounded hover:bg-destructive/30 border border-destructive/30"
                 >
                   Drain
                 </button>
@@ -209,14 +210,14 @@ export default function AdminJobsPage() {
 
         {/* Job Details */}
         {selectedQueue && (
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-background-secondary rounded-lg border border-border-gold/20 p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold capitalize">
+              <h2 className="text-xl font-semibold capitalize text-purple-royal">
                 {selectedQueue.replace(/-/g, ' ')} Jobs
               </h2>
               <button
                 onClick={() => setSelectedQueue(null)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-text-tertiary hover:text-text-primary"
               >
                 ✕ Close
               </button>
@@ -230,8 +231,8 @@ export default function AdminJobsPage() {
                   onClick={() => setJobType(type)}
                   className={`px-4 py-2 rounded ${
                     jobType === type
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-purple-royal text-white'
+                      : 'bg-background-tertiary text-text-secondary hover:bg-background-tertiary/70'
                   }`}
                 >
                   {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -255,14 +256,14 @@ export default function AdminJobsPage() {
                         {jobType === 'failed' && (
                           <button
                             onClick={() => retryJob(selectedQueue, job.id)}
-                            className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                            className="px-3 py-1 text-sm bg-purple-royal/20 text-purple-royal rounded hover:bg-purple-royal/30 border border-purple-royal/30"
                           >
                             Retry
                           </button>
                         )}
                         <button
                           onClick={() => removeJob(selectedQueue, job.id)}
-                          className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
+                          className="px-3 py-1 text-sm bg-destructive/20 text-destructive rounded hover:bg-destructive/30 border border-destructive/30"
                         >
                           Remove
                         </button>
@@ -275,9 +276,9 @@ export default function AdminJobsPage() {
                           <span>Progress</span>
                           <span>{job.progress}%</span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="w-full bg-background-tertiary rounded-full h-2">
                           <div
-                            className="bg-blue-600 h-2 rounded-full"
+                            className="bg-gold-gradient h-2 rounded-full"
                             style={{ width: `${job.progress}%` }}
                           />
                         </div>
@@ -315,7 +316,7 @@ export default function AdminJobsPage() {
                       <summary className="text-sm text-gray-600 cursor-pointer">
                         Job Data
                       </summary>
-                      <pre className="mt-2 p-2 bg-gray-50 rounded text-xs overflow-auto">
+                      <pre className="mt-2 p-2 bg-background-tertiary rounded text-xs overflow-auto">
                         {JSON.stringify(job.data, null, 2)}
                       </pre>
                     </details>

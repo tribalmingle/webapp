@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { ADMIN_COLORS } from '@/lib/constants/admin-theme'
 import {
   MessageSquare, ArrowLeft, Clock, CheckCircle, AlertCircle,
   User, Mail, Tag, Zap, Send
@@ -159,21 +160,13 @@ export default function AdminSupportPage() {
   }
 
   const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'urgent': return 'bg-red-100 text-red-800'
-      case 'high': return 'bg-orange-100 text-orange-800'
-      case 'medium': return 'bg-yellow-100 text-yellow-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
+    const priorityKey = priority as keyof typeof ADMIN_COLORS.priority
+    return ADMIN_COLORS.priority[priorityKey] || ADMIN_COLORS.priority.low
   }
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'open': return 'bg-blue-100 text-blue-800'
-      case 'in_progress': return 'bg-purple-100 text-purple-800'
-      case 'resolved': return 'bg-green-100 text-green-800'
-      default: return 'bg-gray-100 text-gray-800'
-    }
+    const statusKey = status as keyof typeof ADMIN_COLORS.status
+    return ADMIN_COLORS.status[statusKey] || ADMIN_COLORS.badge.neutral
   }
 
   const getTimeRemaining = (deadline: string) => {
@@ -189,16 +182,16 @@ export default function AdminSupportPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
+    <div className="min-h-screen bg-background-primary">
+      <header className="bg-background-secondary border-b border-border-gold/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
               <Button variant="ghost" size="sm" onClick={() => router.push('/admin/overview')}>
                 <ArrowLeft className="h-4 w-4" />
               </Button>
-              <MessageSquare className="h-6 w-6 text-cyan-600" />
-              <h1 className="text-xl font-semibold text-gray-900">Support Desk</h1>
+              <MessageSquare className="h-6 w-6 text-purple-royal-light" />
+              <h1 className="text-xl font-semibold text-text-primary">Support Desk</h1>
             </div>
           </div>
         </div>
@@ -227,9 +220,9 @@ export default function AdminSupportPage() {
             <CardContent>
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {loading ? (
-                  <p className="text-sm text-gray-500">Loading...</p>
+                  <p className="text-sm text-text-tertiary">Loading...</p>
                 ) : tickets.length === 0 ? (
-                  <p className="text-sm text-gray-500">No tickets found</p>
+                  <p className="text-sm text-text-tertiary">No tickets found</p>
                 ) : (
                   tickets.map((ticket) => (
                     <button
@@ -237,14 +230,14 @@ export default function AdminSupportPage() {
                       onClick={() => loadTicketDetails(ticket)}
                       className={`w-full text-left p-3 rounded-lg border transition-colors ${
                         selectedTicket?._id === ticket._id
-                          ? 'bg-cyan-50 border-cyan-200'
-                          : 'bg-white border-gray-200 hover:bg-gray-50'
+                          ? 'bg-purple-royal/20 border-purple-royal/40'
+                          : 'bg-background-secondary border-border-gold/20 hover:bg-background-tertiary'
                       }`}
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
                           <p className="font-medium text-sm line-clamp-1">{ticket.subject}</p>
-                          <p className="text-xs text-gray-500">{ticket.userName}</p>
+                          <p className="text-xs text-text-tertiary">{ticket.userName}</p>
                         </div>
                         <Badge className={getPriorityColor(ticket.priority)} variant="secondary">
                           {ticket.priority}
@@ -262,7 +255,7 @@ export default function AdminSupportPage() {
                           SLA Breached
                         </div>
                       ) : (
-                        <div className="mt-2 text-xs text-gray-500">
+                        <div className="mt-2 text-xs text-text-tertiary">
                           <Clock className="h-3 w-3 inline mr-1" />
                           {getTimeRemaining(ticket.slaDeadline)}
                         </div>
@@ -284,26 +277,26 @@ export default function AdminSupportPage() {
             </CardHeader>
             <CardContent>
               {!selectedTicket ? (
-                <p className="text-center text-gray-500 py-12">
+                <p className="text-center text-text-tertiary py-12">
                   Select a ticket from the queue to view details
                 </p>
               ) : (
                 <div className="space-y-6">
                   {/* Ticket Info */}
-                  <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                  <div className="grid grid-cols-2 gap-4 p-4 bg-background-tertiary rounded-lg">
                     <div>
-                      <p className="text-xs text-gray-500">Customer</p>
+                      <p className="text-xs text-text-tertiary">Customer</p>
                       <p className="text-sm font-medium flex items-center gap-2">
                         <User className="h-4 w-4" />
                         {selectedTicket.userName}
                       </p>
-                      <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                      <p className="text-xs text-text-tertiary flex items-center gap-1 mt-1">
                         <Mail className="h-3 w-3" />
                         {selectedTicket.userEmail}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Category & Priority</p>
+                      <p className="text-xs text-text-tertiary">Category & Priority</p>
                       <div className="flex gap-2 mt-1">
                         <Badge variant="outline">
                           <Tag className="h-3 w-3 mr-1" />
@@ -332,7 +325,7 @@ export default function AdminSupportPage() {
                           key={msg._id}
                           className={`p-3 rounded-lg ${
                             msg.authorType === 'customer'
-                              ? 'bg-gray-100'
+                              ? 'bg-background-tertiary'
                               : 'bg-cyan-50 border border-cyan-200'
                           }`}
                         >
@@ -343,11 +336,11 @@ export default function AdminSupportPage() {
                                 {msg.authorType}
                               </Badge>
                             </p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-text-tertiary">
                               {new Date(msg.createdAt).toLocaleString()}
                             </p>
                           </div>
-                          <p className="text-sm text-gray-900">{msg.message}</p>
+                          <p className="text-sm text-text-primary">{msg.message}</p>
                         </div>
                       ))}
                     </div>
@@ -404,3 +397,4 @@ export default function AdminSupportPage() {
     </div>
   )
 }
+

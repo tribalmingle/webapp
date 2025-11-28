@@ -121,20 +121,20 @@ export default function RoleManagementPage() {
           <Shield className="w-8 h-8 text-blue-600" />
           <h1 className="text-3xl font-bold">Role Management</h1>
         </div>
-        <p className="text-gray-600">
+        <p className="text-text-secondary">
           Manage user roles and permissions. All role changes are audited.
         </p>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
+      <div className="bg-background-secondary rounded-lg shadow-sm border border-border-gold/20 p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-text-secondary mb-2">
               Search Users
             </label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text-tertiary" />
               <input
                 type="text"
                 value={searchQuery}
@@ -145,7 +145,7 @@ export default function RoleManagementPage() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-text-secondary mb-2">
               Filter by Role
             </label>
             <select
@@ -183,20 +183,20 @@ export default function RoleManagementPage() {
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+      <div className="bg-background-secondary rounded-lg shadow-sm border border-border-gold/20 overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-background-tertiary border-b">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">
                 User
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">
                 Current Role
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">
                 Permissions
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -204,23 +204,23 @@ export default function RoleManagementPage() {
           <tbody className="divide-y divide-gray-200">
             {loading ? (
               <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                <td colSpan={4} className="px-6 py-8 text-center text-text-tertiary">
                   Loading users...
                 </td>
               </tr>
             ) : filteredUsers.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                <td colSpan={4} className="px-6 py-8 text-center text-text-tertiary">
                   No users found
                 </td>
               </tr>
             ) : (
               filteredUsers.map(user => (
-                <tr key={user._id} className="hover:bg-gray-50">
+                <tr key={user._id} className="hover:bg-background-tertiary">
                   <td className="px-6 py-4">
                     <div>
-                      <div className="font-medium text-gray-900">{user.name}</div>
-                      <div className="text-sm text-gray-500">{user.email}</div>
+                      <div className="font-medium text-text-primary">{user.name}</div>
+                      <div className="text-sm text-text-tertiary">{user.email}</div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -243,7 +243,7 @@ export default function RoleManagementPage() {
                     )}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-text-secondary">
                       {ROLE_PERMISSIONS[user.role]?.length || 0} permissions
                     </div>
                   </td>
@@ -267,7 +267,7 @@ export default function RoleManagementPage() {
                           </button>
                           <button
                             onClick={cancelEditing}
-                            className="flex items-center gap-1 px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm"
+                            className="flex items-center gap-1 px-3 py-1 bg-background-tertiary0 text-white rounded hover:bg-gray-600 text-sm"
                           >
                             <X className="w-4 h-4" />
                             Cancel
@@ -292,17 +292,17 @@ export default function RoleManagementPage() {
       </div>
 
       {/* Permission Reference */}
-      <div className="mt-8 bg-white rounded-lg shadow-sm border p-6">
+      <div className="mt-8 bg-background-secondary rounded-lg shadow-sm border border-border-gold/20 p-6">
         <h2 className="text-xl font-bold mb-4">Permission Reference</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {permissionEntries.map(([category, permissions]) => (
             <div key={category}>
-              <h3 className="font-semibold text-gray-900 mb-2 capitalize">
+              <h3 className="font-semibold text-text-primary mb-2 capitalize">
                 {category.replace('_', ' ')}
               </h3>
               <ul className="space-y-1 text-sm">
                 {permissions.map(permission => (
-                  <li key={permission} className="text-gray-600">
+                  <li key={permission} className="text-text-secondary">
                     • {PERMISSION_DESCRIPTIONS[permission] || permission}
                   </li>
                 ))}
@@ -314,3 +314,4 @@ export default function RoleManagementPage() {
     </div>
   )
 }
+

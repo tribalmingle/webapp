@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { FileText, Download, Search, Filter, Calendar, AlertCircle, Info, AlertTriangle, XCircle } from 'lucide-react'
+import { ADMIN_COLORS } from '@/lib/constants/admin-theme'
 
 interface AuditLog {
   _id: string
@@ -101,26 +102,27 @@ export default function AuditLogsPage() {
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
       case 'INFO':
-        return <Info className="w-5 h-5 text-blue-500" />
+        return <Info className="w-5 h-5 text-purple-royal" />
       case 'WARNING':
-        return <AlertTriangle className="w-5 h-5 text-yellow-500" />
+        return <AlertTriangle className="w-5 h-5 text-purple-royal-light" />
       case 'ERROR':
-        return <AlertCircle className="w-5 h-5 text-orange-500" />
+        return <AlertCircle className="w-5 h-5 text-gold-warm" />
       case 'CRITICAL':
-        return <XCircle className="w-5 h-5 text-red-500" />
+        return <XCircle className="w-5 h-5 text-destructive" />
       default:
-        return <Info className="w-5 h-5 text-gray-500" />
+        return <Info className="w-5 h-5 text-text-tertiary" />
     }
   }
 
   const getSeverityBadge = (severity: string) => {
-    const colors = {
-      INFO: 'bg-blue-100 text-blue-800',
-      WARNING: 'bg-yellow-100 text-yellow-800',
-      ERROR: 'bg-orange-100 text-orange-800',
-      CRITICAL: 'bg-red-100 text-red-800',
-    }
-    return colors[severity as keyof typeof colors] || 'bg-gray-100 text-gray-800'
+    const severityKey = severity as 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL'
+    const severityMap = {
+      INFO: 'info',
+      WARNING: 'warning',
+      ERROR: 'error',
+      CRITICAL: 'error',
+    } as const
+    return ADMIN_COLORS.badge[severityMap[severityKey] || 'neutral']
   }
 
   const totalPages = Math.ceil(totalCount / pageSize)
@@ -130,20 +132,20 @@ export default function AuditLogsPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-3">
-            <FileText className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold">Audit Logs</h1>
+            <FileText className="w-8 h-8 text-purple-royal" />
+            <h1 className="text-3xl font-bold text-purple-royal">Audit Logs</h1>
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => handleExport('json')}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="flex items-center gap-2 px-4 py-2 bg-purple-royal text-white rounded-lg hover:bg-purple-royal-dark"
             >
               <Download className="w-4 h-4" />
               Export JSON
             </button>
             <button
               onClick={() => handleExport('csv')}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              className="flex items-center gap-2 px-4 py-2 bg-gold-gradient text-white rounded-lg hover:opacity-90"
             >
               <Download className="w-4 h-4" />
               Export CSV
@@ -156,15 +158,15 @@ export default function AuditLogsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow-sm border mb-6">
-        <div className="p-4 border-b flex items-center justify-between">
-          <h2 className="font-semibold flex items-center gap-2">
+      <div className="bg-background-secondary rounded-lg border border-border-gold/20 mb-6">
+        <div className="p-4 border-b border-border-gold/20 flex items-center justify-between">
+          <h2 className="font-semibold flex items-center gap-2 text-purple-royal">
             <Filter className="w-5 h-5" />
             Filters
           </h2>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="text-sm text-blue-600 hover:text-blue-700"
+            className="text-sm text-purple-royal-light hover:text-purple-royal"
           >
             {showFilters ? 'Hide' : 'Show'}
           </button>
@@ -246,7 +248,7 @@ export default function AuditLogsPage() {
                   })
                   setPage(1)
                 }}
-                className="w-full px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+                className="w-full px-4 py-2 bg-background-tertiary text-text-primary rounded-lg hover:bg-background-tertiary/70 border border-border-gold/20"
               >
                 Clear Filters
               </button>
@@ -256,18 +258,18 @@ export default function AuditLogsPage() {
       </div>
 
       {/* Logs Table */}
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+      <div className="bg-background-secondary rounded-lg border border-border-gold/20 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-background-tertiary border-b border-border-gold/20">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">
                   Timestamp
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">
                   Severity
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">
                   Event Type
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -296,8 +298,8 @@ export default function AuditLogsPage() {
                 </tr>
               ) : (
                 logs.map(log => (
-                  <tr key={log._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                  <tr key={log._id} className="hover:bg-background-tertiary/50 border-b border-border-gold/10">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
                       {new Date(log.timestamp).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -308,27 +310,27 @@ export default function AuditLogsPage() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-text-primary">
                       {log.eventType}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
+                    <td className="px-6 py-4 text-sm text-text-primary">
                       {log.action}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
                       {log.actorEmail || log.actorId || 'System'}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
+                    <td className="px-6 py-4 text-sm text-text-secondary">
                       {log.metadata && Object.keys(log.metadata).length > 0 ? (
                         <details className="cursor-pointer">
-                          <summary className="text-blue-600 hover:text-blue-700">
+                          <summary className="text-purple-royal-light hover:text-purple-royal">
                             View Details
                           </summary>
-                          <pre className="mt-2 text-xs bg-gray-50 p-2 rounded overflow-auto max-w-md">
+                          <pre className="mt-2 text-xs bg-background-tertiary p-2 rounded overflow-auto max-w-md">
                             {JSON.stringify(log.metadata, null, 2)}
                           </pre>
                         </details>
                       ) : (
-                        <span className="text-gray-400">No details</span>
+                        <span className="text-text-tertiary">No details</span>
                       )}
                     </td>
                   </tr>
@@ -340,25 +342,25 @@ export default function AuditLogsPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t flex items-center justify-between">
-            <div className="text-sm text-gray-600">
+          <div className="px-6 py-4 border-t border-border-gold/20 flex items-center justify-between">
+            <div className="text-sm text-text-secondary">
               Showing {((page - 1) * pageSize) + 1} to {Math.min(page * pageSize, totalCount)} of {totalCount} logs
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-border-gold/20 rounded-lg hover:bg-background-tertiary disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
-              <span className="px-4 py-2 border rounded-lg bg-blue-50 text-blue-700 font-medium">
+              <span className="px-4 py-2 border border-border-gold/20 rounded-lg bg-purple-royal/20 text-purple-royal font-medium">
                 Page {page} of {totalPages}
               </span>
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-border-gold/20 rounded-lg hover:bg-background-tertiary disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
               </button>

@@ -257,7 +257,7 @@ function generateEmailTemplate(userName: string, subject: string, message: strin
         <p>💜 This message was sent to you by the Tribal Mingle team because you're a valued member of our community.</p>
       </div>
 
-      <a href="https://tribalmingle.com/dashboard" class="cta-button">
+      <a href="https://tribalmingle.com/dashboard-spa" class="cta-button">
         Visit Your Dashboard →
       </a>
 

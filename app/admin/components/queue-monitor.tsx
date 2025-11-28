@@ -44,10 +44,10 @@ export function QueueMonitorCard() {
   }, [])
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+    <div className="rounded-2xl border border-border-gold/20 bg-background-secondary p-5 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Queue Monitor</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">Queue Monitor</p>
           <p className="text-base font-semibold text-gray-900">Socket.IO pipeline</p>
         </div>
         {connected ? (
@@ -55,7 +55,7 @@ export function QueueMonitorCard() {
             <Activity className="h-3.5 w-3.5" /> Live
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-500">
+          <span className="inline-flex items-center gap-1 rounded-full bg-background-tertiary px-3 py-1 text-xs font-semibold text-text-tertiary">
             <WifiOff className="h-3.5 w-3.5" /> Standby
           </span>
         )}
@@ -65,11 +65,11 @@ export function QueueMonitorCard() {
           <div key={queue.name} className="flex items-center justify-between rounded-xl border border-gray-100 px-3 py-2">
             <div>
               <p className="text-sm font-semibold text-gray-900">{queue.name}</p>
-              <p className="text-xs text-gray-500">Last event · {new Date(queue.lastEventAt).toLocaleTimeString()}</p>
+              <p className="text-xs text-text-tertiary">Last event · {new Date(queue.lastEventAt).toLocaleTimeString()}</p>
             </div>
             <div className="text-right">
               <p className="text-xl font-bold text-gray-900">{queue.depth}</p>
-              <p className="text-xs text-gray-500">messages</p>
+              <p className="text-xs text-text-tertiary">messages</p>
             </div>
           </div>
         ))}
@@ -77,3 +77,4 @@ export function QueueMonitorCard() {
     </div>
   )
 }
+

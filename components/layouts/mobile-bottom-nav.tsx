@@ -1,76 +1,63 @@
-'use client'
+"use client"
 
-import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Compass, Heart, MessageCircle, User } from 'lucide-react'
-import { motion } from 'framer-motion'
-
+import { Home, Heart, MessageCircle, User, Eye } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-interface NavItem {
-  icon: React.ElementType
-  label: string
-  href: string
-  badge?: string
+interface MobileBottomNavProps {
+  chatBadgeCount?: number
 }
 
-const navItems: NavItem[] = [
-  { icon: Home, label: 'Home', href: '/dashboard' },
-  { icon: Compass, label: 'Discover', href: '/discover' },
-  { icon: Heart, label: 'Likes', href: '/likes', badge: '3' },
-  { icon: MessageCircle, label: 'Chat', href: '/chat', badge: '5' },
-  { icon: User, label: 'Profile', href: '/profile' },
+const MOBILE_NAV_ITEMS = [
+  { label: 'Home', href: '/dashboard-spa', icon: Home },
+  { label: 'Likes', href: '/likes', icon: Heart },
+  { label: 'Chat', href: '/chat', icon: MessageCircle },
+  { label: 'Profile', href: '/profile', icon: User },
 ]
 
-export function MobileBottomNav() {
+export function MobileBottomNav({ chatBadgeCount }: MobileBottomNavProps) {
   const pathname = usePathname()
-  
+
   return (
-    <nav className="fixed bottom-0 inset-x-0 lg:hidden bg-bg-secondary border-t border-gold-warm/20 shadow-premium z-50">
-      <div className="flex items-center justify-around h-20 px-2 safe-area-inset-bottom">
-        {navItems.map(item => {
-          const Icon = item.icon
-          const isActive = pathname === item.href
-          
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex flex-col items-center justify-center gap-1 px-3 py-2 min-w-[60px] relative"
-            >
-              <div className="relative">
-                <Icon 
-                  className={cn(
-                    "w-6 h-6 transition-all",
-                    isActive ? "text-gold-warm scale-110" : "text-text-secondary"
-                  )}
-                />
-                {item.badge && (
-                  <span className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                    {item.badge}
-                  </span>
+    <nav className="fixed bottom-4 left-4 right-4 z-50 lg:hidden">
+      <div className="bg-background/95 backdrop-blur-md border border-border/50 rounded-[15px] shadow-lg px-2 py-3">
+        <div className="flex justify-around items-center gap-2">
+          {MOBILE_NAV_ITEMS.map((item) => {
+            const Icon = item.icon
+            const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`)
+            const badge = item.href === '/chat' ? chatBadgeCount : undefined
+            
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-1.5 px-3 py-2 rounded-xl transition-all flex-1 min-h-[60px]",
+                  isActive 
+                    ? "bg-primary/10 text-primary" 
+                    : "text-muted-foreground hover:bg-muted/50"
                 )}
-              </div>
-              
-              <span className={cn(
-                "text-xs font-medium transition-colors",
-                isActive ? "text-gold-warm" : "text-text-tertiary"
-              )}>
-                {item.label}
-              </span>
-              
-              {/* Active indicator */}
-              {isActive && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-gold-gradient rounded-full"
-                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                />
-              )}
-            </Link>
-          )
-        })}
+              >
+                <div className="relative">
+                  <Icon className={cn("w-6 h-6", isActive && "text-primary")} />
+                  {badge && badge > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                      {badge}
+                    </span>
+                  )}
+                </div>
+                
+                <span className={cn(
+                  "text-[11px] font-medium",
+                  isActive ? "text-primary" : "text-muted-foreground"
+                )}>
+                  {item.label}
+                </span>
+              </Link>
+            )
+          })}
+        </div>
       </div>
     </nav>
   )

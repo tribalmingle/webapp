@@ -112,11 +112,11 @@ export function MemberQuickActions() {
   }
 
   return (
-    <section className="rounded-3xl border border-border bg-card/80 p-4 shadow-sm">
-      <div className="mb-4 flex flex-wrap items-center gap-3">
+    <section className="rounded-2xl lg:rounded-3xl border border-border bg-card/80 backdrop-blur-sm p-3 sm:p-4 shadow-sm">
+      <div className="mb-3 sm:mb-4 flex flex-wrap items-center gap-2 sm:gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Quick actions</p>
-          <p className="text-base font-semibold">Finish setup to improve your match score</p>
+          <p className="text-sm sm:text-base font-semibold">Finish setup to improve your match score</p>
         </div>
         {dismissed.length > 0 && (
           <button
@@ -128,29 +128,29 @@ export function MemberQuickActions() {
           </button>
         )}
       </div>
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-2.5 sm:gap-3 md:grid-cols-2 xl:grid-cols-4">
         {visibleActions.map((action) => {
           const Icon = action.icon
           return (
             <article
               key={action.id}
-              className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-background/70 p-4"
+              className="flex flex-col gap-2.5 sm:gap-3 rounded-xl sm:rounded-2xl border border-border/70 bg-background/70 backdrop-blur-sm p-3 sm:p-4"
             >
-              <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Icon className="h-5 w-5" />
+              <div className="flex items-start gap-2 sm:gap-3">
+                <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-sm font-semibold leading-tight">{action.title}</h3>
-                  <p className="text-xs text-muted-foreground">{action.description}</p>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-xs sm:text-sm font-semibold leading-tight">{action.title}</h3>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{action.description}</p>
                 </div>
                 <button
                   type="button"
-                  className="text-muted-foreground transition hover:text-foreground"
+                  className="text-muted-foreground transition hover:text-foreground shrink-0"
                   aria-label="Dismiss quick action"
                   onClick={() => handleDismiss(action.id)}
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </button>
               </div>
               <div className="flex items-center gap-2">

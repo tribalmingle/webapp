@@ -302,25 +302,25 @@ function HeroStats({
     <SlideUp>
       <StaggerGrid columns={3}>
         <StatCard
-          icon={Sparkles}
-          label="Today's Matches"
+          icon={<Sparkles className="w-5 h-5" />}
+          title="Today's Matches"
           value={loading ? 0 : total}
-          trend={generatedAt ? `Refreshed ${new Date(generatedAt).toLocaleTimeString()}` : 'Loading...'}
-          gradient="from-purple-royal to-purple-royal/60"
+          trendLabel={generatedAt ? `Refreshed ${new Date(generatedAt).toLocaleTimeString()}` : 'Loading...'}
+          variant="premium"
         />
         <StatCard
-          icon={hasActiveBoost ? Flame : MapPin}
-          label={hasActiveBoost ? "Active Boosts" : "Boost Status"}
+          icon={hasActiveBoost ? <Flame className="w-5 h-5" /> : <MapPin className="w-5 h-5" />}
+          title={hasActiveBoost ? "Active Boosts" : "Boost Status"}
           value={activeBoosts}
-          trend={hasActiveBoost ? `Ends ${new Date(boostStrip!.active[0].endsAt).toLocaleTimeString()}` : 'Spotlight available'}
-          gradient={hasActiveBoost ? "from-orange-500 to-red-500" : "from-blue-500 to-cyan-500"}
+          trendLabel={hasActiveBoost ? `Ends ${new Date(boostStrip!.active[0].endsAt).toLocaleTimeString()}` : 'Spotlight available'}
+          variant="premium"
         />
         <StatCard
-          icon={Users}
-          label="Concierge Picks"
+          icon={<Users className="w-5 h-5" />}
+          title="Concierge Picks"
           value={loading ? 0 : total}
-          trend="AI-curated for you"
-          gradient="from-gold-warm to-gold-warm/60"
+          trendLabel="AI-curated for you"
+          variant="premium"
         />
       </StaggerGrid>
     </SlideUp>

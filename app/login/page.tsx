@@ -40,14 +40,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="h-screen overflow-hidden bg-background-primary flex items-center justify-center p-4 relative">
+    <div className="min-h-dvh bg-background-primary flex items-center justify-center p-4 relative">
       {/* Animated gradient orbs */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-purple-royal/30 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gold-warm/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-20 left-20 w-48 h-48 md:w-96 md:h-96 bg-purple-royal/30 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-20 w-48 h-48 md:w-96 md:h-96 bg-gold-warm/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
       </div>
       
-      <div className="w-full max-w-md max-h-[95vh] bg-bg-secondary/60 backdrop-blur-xl rounded-2xl shadow-premium border border-border-gold/30 overflow-y-auto relative z-10">
+      <div className="w-full max-w-md bg-bg-secondary/60 backdrop-blur-xl rounded-2xl shadow-premium border border-border-gold/30 relative z-10">
         {/* Premium Header Section */}
         <div className="bg-purple-gradient px-6 py-8">
           {/* Logo */}

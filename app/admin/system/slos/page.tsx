@@ -12,6 +12,7 @@ import {
   LineChart,
   Target,
 } from 'lucide-react'
+import { ADMIN_COLORS } from '@/lib/constants/admin-theme'
 
 interface SLOMeasurement {
   timestamp: string
@@ -39,9 +40,9 @@ interface SLOStatus {
 }
 
 const STATUS_COLORS: Record<SLOStatus['status'], string> = {
-  healthy: 'text-green-600 bg-green-50 border-green-200',
-  warning: 'text-yellow-600 bg-yellow-50 border-yellow-200',
-  critical: 'text-red-600 bg-red-50 border-red-200',
+  healthy: 'border-gold-warm/50',
+  warning: 'border-purple-royal-light/50',
+  critical: 'border-destructive/50',
 }
 
 function formatPercent(value: number, decimals = 2) {
@@ -50,7 +51,7 @@ function formatPercent(value: number, decimals = 2) {
 
 function Sparkline({ points }: { points: number[] }) {
   if (!points.length) {
-    return <div className="text-xs text-gray-400">No data</div>
+    return <div className="text-xs text-text-tertiary">No data</div>
   }
 
   const min = Math.min(...points)
@@ -162,16 +163,16 @@ export default function SLOPage() {
             Reliability Center
           </div>
           <h1 className="text-3xl font-bold mt-2">Service Level Objectives</h1>
-          <p className="text-gray-600">Real-time health of critical platform commitments.</p>
+          <p className="text-text-secondary">Real-time health of critical platform commitments.</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="text-sm text-gray-500 flex items-center gap-1">
+          <div className="text-sm text-text-tertiary flex items-center gap-1">
             <Clock className="w-4 h-4" />
             Updated {lastUpdatedLabel}
           </div>
           <button
             onClick={fetchData}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-50"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-border-gold/20 hover:bg-background-tertiary"
             disabled={loading}
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -182,60 +183,60 @@ export default function SLOPage() {
 
       {/* Summary */}
       <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-          <div className="text-sm text-gray-500 flex items-center gap-2">
-            <Activity className="w-4 h-4 text-indigo-500" /> Overall Compliance
+        <div className="bg-background-secondary rounded-xl border border-border-gold/20 p-5">
+          <div className="text-sm text-text-tertiary flex items-center gap-2">
+            <Activity className="w-4 h-4 text-purple-royal" /> Overall Compliance
           </div>
-          <div className="mt-2 text-3xl font-bold text-indigo-600">
+          <div className="mt-2 text-3xl font-bold text-purple-royal">
             {formatPercent(summary.overall)}
           </div>
-          <p className="text-xs text-gray-500 mt-1">Across {slos.length} active SLOs</p>
+          <p className="text-xs text-text-tertiary mt-1">Across {slos.length} active SLOs</p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-          <div className="text-sm text-gray-500 flex items-center gap-2">
-            <Target className="w-4 h-4 text-green-500" /> Meeting Targets
+        <div className="bg-background-secondary rounded-xl border border-border-gold/20 p-5">
+          <div className="text-sm text-text-tertiary flex items-center gap-2">
+            <Target className="w-4 h-4 text-gold-warm" /> Meeting Targets
           </div>
-          <div className="mt-2 text-3xl font-bold text-green-600">{summary.healthy}</div>
-          <p className="text-xs text-gray-500 mt-1">{summary.warning} warning • {summary.critical} critical</p>
+          <div className="mt-2 text-3xl font-bold text-gold-warm">{summary.healthy}</div>
+          <p className="text-xs text-text-tertiary mt-1">{summary.warning} warning • {summary.critical} critical</p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-          <div className="text-sm text-gray-500 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-yellow-500" /> Error Budget Remaining
+        <div className="bg-background-secondary rounded-xl border border-border-gold/20 p-5">
+          <div className="text-sm text-text-tertiary flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-purple-royal-light" /> Error Budget Remaining
           </div>
-          <div className="mt-2 text-3xl font-bold text-amber-600">
+          <div className="mt-2 text-3xl font-bold text-purple-royal-light">
             {formatPercent(Math.max(summary.avgErrorBudget, 0))}
           </div>
-          <p className="text-xs text-gray-500 mt-1">Average remaining across all SLOs</p>
+          <p className="text-xs text-text-tertiary mt-1">Average remaining across all SLOs</p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-          <div className="text-sm text-gray-500 flex items-center gap-2">
-            <LineChart className="w-4 h-4 text-red-500" /> At Risk
+        <div className="bg-background-secondary rounded-xl border border-border-gold/20 p-5">
+          <div className="text-sm text-text-tertiary flex items-center gap-2">
+            <LineChart className="w-4 h-4 text-destructive" /> At Risk
           </div>
-          <div className="mt-2 text-3xl font-bold text-red-600">{summary.atRisk.length}</div>
-          <p className="text-xs text-gray-500 mt-1">Need action to avoid breach</p>
+          <div className="mt-2 text-3xl font-bold text-destructive">{summary.atRisk.length}</div>
+          <p className="text-xs text-text-tertiary mt-1">Need action to avoid breach</p>
         </div>
       </section>
 
       {!loading && slos.length === 0 && (
-        <div className="bg-white border border-dashed border-gray-300 rounded-xl p-6 text-center text-gray-500">
+        <div className="bg-background-secondary border border-dashed border-border-gold/20 rounded-xl p-6 text-center text-text-tertiary">
           No SLO measurements have been recorded yet.
         </div>
       )}
 
       {/* At Risk Table */}
-      <section className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+      <section className="bg-background-secondary rounded-xl border border-border-gold/20 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-yellow-500" /> At-Risk SLOs
+          <h2 className="text-xl font-semibold flex items-center gap-2 text-purple-royal">
+            <AlertTriangle className="w-5 h-5 text-purple-royal-light" /> At-Risk SLOs
           </h2>
-          <span className="text-sm text-gray-500">Sorted by lowest performance</span>
+          <span className="text-sm text-text-tertiary">Sorted by lowest performance</span>
         </div>
         {summary.atRisk.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">All SLOs are healthy 🎉</div>
+          <div className="text-center py-8 text-text-tertiary">All SLOs are healthy 🎉</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="text-left text-gray-500">
+              <thead className="text-left text-text-tertiary">
                 <tr>
                   <th className="py-2 font-medium">SLO</th>
                   <th className="py-2 font-medium">Current</th>
@@ -255,14 +256,14 @@ export default function SLOPage() {
                     <tr key={slo.slo.id}>
                       <td className="py-3">
                         <div className="font-medium">{slo.slo.name}</div>
-                        <div className="text-xs text-gray-500">{slo.slo.description}</div>
+                        <div className="text-xs text-text-tertiary">{slo.slo.description}</div>
                       </td>
-                      <td className="py-3 font-semibold text-gray-900">{formatPercent(slo.current)}</td>
-                      <td className="py-3 text-gray-600">{formatPercent(slo.target, 1)}</td>
-                      <td className="py-3 text-gray-600">{formatPercent(slo.errorBudgetRemaining, 3)}</td>
-                      <td className="py-3 text-gray-600 capitalize">{slo.slo.window}</td>
+                      <td className="py-3 font-semibold text-text-primary">{formatPercent(slo.current)}</td>
+                      <td className="py-3 text-text-secondary">{formatPercent(slo.target, 1)}</td>
+                      <td className="py-3 text-text-secondary">{formatPercent(slo.errorBudgetRemaining, 3)}</td>
+                      <td className="py-3 text-text-secondary capitalize">{slo.slo.window}</td>
                       <td className="py-3">
-                        <div className="flex items-center gap-1 text-xs text-gray-600">
+                        <div className="flex items-center gap-1 text-xs text-text-secondary">
                           {trend >= 0 ? (
                             <ArrowUpRight className="w-4 h-4 text-green-500" />
                           ) : (
@@ -283,39 +284,39 @@ export default function SLOPage() {
       {/* Detailed Cards */}
       <section className="grid gap-4 md:grid-cols-2">
         {slos.map((slo) => (
-          <div key={slo.slo.id} className={`rounded-xl border p-6 bg-white shadow-sm border-l-4 ${STATUS_COLORS[slo.status]}`}>
+          <div key={slo.slo.id} className={`rounded-xl border p-6 bg-background-secondary border-l-4 ${STATUS_COLORS[slo.status]}`}>
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-lg font-semibold">{slo.slo.name}</h3>
-                <p className="text-sm text-gray-600">{slo.slo.description}</p>
+                <h3 className="text-lg font-semibold text-text-primary">{slo.slo.name}</h3>
+                <p className="text-sm text-text-secondary">{slo.slo.description}</p>
               </div>
-              <span className="text-sm font-semibold capitalize">{slo.status}</span>
+              <span className={`text-sm font-semibold capitalize ${slo.status === 'healthy' ? 'text-gold-warm' : slo.status === 'warning' ? 'text-purple-royal-light' : 'text-destructive'}`}>{slo.status}</span>
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <div className="text-gray-500">Current</div>
-                <div className="text-2xl font-bold">{formatPercent(slo.current)}</div>
-                <p className="text-xs text-gray-500">Target {formatPercent(slo.target)}</p>
+                <div className="text-text-tertiary">Current</div>
+                <div className="text-2xl font-bold text-text-primary">{formatPercent(slo.current)}</div>
+                <p className="text-xs text-text-tertiary">Target {formatPercent(slo.target)}</p>
               </div>
               <div>
-                <div className="text-gray-500">Error Budget Remaining</div>
-                <div className="text-2xl font-bold">{formatPercent(Math.max(slo.errorBudgetRemaining, 0), 3)}</div>
-                <p className="text-xs text-gray-500">Budget {formatPercent(slo.errorBudget, 3)}</p>
+                <div className="text-text-tertiary">Error Budget Remaining</div>
+                <div className="text-2xl font-bold text-text-primary">{formatPercent(Math.max(slo.errorBudgetRemaining, 0), 3)}</div>
+                <p className="text-xs text-text-tertiary">Budget {formatPercent(slo.errorBudget, 3)}</p>
               </div>
             </div>
             <div className="mt-4">
-              <div className="flex justify-between text-xs text-gray-600 mb-1">
+              <div className="flex justify-between text-xs text-text-secondary mb-1">
                 <span>Performance</span>
                 <span>{formatPercent(slo.current)} / {formatPercent(slo.target)}</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-background-tertiary rounded-full h-2">
                 <div
                   className={`h-2 rounded-full ${
                     slo.status === 'healthy'
-                      ? 'bg-green-600'
+                      ? 'bg-gold-gradient'
                       : slo.status === 'warning'
-                      ? 'bg-yellow-500'
-                      : 'bg-red-600'
+                      ? 'bg-purple-royal-light'
+                      : 'bg-destructive'
                   }`}
                   style={{ width: `${Math.min(slo.current, 100)}%` }}
                 />
@@ -323,7 +324,7 @@ export default function SLOPage() {
             </div>
             <div className="mt-4">
               <Sparkline points={getMeasurementSeries(slo, 20)} />
-              <p className="text-xs text-gray-500 text-right">Last 20 measurements</p>
+              <p className="text-xs text-text-tertiary text-right">Last 20 measurements</p>
             </div>
           </div>
         ))}
@@ -331,3 +332,4 @@ export default function SLOPage() {
     </div>
   )
 }
+

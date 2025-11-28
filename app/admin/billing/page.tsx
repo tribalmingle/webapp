@@ -92,7 +92,7 @@ export default function BillingDashboard() {
     return (
       <div className="p-8">
         <h1 className="text-3xl font-bold mb-8">Billing Dashboard</h1>
-        <p className="text-red-500">Failed to load billing stats. Please try again.</p>
+        <p className="text-destructive">Failed to load billing stats. Please try again.</p>
       </div>
     )
   }
@@ -108,35 +108,35 @@ export default function BillingDashboard() {
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Billing Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-8 text-purple-royal">Billing Dashboard</h1>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="border rounded-lg p-6 bg-white dark:bg-neutral-900">
-          <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Monthly Recurring Revenue</h3>
-          <p className="text-3xl font-bold mt-2">${(stats.mrr / 100).toFixed(2)}</p>
+        <div className="border border-border-gold/20 rounded-lg p-6 bg-background-secondary">
+          <h3 className="text-sm font-medium text-text-tertiary">Monthly Recurring Revenue</h3>
+          <p className="text-3xl font-bold mt-2 text-gold-warm">${(stats.mrr / 100).toFixed(2)}</p>
         </div>
-        <div className="border rounded-lg p-6 bg-white dark:bg-neutral-900">
-          <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Active Subscriptions</h3>
-          <p className="text-3xl font-bold mt-2">{totalActive}</p>
-          <p className="text-xs text-neutral-500 mt-1">{stats.activeSubscriptions.free} free</p>
+        <div className="border border-border-gold/20 rounded-lg p-6 bg-background-secondary">
+          <h3 className="text-sm font-medium text-text-tertiary">Active Subscriptions</h3>
+          <p className="text-3xl font-bold mt-2 text-purple-royal">{totalActive}</p>
+          <p className="text-xs text-text-tertiary mt-1">{stats.activeSubscriptions.free} free</p>
         </div>
-        <div className="border rounded-lg p-6 bg-white dark:bg-neutral-900">
-          <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Trial Conversion Rate</h3>
-          <p className="text-3xl font-bold mt-2">{stats.trialConversions.conversionRate.toFixed(1)}%</p>
-          <p className="text-xs text-neutral-500 mt-1">{stats.trialConversions.converted}/{stats.trialConversions.total} converted</p>
+        <div className="border border-border-gold/20 rounded-lg p-6 bg-background-secondary">
+          <h3 className="text-sm font-medium text-text-tertiary">Trial Conversion Rate</h3>
+          <p className="text-3xl font-bold mt-2 text-purple-royal-light">{stats.trialConversions.conversionRate.toFixed(1)}%</p>
+          <p className="text-xs text-text-tertiary mt-1">{stats.trialConversions.converted}/{stats.trialConversions.total} converted</p>
         </div>
-        <div className="border rounded-lg p-6 bg-white dark:bg-neutral-900">
-          <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Churn Rate (30d)</h3>
-          <p className="text-3xl font-bold mt-2">{stats.churnRate.toFixed(1)}%</p>
+        <div className="border border-border-gold/20 rounded-lg p-6 bg-background-secondary">
+          <h3 className="text-sm font-medium text-text-tertiary">Churn Rate (30d)</h3>
+          <p className="text-3xl font-bold mt-2 text-destructive">{stats.churnRate.toFixed(1)}%</p>
         </div>
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* MRR Trend */}
-        <div className="border rounded-lg p-6 bg-white dark:bg-neutral-900">
-          <h2 className="text-xl font-semibold mb-4">MRR Trend (Last 6 Months)</h2>
+        <div className="border border-border-gold/20 rounded-lg p-6 bg-background-secondary">
+          <h2 className="text-xl font-semibold mb-4 text-purple-royal">MRR Trend (Last 6 Months)</h2>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={stats.revenueCohorts}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -150,8 +150,8 @@ export default function BillingDashboard() {
         </div>
 
         {/* Plan Distribution */}
-        <div className="border rounded-lg p-6 bg-white dark:bg-neutral-900">
-          <h2 className="text-xl font-semibold mb-4">Subscription Plan Distribution</h2>
+        <div className="border border-border-gold/20 rounded-lg p-6 bg-background-secondary">
+          <h2 className="text-xl font-semibold mb-4 text-purple-royal">Subscription Plan Distribution</h2>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -174,8 +174,8 @@ export default function BillingDashboard() {
         </div>
 
         {/* New Subscribers by Month */}
-        <div className="border rounded-lg p-6 bg-white dark:bg-neutral-900">
-          <h2 className="text-xl font-semibold mb-4">New Subscribers (Last 6 Months)</h2>
+        <div className="border border-border-gold/20 rounded-lg p-6 bg-background-secondary">
+          <h2 className="text-xl font-semibold mb-4 text-purple-royal">New Subscribers (Last 6 Months)</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={stats.revenueCohorts}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -189,11 +189,11 @@ export default function BillingDashboard() {
         </div>
 
         {/* Revenue Breakdown Table */}
-        <div className="border rounded-lg p-6 bg-white dark:bg-neutral-900">
-          <h2 className="text-xl font-semibold mb-4">Revenue by Plan</h2>
+        <div className="border border-border-gold/20 rounded-lg p-6 bg-background-secondary">
+          <h2 className="text-xl font-semibold mb-4 text-purple-royal">Revenue by Plan</h2>
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b">
+              <tr className="border-b border-border-gold/20">
                 <th className="text-left py-2">Plan</th>
                 <th className="text-right py-2">Subscribers</th>
                 <th className="text-right py-2">MRR</th>

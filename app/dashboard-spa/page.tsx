@@ -6,8 +6,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/contexts/auth-context'
 import { MemberAppShell } from '@/components/layouts/member-app-shell'
+import { PremiumProfileCard, StatCard } from '@/components/premium'
+import { StaggerGrid, SlideUp, FadeIn } from '@/components/motion'
 import { 
   Apple,
   Heart,
@@ -23,6 +27,7 @@ import {
   Search,
   X,
   ArrowLeft,
+  ArrowRight,
   Smile,
   Send,
   Check,
@@ -359,11 +364,11 @@ export default function UnifiedDashboard() {
   // Rotating messages for premium users
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
   const inspirationalMessages = [
-    { title: "Find love within your tribe", subtitle: "Your life partner is just a chat away - initiate that chat now and see miracles happen", icon: Heart },
-    { title: "Connections that matter", subtitle: "Build meaningful relationships with people who share your values and heritage", icon: Users },
-    { title: "Your perfect match awaits", subtitle: "Discover someone special who understands your culture and traditions", icon: Sparkles },
-    { title: "Love knows no distance", subtitle: "Connect with amazing people from your tribe around the world", icon: Star },
-    { title: "Start your love story today", subtitle: "Every great relationship starts with a simple hello - send yours now", icon: MessageCircle }
+    { title: "Find love within your tribe", subtitle: "Your life partner is just a chat away - initiate that chat now and see miracles happen" },
+    { title: "Connections that matter", subtitle: "Build meaningful relationships with people who share your values and heritage" },
+    { title: "Your perfect match awaits", subtitle: "Discover someone special who understands your culture and traditions" },
+    { title: "Love knows no distance", subtitle: "Connect with amazing people from your tribe around the world" },
+    { title: "Start your love story today", subtitle: "Every great relationship starts with a simple hello - send yours now" }
   ]
 
   const walletRegionHint = useMemo(() => computeWalletRegion(user), [user])
@@ -619,7 +624,14 @@ export default function UnifiedDashboard() {
       const data: BoostSummary = await response.json()
 
       if (!response.ok || !data.success) {
-        throw new Error((data as any)?.error || 'Unable to load boost auction data')
+        const errorMessage = (data as any)?.error || 'Unable to load boost auction data'
+        // Silently handle "Auction disabled for locale" - this is expected behavior
+        if (errorMessage === 'Auction disabled for locale') {
+          setBoostSummary(null)
+          setBoostLoading(false)
+          return
+        }
+        throw new Error(errorMessage)
       }
 
       setBoostSummary(data)
@@ -1706,16 +1718,7 @@ export default function UnifiedDashboard() {
     return 'partner'
   })()
 
-  // Handle header actions
-  const handleSearchClick = () => {
-    // Always stay on the current view and just reveal/scroll to the basic search bar
-    setTimeout(() => {
-      if (basicSearchRef.current) {
-        basicSearchRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
-    }, 100)
-  }
-
+  // Handle shell navigation
   const derivedNavKey: SpaNavKey =
     activeView === 'chat-conversation'
       ? 'chat'
@@ -1742,14 +1745,11 @@ export default function UnifiedDashboard() {
         description="Experimental concierge surface with boosts, referrals, and inbox."
         actions={
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" onClick={handleSearchClick}>
-              Quick search
-            </Button>
             <SpaViewSwitcher activeView={derivedNavKey} onNavigate={handleShellNavigate} />
           </div>
         }
       >
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pb-10 pt-2">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-10 pt-2">
         {globalMessage && (
           <div
             className={`mb-4 p-3 rounded-lg text-sm border flex items-start justify-between gap-3 ${
@@ -1773,123 +1773,123 @@ export default function UnifiedDashboard() {
         {/* HOME VIEW */}
         {activeView === 'home' && (
           <>
-            {/* Basic sticky search bar */}
-            <div
-              ref={basicSearchRef}
-              className="sticky top-20 md:top-24 z-10 mb-4 md:mb-6"
-            >
-              <div className="bg-card/95 backdrop-blur border border-border rounded-xl px-3 py-3 md:px-4 md:py-4 shadow-md flex flex-col md:flex-row md:items-center gap-3">
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs md:text-sm font-medium text-muted-foreground mb-1">Quick search</p>
-                  <p className="text-sm md:text-base font-semibold text-foreground truncate">
-                    I am looking for a
-                    {' '}
-                    <span className="text-accent">
-                      {basicMinAge || 30}-{basicMaxAge || 45}
-                    </span>
-                    {' '}year old {partnerLabel} from
-                    {' '}
-                    <span className="text-accent">
-                      {basicTribe !== 'i-dont-mind' ? `${basicTribe} tribe` : 'any tribe'}
-                    </span>
-                  </p>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-2 md:gap-3 sm:items-center">
-                  <div className="flex gap-2 w-full sm:w-auto">
-                    <Input
-                      type="number"
-                      min={30}
-                      max={79}
-                      value={basicMinAge}
-                      onChange={(e) => {
-                        const v = e.target.value ? parseInt(e.target.value, 10) : ''
-                        setBasicMinAge(v === '' ? '' : Math.min(Math.max(v, 30), 79))
-                      }}
-                      className="w-full sm:w-20 text-xs sm:text-sm h-8 sm:h-9"
-                      placeholder="Min"
-                    />
-                    <Input
-                      type="number"
-                      min={30}
-                      max={79}
-                      value={basicMaxAge}
-                      onChange={(e) => {
-                        const v = e.target.value ? parseInt(e.target.value, 10) : ''
-                        setBasicMaxAge(v === '' ? '' : Math.min(Math.max(v, 30), 79))
-                      }}
-                      className="w-full sm:w-20 text-xs sm:text-sm h-8 sm:h-9"
-                      placeholder="Max"
-                    />
-                  </div>
-                  <select
-                    value={basicTribe}
-                    onChange={(e) => setBasicTribe(e.target.value)}
-                    className="w-full sm:min-w-[140px] h-8 sm:h-9 px-2 rounded-lg border border-border bg-background text-xs sm:text-sm"
-                  >
-                    <option value="i-dont-mind">Any tribe</option>
-                    {(user?.countryOfOrigin
-                      ? getTribesForCountry(user.countryOfOrigin).map((tribe) => ({ tribe, country: user.countryOfOrigin }))
-                      : Object.keys(AFRICAN_COUNTRIES_WITH_TRIBES).flatMap((country) =>
-                          AFRICAN_COUNTRIES_WITH_TRIBES[country].map((tribe) => ({ tribe, country }))
-                        )
-                    ).map(({ tribe, country }) => (
-                      <option key={`${country}-${tribe}`} value={tribe}>{tribe}</option>
-                    ))}
-                  </select>
-                  <div className="flex gap-2 w-full sm:w-auto">
-                    <Button
-                      size="sm"
-                      className="flex-1 h-8 sm:h-9 text-xs sm:text-sm px-2"
-                      onClick={() => {
-                        setAdvancedFilters((prev) => ({
-                          ...prev,
-                          minAge: basicMinAge ? String(basicMinAge) : '',
-                          maxAge: basicMaxAge ? String(basicMaxAge) : '',
-                          tribe: basicTribe,
-                        }))
-                        fetchDiscoverUsers()
-                      }}
-                    >
-                      <Search className="w-4 h-4 mr-1" />
-                      Search
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="flex-1 h-8 sm:h-9 text-xs sm:text-sm px-2"
-                      onClick={() => setShowAdvancedSearch(true)}
-                    >
-                      Advanced
-                    </Button>
-                  </div>
+            {/* Premium Stats Grid with Ambient Glow (Mobile First) */}
+            <SlideUp>
+              <div className="relative subsection-spacing ambient-glow-purple">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                  {[
+                    { icon: Heart, label: 'Likes', value: dashboardStats.likes, trend: 'Total likes', color: 'from-red-500/20 to-pink-500/20' },
+                    { icon: MessageCircle, label: 'Chats', value: dashboardStats.messages, trend: 'Active', color: 'from-blue-500/20 to-cyan-500/20' },
+                    { icon: Star, label: 'Views', value: dashboardStats.views, trend: 'This week', color: 'from-yellow-500/20 to-orange-500/20' },
+                    { icon: Zap, label: 'Matches', value: dashboardStats.matches, trend: 'Mutual', color: 'from-purple-royal/20 to-gold-warm/20' }
+                  ].map((stat, index) => {
+                    const IconComponent = stat.icon
+                    return (
+                      <FadeIn key={stat.label} delay={0.1 * (index + 1)}>
+                        <div className="group relative">
+                          {/* Glow on interaction */}
+                          <div className={`absolute -inset-1 bg-gradient-to-br ${stat.color} rounded-2xl opacity-0 group-hover:opacity-100 group-active:opacity-100 blur-xl transition-all duration-500`} />
+                          
+                          {/* Card */}
+                          <div className="relative card-premium rounded-xl md:rounded-2xl p-3 md:p-5 lg:p-6 group-hover:border-gold-warm/30 group-active:border-gold-warm/30 transition-all duration-300">
+                            {/* Icon */}
+                            <div className={`w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-gradient-to-br ${stat.color} rounded-lg md:rounded-xl flex items-center justify-center mb-2 md:mb-3 lg:mb-4 group-hover:scale-110 group-active:scale-110 transition-transform duration-300`}>
+                              <IconComponent className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-gold-warm" />
+                            </div>
+                            
+                            {/* Value */}
+                            <div className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-text-primary mb-1">
+                              {stat.value}
+                            </div>
+                            
+                            {/* Label */}
+                            <div className="text-xs md:text-sm text-text-secondary font-medium mb-0.5 md:mb-1">
+                              {stat.label}
+                            </div>
+                            
+                            {/* Trend */}
+                            <div className="text-[10px] md:text-xs text-text-tertiary">
+                              {stat.trend}
+                            </div>
+                          </div>
+                        </div>
+                      </FadeIn>
+                    )
+                  })}
                 </div>
               </div>
-            </div>
-            {/* Welcome Section - Mobile Optimized */}
-            <div className="mb-4 md:mb-8">
-              <h1 className="text-2xl md:text-3xl font-bold mb-1 md:mb-2">Welcome back, {userName}!</h1>
-              <p className="text-sm md:text-base text-muted-foreground">Find your perfect match today</p>
-            </div>
+            </SlideUp>
 
-            {/* Stats Grid - Mobile Optimized */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-4 md:mb-8">
-              {[
-                { icon: Heart, label: 'Likes', helper: 'Total people you have liked and who liked you', value: dashboardStats.likes.toString(), color: 'text-red-500' },
-                { icon: MessageCircle, label: 'Messages', helper: 'Conversations you have started or replied to', value: dashboardStats.messages.toString(), color: 'text-blue-500' },
-                { icon: Star, label: 'Profile Views', helper: 'How many times people have viewed your profile', value: dashboardStats.views.toString(), color: 'text-yellow-500' },
-                { icon: Zap, label: 'Matches', helper: 'Mutual likes between you and others', value: dashboardStats.matches.toString(), color: 'text-purple-500' }
-              ].map(stat => {
-                const Icon = stat.icon
-                return (
-                  <div key={stat.label} className="bg-card border border-border rounded-xl p-3 md:p-4 text-center shadow-sm active:scale-95 transition-transform duration-150">
-                    <Icon className={`w-5 h-5 md:w-6 md:h-6 mx-auto mb-1 md:mb-2 ${stat.color}`} />
-                    <div className="text-xl md:text-2xl font-bold mb-0.5 md:mb-1">{stat.value}</div>
-                    <div className="text-xs md:text-sm text-muted-foreground">{stat.label}</div>
-                    <div className="hidden md:block text-[11px] text-muted-foreground/80 mt-1 leading-tight">{stat.helper}</div>
+            {/* Premium Match Carousel (Mobile First) */}
+            {discoverUsers.length > 0 && (
+              <section className="section-spacing ambient-glow-gold">
+                <FadeIn delay={0.2}>
+                  <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-6 md:mb-8 gap-4">
+                    <div className="flex-1">
+                      <Badge variant="gold" className="mb-3 inline-flex items-center gap-1.5 touch-target">
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span className="text-xs font-medium tracking-wide">Daily Spotlight</span>
+                      </Badge>
+                      <h2 className="text-2xl md:text-3xl lg:text-4xl font-display text-text-primary mb-2">
+                        Handpicked Matches
+                      </h2>
+                      <p className="text-sm md:text-base lg:text-lg text-text-secondary max-w-2xl">
+                        Curated by AI based on your preferences and values
+                      </p>
+                    </div>
+                    
+                    <Button variant="ghost" className="group touch-target hidden md:flex" onClick={() => fetchDiscoverUsers()}>
+                      Refresh
+                      <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </Button>
                   </div>
-                )
-              })}
-            </div>
+                </FadeIn>
+
+                {/* Carousel with scroll hints (Mobile optimized) */}
+                <div className="relative">
+                  {/* Scroll hints for desktop */}
+                  <div className="scroll-hint-left hidden md:block" />
+                  <div className="scroll-hint-right hidden md:block" />
+                  
+                  {/* Horizontal scroll carousel */}
+                  <div className="flex gap-4 md:gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+                    {discoverUsers.slice(0, 5).map((match, index) => (
+                      <FadeIn key={match._id} delay={0.3 + index * 0.1}>
+                        <div className="shrink-0 w-[min(85vw,320px)] md:w-80 snap-start">
+                          <PremiumProfileCard
+                            profile={{
+                              name: match.name,
+                              age: match.age,
+                              tribe: match.tribe,
+                              location: `${match.city}, ${match.country}`,
+                              bio: match.bio || 'No bio yet',
+                              photo: match.profilePhotos?.[0] || '/placeholder.svg',
+                              verified: match.isVerified || false,
+                              interests: match.interests || []
+                            }}
+                            matchScore={Math.floor(Math.random() * 20) + 80}
+                            onLike={() => console.log('Liked', match.name)}
+                            onPass={() => console.log('Passed', match.name)}
+                          />
+                        </div>
+                      </FadeIn>
+                    ))}
+                  </div>
+                  
+                  {/* Scroll indicators for mobile */}
+                  <div className="flex justify-center gap-1.5 mt-4 md:hidden">
+                    {discoverUsers.slice(0, 5).map((_, index) => (
+                      <div 
+                        key={index} 
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          index === 0 ? 'bg-gold-warm w-6' : 'bg-gold-warm/30'
+                        }`} 
+                      />
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
 
             {/* Boost auction member experience */}
             <div className="mb-6 md:mb-10">
@@ -1901,215 +1901,393 @@ export default function UnifiedDashboard() {
               {renderReferralSection()}
             </div>
 
-            {/* Premium/Inspirational Banner - Mobile Optimized */}
-            <div className="grid gap-3 md:gap-4 mb-4 md:mb-6">
-            {/* Testimonials for free users only */}
-            {(!user.subscriptionPlan || user.subscriptionPlan === 'free') && testimonials.length > 0 && (
-              <div className="mb-4 md:mb-8">
-                <h2 className="text-xl md:text-2xl font-bold mb-2">Stories from our Tribal community</h2>
-                <p className="text-xs md:text-sm text-muted-foreground mb-4">See how other Africans are building real connections with people who respect their tribe, faith and values.</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                  {testimonials.map((t) => (
-                    <div key={t._id} className="bg-card border border-accent/30 rounded-xl p-4 shadow-sm">
-                      <div className="flex items-center gap-3 mb-3">
-                        {t.profilePhoto ? (
-                          <img src={t.profilePhoto} alt={t.name} className="w-10 h-10 rounded-full object-cover" />
-                        ) : (
-                          <div className="w-10 h-10 rounded-full bg-linear-to-br from-primary to-accent flex items-center justify-center text-white font-bold">
-                            {t.name?.charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                        <div>
-                          <div className="font-semibold text-sm">{t.name}{t.age ? `, ${t.age}` : ''}</div>
-                          <div className="text-xs text-muted-foreground flex items-center gap-1">
-                            {t.city || t.country
-                              ? [t.city, t.country].filter(Boolean).join(', ')
-                              : t.tribe
-                              ? `${t.tribe} tribe`
-                              : 'Tribal Mingle member'}
-                            {t.tribe && (
-                              <span className="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded-full bg-accent/10 text-accent ml-1">
-                                {t.tribe}
-                              </span>
-                            )}
+            {/* Who Likes You - Premium Section (Mobile First) */}
+            {peopleWhoLikedMe.length > 0 && (
+              <section className="section-spacing">
+                <FadeIn delay={0.5}>
+                  <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-6 md:mb-8 gap-4">
+                    <div className="flex-1">
+                      <Badge variant="purple" className="mb-3 inline-flex items-center gap-1.5 touch-target">
+                        <Crown className="w-3.5 h-3.5" />
+                        <span className="text-xs font-medium tracking-wide">Who Likes You</span>
+                      </Badge>
+                      <h2 className="text-2xl md:text-3xl lg:text-4xl font-display text-text-primary mb-2">
+                        See Who's Interested
+                      </h2>
+                      <p className="text-sm md:text-base text-text-secondary">
+                        {peopleWhoLikedMe.length} {peopleWhoLikedMe.length === 1 ? 'person has' : 'people have'} liked your profile
+                      </p>
+                    </div>
+                    
+                    <Button variant="secondary" className="group touch-target w-full md:w-auto" onClick={() => setActiveView('likes')}>
+                      View All
+                      <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </div>
+                </FadeIn>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                  {peopleWhoLikedMe.slice(0, 2).map((liker, index) => (
+                    <FadeIn key={liker._id} delay={0.6 + index * 0.1}>
+                      <div className="group relative">
+                        {/* Glow on interaction */}
+                        <div className="absolute -inset-1 bg-gradient-to-br from-purple-royal/20 to-gold-warm/20 rounded-2xl opacity-0 group-hover:opacity-100 group-active:opacity-100 blur-xl transition-all duration-500" />
+                        
+                        <div 
+                          className="relative glass-effect rounded-2xl p-4 md:p-6 cursor-pointer card-interactive border border-gold-warm/10 group-hover:border-gold-warm/30 group-active:border-gold-warm/30 transition-all"
+                          onClick={() => setActiveView('likes')}
+                        >
+                          <div className="flex items-center gap-3 md:gap-4">
+                            <div className="relative shrink-0">
+                              <div className="w-14 h-14 md:w-20 md:h-20 rounded-xl md:rounded-2xl overflow-hidden">
+                                <img 
+                                  src={liker.profilePhoto || "/placeholder.svg"} 
+                                  alt={liker.name}
+                                  className="w-full h-full object-cover group-hover:scale-110 group-active:scale-110 transition-transform duration-500"
+                                />
+                              </div>
+                              <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-gradient-to-br from-purple-royal to-gold-warm flex items-center justify-center border-2 border-background-primary shadow-glow-gold">
+                                <Heart className="w-3.5 h-3.5 text-white" fill="currentColor" />
+                              </div>
+                            </div>
+                            
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-2">
+                                <h3 className="text-base md:text-lg text-text-primary font-semibold truncate">
+                                  {liker.name}, {liker.age}
+                                </h3>
+                              </div>
+                              <Badge variant="purple" className="mb-2 text-xs">
+                                {liker.tribe}
+                              </Badge>
+                              <p className="text-xs md:text-sm text-text-tertiary truncate">
+                                <MapPin className="w-3 h-3 inline mr-1" />
+                                {liker.city}
+                              </p>
+                            </div>
+                            
+                            <Button variant="primary" size="sm" className="shrink-0 touch-target">
+                              <span className="hidden md:inline">View</span>
+                              <ArrowRight className="w-4 h-4 md:ml-1" />
+                            </Button>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 mb-2">
-                        {Array.from({ length: 5 }).map((_, idx) => (
-                          <Star
-                            key={idx}
-                            className={`w-4 h-4 ${idx < t.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`}
-                          />
-                        ))}
-                      </div>
-                      <p className="text-sm text-muted-foreground line-clamp-4">{t.content}</p>
-                    </div>
+                    </FadeIn>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
-              {user?.subscriptionPlan && user.subscriptionPlan !== 'free' ? (
-                <div className="bg-linear-to-r from-purple-500 to-pink-500 text-white rounded-xl p-4 md:p-6 shadow-lg">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex-1">
-                      <h3 className="text-base md:text-xl font-bold mb-1 md:mb-2">{inspirationalMessages[currentMessageIndex].title}</h3>
-                      <p className="text-xs md:text-sm opacity-90">{inspirationalMessages[currentMessageIndex].subtitle}</p>
-                    </div>
-                    {(() => {
-                      const Icon = inspirationalMessages[currentMessageIndex].icon
-                      return <Icon className="w-8 h-8 md:w-12 md:h-12 shrink-0" />
-                    })()}
-                  </div>
-                </div>
-              ) : (
-                <button 
-                  onClick={() => setActiveView('subscription')}
-                  className="bg-linear-to-r from-purple-500 to-pink-500 text-white rounded-xl p-4 md:p-6 text-left hover:shadow-lg transition hover:scale-[1.02] active:scale-[0.98] shadow-md"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex-1">
-                      <h3 className="text-base md:text-xl font-bold mb-1 md:mb-2">Upgrade to Premium</h3>
-                      <p className="text-xs md:text-sm opacity-90">Get unlimited likes and advanced features</p>
-                    </div>
-                    <Crown className="w-8 h-8 md:w-12 md:h-12 shrink-0" />
-                  </div>
-                </button>
-              )}
-            </div>
 
-            {/* Today's Matches Section - Mobile Optimized */}
-            <div className="mb-6 md:mb-8">
-              <div className="flex items-center justify-between mb-3 md:mb-4">
-                <div>
-                  <h2 className="text-xl md:text-2xl font-bold">Today's Matches for You</h2>
-                  <p className="text-xs md:text-sm text-muted-foreground">Based on your tribe, interests, and preferences</p>
-                </div>
-              </div>
-              {todayMatches.length === 0 ? (
-                <div className="text-center py-8 md:py-12 bg-card border border-border rounded-xl">
-                  <Heart className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 text-muted-foreground opacity-50" />
-                  <p className="text-lg md:text-xl font-semibold mb-1 md:mb-2">No matches yet</p>
-                  <p className="text-sm md:text-base text-muted-foreground px-4">Complete your profile to get better matches!</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-                  {todayMatches.map(person => (
-                    <div key={person._id} className="bg-card border border-border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
-                      <div 
-                        className="w-full h-56 sm:h-64 bg-linear-to-br from-primary to-accent relative cursor-pointer active:scale-[0.98] transition-transform"
-                        onClick={() => {
-                          trackProfileView(person.email)
-                          setSelectedProfile(person)
-                          setActiveView('profile-view')
-                        }}
-                      >
-                        {person.profilePhoto ? (
-                          <img 
-                            src={person.profilePhoto} 
-                            alt={person.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-white text-5xl md:text-6xl font-bold">
-                            {person.name.charAt(0).toUpperCase()}
+            {/* Testimonials - Premium Social Proof (Mobile First) */}
+            {(!user.subscriptionPlan || user.subscriptionPlan === 'free') && testimonials.length > 0 && (
+              <section className="section-spacing">
+                <FadeIn delay={0.7}>
+                  <div className="mb-6 md:mb-8">
+                    <Badge variant="gold" className="mb-3 inline-flex items-center gap-1.5 touch-target">
+                      <Star className="w-3.5 h-3.5" />
+                      <span className="text-xs font-medium tracking-wide">Success Stories</span>
+                    </Badge>
+                    <h2 className="text-2xl md:text-3xl lg:text-4xl font-display text-text-primary mb-2">
+                      Stories from our Tribal Community
+                    </h2>
+                    <p className="text-sm md:text-base text-text-secondary max-w-3xl">
+                      See how other Africans are building real connections with people who respect their tribe, faith and values.
+                    </p>
+                  </div>
+                </FadeIn>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                  {testimonials.map((t, index) => (
+                    <FadeIn key={t._id} delay={0.8 + index * 0.1}>
+                      <div className="group relative">
+                        {/* Glow effect */}
+                        <div className="absolute -inset-1 bg-gradient-to-br from-gold-warm/10 to-purple-royal/10 rounded-2xl opacity-0 group-hover:opacity-100 group-active:opacity-100 blur-xl transition-all duration-500" />
+                        
+                        <div className="relative card-premium rounded-xl md:rounded-2xl p-4 md:p-6">
+                          {/* Header with photo and name */}
+                          <div className="flex items-center gap-3 mb-3 md:mb-4">
+                            {t.profilePhoto ? (
+                              <div className="w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full overflow-hidden ring-2 ring-gold-warm/20">
+                                <img src={t.profilePhoto} alt={t.name} className="w-full h-full object-cover" />
+                              </div>
+                            ) : (
+                              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-purple-royal to-gold-warm flex items-center justify-center ring-2 ring-gold-warm/20">
+                                <span className="text-white font-bold text-lg">
+                                  {t.name?.charAt(0).toUpperCase()}
+                                </span>
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-sm md:text-base font-semibold text-text-primary truncate">{t.name}</h3>
+                              <Badge variant="purple" className="text-xs mt-1">{t.tribe}</Badge>
+                            </div>
                           </div>
-                        )}
-                        <div className="absolute top-3 right-3 bg-white rounded-full px-3 py-1.5 shadow-lg">
-                          <span className="text-xs md:text-sm font-bold text-primary">{person.matchPercentage}% Match</span>
-                        </div>
-                      </div>
-                      <div className="p-3 md:p-4">
-                        <h3 className="text-base md:text-lg font-bold">{person.name}, {person.age}</h3>
-                        <p className="text-xs md:text-sm text-muted-foreground">
-                          {person.city && person.country ? `${person.city}, ${person.country}` : 'Location not specified'}
-                        </p>
-                        {person.tribe && (
-                          <p className="text-xs md:text-sm text-purple-500 mt-1 font-semibold">{person.tribe}</p>
-                        )}
-                        {person.interests && person.interests.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {person.interests.slice(0, 3).map((interest: string, idx: number) => (
-                              <span key={idx} className="text-xs px-2 py-1 bg-muted rounded-full">
-                                {interest}
-                              </span>
+                          
+                          {/* Star rating */}
+                          <div className="flex gap-0.5 mb-3">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`w-4 h-4 ${i < t.rating ? 'fill-gold-warm text-gold-warm' : 'text-text-tertiary'}`}
+                              />
                             ))}
                           </div>
-                        )}
-                        <div className="flex gap-2 mt-3 md:mt-4">
-                          <Button 
-                            className={`flex-1 min-h-[44px] md:min-h-[40px] active:scale-95 transition-transform text-xs md:text-sm ${isUserLiked(person.email) ? 'bg-gray-400 cursor-default' : 'bg-purple-600 hover:bg-purple-700'}`}
-                            onClick={async () => {
-                              if (isUserLiked(person.email)) return
-                              
-                              try {
-                                const response = await fetch('/api/likes/like', {
-                                  method: 'POST',
-                                  headers: { 
-                                    'Content-Type': 'application/json'
-                                  },
-                                  body: JSON.stringify({ 
-                                    userId: person.email
-                                  })
-                                })
-                                const data = await response.json()
-                                if (data.success) {
-                                  setGlobalMessage({
-                                    type: 'success',
-                                    text: 'User liked!'
-                                  })
-                                  fetchTodayMatches()
-                                  fetchLikesData()
-                                } else {
-                                  setGlobalMessage({
-                                    type: 'error',
-                                    text: data.message || 'Failed to like user'
-                                  })
-                                }
-                              } catch (error) {
-                                console.error('Error liking user:', error)
-                                setGlobalMessage({
-                                  type: 'error',
-                                  text: 'An error occurred while liking this user'
-                                })
-                              }
-                            }}
-                            disabled={isUserLiked(person.email)}
-                          >
-                            <Heart className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
-                            {isUserLiked(person.email) ? 'Liked' : 'Like'}
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            className="flex-1 min-h-[44px] md:min-h-[40px] active:scale-95 transition-transform text-xs md:text-sm"
+                          
+                          {/* Testimonial text */}
+                          <p className="text-xs md:text-sm text-text-secondary leading-relaxed line-clamp-4">
+                            {t.content}
+                          </p>
+                        </div>
+                      </div>
+                    </FadeIn>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Premium Inspirational Banner - Mobile First */}
+            {user.subscriptionPlan && user.subscriptionPlan !== 'free' && (
+              <FadeIn delay={0.9}>
+                <div className="section-spacing px-4 md:px-0">
+                  <div className="relative overflow-hidden rounded-3xl">
+                    {/* Animated gradient background */}
+                    <div className="absolute inset-0 premium-gradient-1" />
+                    
+                    {/* Shimmer overlay */}
+                    <div className="absolute inset-0 shimmer-effect opacity-50" />
+                    
+                    <div className="relative text-center py-12 md:py-16 px-6">
+                      <Crown className="w-12 h-12 md:w-16 md:h-16 text-gold-warm mx-auto mb-4 md:mb-6" />
+                      <h3 className="text-xl md:text-2xl lg:text-3xl font-display text-white mb-3 md:mb-4">
+                        {inspirationalMessages[Math.floor(Math.random() * inspirationalMessages.length)].title}
+                      </h3>
+                      <p className="text-sm md:text-base text-white/80 max-w-2xl mx-auto">
+                        You're a premium member — enjoy unlimited access to all features
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </FadeIn>
+            )}
+
+            {/* Free User CTA - Mobile First */}
+            {(!user.subscriptionPlan || user.subscriptionPlan === 'free') && (
+              <FadeIn delay={0.9}>
+                <div className="section-spacing px-4 md:px-0">
+                  <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-royal via-purple-royal-dark to-gold-warm p-1">
+                    <div className="bg-background-primary rounded-3xl p-6 md:p-10 text-center">
+                      <div className="inline-flex items-center gap-2 bg-gold-warm/10 border border-gold-warm/30 rounded-full px-4 py-2 mb-6">
+                        <Sparkles className="w-4 h-4 text-gold-warm" />
+                        <span className="text-sm text-gold-warm font-medium">Limited Time Offer</span>
+                      </div>
+                      
+                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-display gradient-text-royal mb-4">
+                        Unlock Your Full Potential
+                      </h3>
+                      
+                      <p className="text-base md:text-lg text-text-secondary max-w-2xl mx-auto mb-8">
+                        Get unlimited likes, see who viewed you, and boost your profile visibility
+                      </p>
+                      
+                      <Button 
+                        size="lg" 
+                        className="btn-premium touch-target text-base md:text-lg"
+                        onClick={() => setActiveView('subscription')}
+                      >
+                        <Crown className="w-5 h-5 mr-2" />
+                        Upgrade to Premium
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </FadeIn>
+            )}
+
+            {/* Today's Matches Section - Premium Mobile First */}
+            <section className="section-spacing px-4 md:px-0">
+              <FadeIn delay={1.0}>
+                <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-6 md:mb-8 gap-4">
+                  <div className="flex-1">
+                    <Badge variant="purple" className="mb-3 inline-flex items-center gap-1.5 touch-target">
+                      <Heart className="w-3.5 h-3.5" />
+                      <span className="text-xs font-medium tracking-wide">Today's Picks</span>
+                    </Badge>
+                    <h2 className="text-2xl md:text-3xl lg:text-4xl font-display text-text-primary mb-2">
+                      Matches for You
+                    </h2>
+                    <p className="text-sm md:text-base text-text-secondary">
+                      Based on your tribe, interests, and preferences
+                    </p>
+                  </div>
+                </div>
+              </FadeIn>
+
+              {todayMatches.length === 0 ? (
+                <FadeIn delay={1.1}>
+                  <div className="text-center py-12 md:py-16 card-premium rounded-3xl">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-purple-royal/20 to-gold-warm/20 flex items-center justify-center mx-auto mb-6">
+                      <Heart className="w-10 h-10 md:w-12 md:h-12 text-gold-warm opacity-50" />
+                    </div>
+                    <h3 className="text-xl md:text-2xl font-display text-text-primary mb-2">No matches yet</h3>
+                    <p className="text-sm md:text-base text-text-secondary px-4 mb-6">
+                      Complete your profile to get better matches!
+                    </p>
+                    <Button 
+                      variant="secondary" 
+                      onClick={() => setActiveView('profile')}
+                      className="touch-target"
+                    >
+                      Complete Profile
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
+                  </div>
+                </FadeIn>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                  {todayMatches.map((person, index) => (
+                    <FadeIn key={person._id} delay={1.2 + index * 0.05}>
+                      <div className="group relative">
+                        {/* Glow effect */}
+                        <div className="absolute -inset-1 bg-linear-to-br from-purple-royal/20 to-gold-warm/20 rounded-3xl opacity-0 group-hover:opacity-100 group-active:opacity-100 blur-xl transition-all duration-500" />
+                        
+                        <div className="relative card-premium rounded-3xl overflow-hidden">
+                          {/* Image Section */}
+                          <div 
+                            className="relative h-64 md:h-80 cursor-pointer overflow-hidden"
                             onClick={() => {
                               trackProfileView(person.email)
                               setSelectedProfile(person)
                               setActiveView('profile-view')
                             }}
                           >
-                            <Eye className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
-                            View
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            className="flex-1 min-h-[44px] md:min-h-[40px] active:scale-95 transition-transform text-xs md:text-sm"
-                            onClick={() => {
-                              setActiveView('chat-conversation')
-                              setSelectedChatUser(person.email)
-                              fetchChatUser(person.email)
-                            }}
-                          >
-                            <MessageCircle className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
-                            Chat
-                          </Button>
+                            {person.profilePhoto ? (
+                              <img 
+                                src={person.profilePhoto} 
+                                alt={person.name}
+                                className="w-full h-full object-cover group-hover:scale-110 group-active:scale-110 transition-transform duration-700"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-linear-to-br from-purple-royal to-gold-warm flex items-center justify-center">
+                                <span className="text-white text-6xl md:text-7xl font-bold opacity-50">
+                                  {person.name.charAt(0).toUpperCase()}
+                                </span>
+                              </div>
+                            )}
+                            
+                            {/* Gradient overlay */}
+                            <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+                            
+                            {/* Match percentage badge */}
+                            <div className="absolute top-4 right-4 bg-linear-to-br from-gold-warm to-gold-warm-dark px-4 py-2 rounded-full shadow-glow-gold">
+                              <span className="text-sm md:text-base font-bold text-background-primary">
+                                {person.matchPercentage}% Match
+                              </span>
+                            </div>
+                          </div>
+                          
+                          {/* Content Section */}
+                          <div className="p-4 md:p-6">
+                            <h3 className="text-xl md:text-2xl font-display text-text-primary mb-2">
+                              {person.name}, {person.age}
+                            </h3>
+                            
+                            <div className="flex flex-wrap items-center gap-2 mb-4">
+                              {person.tribe && (
+                                <Badge variant="purple" className="text-xs">
+                                  {person.tribe}
+                                </Badge>
+                              )}
+                              {person.city && person.country && (
+                                <span className="text-sm text-text-tertiary flex items-center gap-1">
+                                  <MapPin className="w-3.5 h-3.5" />
+                                  {person.city}, {person.country}
+                                </span>
+                              )}
+                            </div>
+                            
+                            {/* Interests */}
+                            {person.interests && person.interests.length > 0 && (
+                              <div className="flex flex-wrap gap-2 mb-4">
+                                {person.interests.slice(0, 3).map((interest: string, idx: number) => (
+                                  <span 
+                                    key={idx} 
+                                    className="text-xs px-3 py-1.5 rounded-full bg-background-tertiary text-text-secondary border border-border-gold/20"
+                                  >
+                                    {interest}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            
+                            {/* Action Buttons */}
+                            <div className="grid grid-cols-3 gap-2">
+                              <Button 
+                                className={`touch-target transition-all ${
+                                  isUserLiked(person.email) 
+                                    ? 'bg-background-tertiary text-text-tertiary cursor-default' 
+                                    : 'bg-linear-to-r from-purple-royal to-purple-royal-dark hover:shadow-glow-purple'
+                                }`}
+                                onClick={async () => {
+                                  if (isUserLiked(person.email)) return
+                                  try {
+                                    const response = await fetch('/api/likes/like', {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ userId: person.email })
+                                    })
+                                    const data = await response.json()
+                                    if (data.success) {
+                                      setGlobalMessage({ type: 'success', text: 'User liked!' })
+                                      fetchTodayMatches()
+                                      fetchLikesData()
+                                    } else {
+                                      setGlobalMessage({ type: 'error', text: data.message || 'Failed to like user' })
+                                    }
+                                  } catch (error) {
+                                    setGlobalMessage({ type: 'error', text: 'An error occurred' })
+                                  }
+                                }}
+                                disabled={isUserLiked(person.email)}
+                              >
+                                <Heart className="w-4 h-4 md:mr-1" fill={isUserLiked(person.email) ? "currentColor" : "none"} />
+                                <span className="hidden md:inline">{isUserLiked(person.email) ? 'Liked' : 'Like'}</span>
+                              </Button>
+                              
+                              <Button 
+                                variant="outline" 
+                                className="touch-target"
+                                onClick={() => {
+                                  trackProfileView(person.email)
+                                  setSelectedProfile(person)
+                                  setActiveView('profile-view')
+                                }}
+                              >
+                                <Eye className="w-4 h-4 md:mr-1" />
+                                <span className="hidden md:inline">View</span>
+                              </Button>
+                              
+                              <Button 
+                                variant="outline" 
+                                className="touch-target"
+                                onClick={() => {
+                                  setActiveView('chat-conversation')
+                                  setSelectedChatUser(person.email)
+                                  fetchChatUser(person.email)
+                                }}
+                              >
+                                <MessageCircle className="w-4 h-4 md:mr-1" />
+                                <span className="hidden md:inline">Chat</span>
+                              </Button>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </FadeIn>
                   ))}
                 </div>
               )}
-            </div>
+            </section>
 
             {/* Discover More People Section - Mobile Optimized */}
             <div>

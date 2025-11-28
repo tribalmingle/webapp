@@ -66,11 +66,20 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
       setReady(true)
     }
     const handleChange = () => setFlags(ldClient.allFlags())
+    const handleError = (error: Error) => {
+      // Suppress LaunchDarkly network errors in development
+      if (process.env.NODE_ENV === 'development') {
+        return
+      }
+      console.error('[LaunchDarkly] error:', error)
+    }
     ldClient.on("ready", handleReady)
     ldClient.on("change", handleChange)
+    ldClient.on("error", handleError)
     return () => {
       ldClient.off("ready", handleReady)
       ldClient.off("change", handleChange)
+      ldClient.off("error", handleError)
       ldClient.close()
       setClient(null)
     }

@@ -86,10 +86,10 @@ export function PrivacyDashboard({
       </div>
 
       {/* Profile Visibility */}
-      <section className="bg-white rounded-lg border border-gray-200 p-6">
+      <section className="bg-background-secondary rounded-lg border border-border-gold/20 p-6">
         <div className="flex items-center gap-3 mb-4">
-          <Eye className="text-indigo-600" size={24} />
-          <h2 className="text-xl font-semibold">Profile Visibility</h2>
+          <Eye className="text-purple-royal" size={24} />
+          <h2 className="text-xl font-semibold text-purple-royal">Profile Visibility</h2>
         </div>
 
         <div className="space-y-4">
@@ -170,10 +170,10 @@ export function PrivacyDashboard({
       </section>
 
       {/* Data Sharing */}
-      <section className="bg-white rounded-lg border border-gray-200 p-6">
+      <section className="bg-background-secondary rounded-lg border border-border-gold/20 p-6">
         <div className="flex items-center gap-3 mb-4">
-          <Shield className="text-indigo-600" size={24} />
-          <h2 className="text-xl font-semibold">Data Sharing</h2>
+          <Shield className="text-purple-royal" size={24} />
+          <h2 className="text-xl font-semibold text-purple-royal">Data Sharing</h2>
         </div>
 
         <div className="space-y-4">
@@ -241,20 +241,20 @@ export function PrivacyDashboard({
         <button
           onClick={handleSaveSettings}
           disabled={isLoading}
-          className="mt-6 w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium disabled:opacity-50"
+          className="mt-6 w-full px-6 py-3 bg-purple-royal text-white rounded-lg hover:bg-purple-royal-dark transition-colors font-medium disabled:opacity-50"
         >
           {isLoading ? 'Saving...' : 'Save Privacy Settings'}
         </button>
       </section>
 
       {/* Data Export */}
-      <section className="bg-white rounded-lg border border-gray-200 p-6">
+      <section className="bg-background-secondary rounded-lg border border-border-gold/20 p-6">
         <div className="flex items-center gap-3 mb-4">
-          <Download className="text-indigo-600" size={24} />
-          <h2 className="text-xl font-semibold">Download Your Data</h2>
+          <Download className="text-purple-royal" size={24} />
+          <h2 className="text-xl font-semibold text-purple-royal">Download Your Data</h2>
         </div>
 
-        <p className="text-gray-600 mb-4">
+        <p className="text-text-secondary mb-4">
           Request a copy of all your personal data stored on TribalMingle.
           You'll receive an email with a download link within 24 hours.
         </p>
@@ -262,22 +262,22 @@ export function PrivacyDashboard({
         <button
           onClick={handleExportData}
           disabled={isLoading}
-          className="px-6 py-3 border border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors font-medium disabled:opacity-50"
+          className="px-6 py-3 border border-purple-royal/30 text-purple-royal rounded-lg hover:bg-purple-royal/10 transition-colors font-medium disabled:opacity-50"
         >
           {isLoading ? 'Requesting...' : 'Request Data Export'}
         </button>
       </section>
 
       {/* Account Deletion */}
-      <section className="bg-white rounded-lg border border-red-200 p-6">
+      <section className="bg-background-secondary rounded-lg border border-destructive/30 p-6">
         <div className="flex items-center gap-3 mb-4">
-          <Trash2 className="text-red-600" size={24} />
-          <h2 className="text-xl font-semibold text-red-600">Delete Account</h2>
+          <Trash2 className="text-destructive" size={24} />
+          <h2 className="text-xl font-semibold text-destructive">Delete Account</h2>
         </div>
 
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+        <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 mb-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="text-red-600 shrink-0 mt-0.5" size={20} />
+            <AlertTriangle className="text-destructive shrink-0 mt-0.5" size={20} />
             <div>
               <p className="font-medium text-red-900 text-sm mb-1">
                 This action cannot be undone

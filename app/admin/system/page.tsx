@@ -18,6 +18,7 @@ import {
   BarChart3,
   ArrowRight,
 } from 'lucide-react'
+import { ADMIN_COLORS } from '@/lib/constants/admin-theme'
 
 type HealthCheck = {
   service: string
@@ -139,23 +140,19 @@ export default function SystemPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'healthy':
-        return <CheckCircle className="h-5 w-5 text-green-500" />
+        return <CheckCircle className="h-5 w-5 text-gold-warm" />
       case 'degraded':
-        return <AlertTriangle className="h-5 w-5 text-yellow-500" />
+        return <AlertTriangle className="h-5 w-5 text-purple-royal-light" />
       case 'down':
-        return <XCircle className="h-5 w-5 text-red-500" />
+        return <XCircle className="h-5 w-5 text-destructive" />
       default:
-        return <Activity className="h-5 w-5 text-gray-500" />
+        return <Activity className="h-5 w-5 text-text-tertiary" />
     }
   }
 
   const getStatusBadge = (status: string) => {
-    const colors = {
-      healthy: 'bg-green-500 text-white',
-      degraded: 'bg-yellow-500 text-black',
-      down: 'bg-red-500 text-white',
-    }
-    return <Badge className={colors[status as keyof typeof colors] || 'bg-gray-500'}>
+    const statusKey = status as keyof typeof ADMIN_COLORS.status
+    return <Badge className={ADMIN_COLORS.status[statusKey] || ADMIN_COLORS.badge.neutral}>
       {status.toUpperCase()}
     </Badge>
   }
@@ -195,18 +192,18 @@ export default function SystemPage() {
               href={card.href}
               className="group block"
             >
-              <div className="h-full border rounded-xl p-5 bg-white shadow-sm hover:border-indigo-200 hover:shadow-md transition flex flex-col gap-3">
+              <div className="h-full border rounded-xl p-5 bg-background-secondary shadow-sm hover:border-purple-royal/40 hover:shadow-md transition flex flex-col gap-3 border-border-gold/20">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-full bg-indigo-50 text-indigo-600">
+                    <div className="p-2 rounded-full bg-purple-royal/20 text-purple-royal">
                       <Icon className="w-5 h-5" />
                     </div>
                     <div>
                       <div className="font-semibold text-lg">{card.title}</div>
-                      <p className="text-sm text-gray-500">{card.description}</p>
+                      <p className="text-sm text-text-tertiary">{card.description}</p>
                     </div>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-indigo-500" />
+                  <ArrowRight className="w-4 h-4 text-text-tertiary group-hover:text-indigo-500" />
                 </div>
               </div>
             </Link>
@@ -342,3 +339,4 @@ export default function SystemPage() {
     </div>
   )
 }
+

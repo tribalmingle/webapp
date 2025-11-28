@@ -26,7 +26,7 @@ export default async function SubscriptionSettingsPage() {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       <h1 className="text-2xl font-semibold">Subscription</h1>
-      <div className="border rounded p-4 space-y-2 bg-white/50 dark:bg-neutral-900/50">
+      <div className="border rounded p-4 space-y-2 bg-background-secondary/50 backdrop-blur-sm border-border-gold/20">
         <p><strong>Current Plan:</strong> {subscription.plan}</p>
         {subscription.status === 'trialing' && subscription.trialEndsAt && (
           <p className="text-sm text-amber-600">Trial ends {subscription.trialEndsAt.toLocaleDateString()}</p>

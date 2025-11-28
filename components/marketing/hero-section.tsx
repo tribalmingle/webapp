@@ -36,13 +36,13 @@ export function HeroSection({
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Link
           href={primaryHref}
-          className="flex-1 rounded-xl bg-accent px-6 py-4 text-center text-lg font-semibold text-accent-foreground shadow-sm transition hover:scale-[1.01]"
+          className="flex-1 rounded-xl bg-purple-gradient px-6 py-4 text-center text-lg font-semibold text-white shadow-sm transition hover:scale-[1.01]"
         >
           {variant.primaryCta}
         </Link>
         <Link
           href={secondaryHref}
-          className="flex-1 rounded-xl border border-accent px-6 py-4 text-center text-lg font-semibold text-accent transition hover:bg-accent/10"
+          className="flex-1 rounded-xl border border-purple-royal px-6 py-4 text-center text-lg font-semibold text-purple-royal transition hover:bg-purple-royal/10"
         >
           {variant.secondaryCta}
         </Link>

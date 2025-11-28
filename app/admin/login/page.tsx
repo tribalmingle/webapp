@@ -46,19 +46,19 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo and Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-lg mb-4">
-            <Shield className="w-12 h-12 text-purple-900" />
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-background-secondary rounded-2xl shadow-lg mb-4 border border-border-gold/20">
+            <Shield className="w-12 h-12 text-purple-royal" />
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">Admin Login</h1>
           <p className="text-purple-200">Tribal Mingle Administration • Authorized staff only</p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="bg-background-secondary rounded-2xl shadow-2xl p-8 border border-border-gold/20">
           {error && (
             <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
               {error}

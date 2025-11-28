@@ -9,7 +9,7 @@ export function BottomNav() {
   const pathname = usePathname()
   
   const navItems = [
-    { label: 'Home', href: '/dashboard', icon: Home },
+    { label: 'Home', href: '/dashboard-spa', icon: Home },
     { label: 'Likes', href: '/likes', icon: Heart },
     { label: 'Chat', href: '/chat', icon: MessageSquare },
     { label: 'Profile', href: '/profile', icon: User }

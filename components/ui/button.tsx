@@ -77,15 +77,21 @@ function Button({
       aria-disabled={props.disabled}
       {...props}
     >
-      {/* Shimmer effect overlay on hover (gold & default variants) */}
-      {(variant === 'gold' || variant === 'default' || !variant) && (
-        <span className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
+      {asChild ? (
+        children
+      ) : (
+        <>
+          {/* Shimmer effect overlay on hover (gold & default variants) */}
+          {(variant === 'gold' || variant === 'default' || !variant) && (
+            <span className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
+          )}
+          
+          {/* Content wrapper for icon animations */}
+          <span className="relative z-10 flex items-center justify-center gap-2 [&>svg]:transition-transform [&>svg]:duration-300 group-hover:[&>svg]:rotate-12 group-hover:[&>svg]:scale-110">
+            {children}
+          </span>
+        </>
       )}
-      
-      {/* Content wrapper for icon animations */}
-      <span className="relative z-10 flex items-center justify-center gap-2 [&>svg]:transition-transform [&>svg]:duration-300 group-hover:[&>svg]:rotate-12 group-hover:[&>svg]:scale-110">
-        {children}
-      </span>
     </Comp>
   )
 }

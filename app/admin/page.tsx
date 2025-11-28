@@ -9,7 +9,7 @@ import {
   UserCheck, UserX, Image, Flag, Ban, UnlockKeyhole, Lock, ArrowUpRight,
   ArrowDownRight, RefreshCw, FileText, Bell, Clock, MapPin, Briefcase,
   Award, Gift, Target, TrendingDown, Zap, Phone, Globe, Smartphone, Quote,
-  WalletCards, X, Sparkles
+  WalletCards, X, Sparkles, Menu
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -404,6 +404,7 @@ export default function AdminDashboard() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard')
   const [loading, setLoading] = useState(true)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [filterCountry, setFilterCountry] = useState('all')
@@ -1135,21 +1136,41 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background-primary flex">
+    <div className="min-h-screen flex relative">
+      {/* Premium background effects */}
+      <div className="fixed inset-0 -z-50 bg-hero-gradient">
+        <div className="absolute top-20 left-20 w-48 h-48 md:w-96 md:h-96 bg-purple-royal/30 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gold-warm/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-royal/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+      </div>
+      
+      {/* Grid overlay */}
+      <div className="fixed inset-0 -z-40 bg-[url('/grid.svg')] opacity-10" />
+      
+      {/* Mobile menu backdrop */}
+      {mobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+      
       {/* Premium Sidebar */}
-      <div className="w-64 bg-background-secondary border-r border-border-gold/20 fixed h-full overflow-y-auto">
-        <div className="bg-linear-to-br from-purple-royal to-purple-royal/80 p-6">
-          <div className="flex flex-col items-center mb-8">
-            <img src="/triballogo.png" alt="Tribal Mingle" className="w-full h-auto mb-0" />
-            <h1 className="text-xl font-bold text-white font-display">Admin Panel</h1>
-            <Badge variant="gold" className="mt-2">
+      <div className={`w-64 bg-card/60 backdrop-blur-md border-r border-border-gold/20 fixed h-full overflow-y-auto z-50 transition-transform duration-300 lg:translate-x-0 ${
+        mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+      } lg:block`}>
+        <div className="bg-gradient-to-br from-purple-royal via-purple-royal/90 to-purple-royal/80 p-4 lg:p-6">
+          <div className="flex flex-col items-center mb-6 lg:mb-8">
+            <img src="/triballogo.png" alt="Tribal Mingle" className="w-full h-auto max-w-[180px] mb-0" />
+            <h1 className="text-lg lg:text-xl font-bold text-white font-display">Admin Panel</h1>
+            <Badge variant="gold" className="mt-2 text-xs">
               <Crown className="w-3 h-3 mr-1" />
               Premium Access
             </Badge>
             <p className="mt-2 text-xs text-white/70 text-center">Trusted staff only</p>
           </div>
         </div>
-        <div className="p-6">
+        <div className="p-4 lg:p-6">
 
           <nav className="space-y-1">
             {[
@@ -1170,41 +1191,63 @@ export default function AdminDashboard() {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as ActiveTab)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${
+                  onClick={() => {
+                    setActiveTab(tab.id as ActiveTab)
+                    setMobileMenuOpen(false)
+                  }}
+                  className={`w-full flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg transition-all duration-300 text-sm lg:text-base ${
                     activeTab === tab.id
-                      ? 'bg-purple-royal/20 text-purple-royal font-semibold border border-purple-royal/40'
-                      : 'text-text-secondary hover:bg-background-tertiary hover:text-text-primary'
+                      ? 'bg-purple-royal/20 text-purple-royal font-semibold border border-purple-royal/40 backdrop-blur-sm'
+                      : 'text-text-secondary hover:bg-background-tertiary/50 hover:text-text-primary backdrop-blur-sm'
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
-                  {tab.label}
+                  <Icon className="w-4 h-4 lg:w-5 lg:h-5 shrink-0" />
+                  <span className="truncate">{tab.label}</span>
                 </button>
               )
             })}
           </nav>
         </div>
 
-        <div className="p-6 border-t border-border-gold/20 space-y-2">
+        <div className="p-4 lg:p-6 border-t border-border-gold/20 space-y-2">
           <button
             onClick={() => router.push('/dashboard-spa')}
-            className="w-full flex items-center gap-3 px-4 py-3 text-text-secondary hover:bg-background-tertiary hover:text-text-primary rounded-lg transition-all"
+            className="w-full flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2.5 lg:py-3 text-text-secondary hover:bg-background-tertiary/50 hover:text-text-primary rounded-lg transition-all backdrop-blur-sm text-sm lg:text-base"
           >
-            <Users className="w-5 h-5" />
-            User Dashboard
+            <Users className="w-4 h-4 lg:w-5 lg:h-5" />
+            <span className="truncate">User Dashboard</span>
           </button>
           <button
             onClick={handleAdminLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+            className="w-full flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2.5 lg:py-3 text-red-400 hover:bg-red-500/10 rounded-lg transition-all backdrop-blur-sm text-sm lg:text-base"
           >
-            <LogOut className="w-5 h-5" />
+            <LogOut className="w-4 h-4 lg:w-5 lg:h-5" />
             Logout
           </button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="ml-64 flex-1 p-8 bg-background-primary">
+      <div className="lg:ml-64 flex-1 p-4 sm:p-6 lg:p-8 w-full">
+        {/* Mobile Header */}
+        <div className="lg:hidden sticky top-0 z-30 -mx-4 sm:-mx-6 mb-4 sm:mb-6 px-4 sm:px-6 py-3 bg-card/60 backdrop-blur-md border-b border-border-gold/20">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-royal/10 text-purple-royal hover:bg-purple-royal/20 transition-all"
+            >
+              <Menu className="w-5 h-5" />
+              <span className="text-sm font-semibold">Menu</span>
+            </button>
+            <div className="flex items-center gap-2">
+              <img src="/triballogo.png" alt="Tribal Mingle" className="h-8 w-auto" />
+            </div>
+            <Badge variant="gold" className="text-xs">
+              <Crown className="w-3 h-3 mr-1" />
+              Admin
+            </Badge>
+          </div>
+        </div>
         {/* DASHBOARD VIEW */}
         {activeTab === 'dashboard' && (
           <div>
@@ -1296,7 +1339,7 @@ export default function AdminDashboard() {
                       <div key={index} className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <Icon className={`w-5 h-5 ${item.color}`} />
-                          <span className="text-gray-700">{item.label}</span>
+                          <span className="text-text-secondary">{item.label}</span>
                         </div>
                         <span className="text-gray-900 font-semibold">{item.value.toLocaleString()}</span>
                       </div>
@@ -1309,11 +1352,11 @@ export default function AdminDashboard() {
             </FadeIn>
 
             {/* Recent Activity */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Registrations</h3>
+            <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
+              <h3 className="text-lg font-bold text-text-primary mb-4">Recent Registrations</h3>
               <div className="space-y-3">
                 {users.slice(0, 5).map(user => (
-                  <div key={user._id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition">
+                  <div key={user._id} className="flex items-center justify-between p-3 hover:bg-background-tertiary rounded-lg transition">
                     <div className="flex items-center gap-3">
                       {user.profilePhoto ? (
                         <img src={user.profilePhoto} alt={user.name} className="w-10 h-10 rounded-full object-cover" />
@@ -1324,16 +1367,16 @@ export default function AdminDashboard() {
                       )}
                       <div>
                         <div className="font-semibold text-gray-900">{user.name}</div>
-                        <div className="text-sm text-gray-500">{user.email}</div>
+                        <div className="text-sm text-text-tertiary">{user.email}</div>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className={`text-xs px-2 py-1 rounded-full ${
-                        user.subscriptionPlan === 'free' ? 'bg-gray-100 text-gray-700' : 'bg-purple-100 text-purple-700'
+                        user.subscriptionPlan === 'free' ? 'bg-background-tertiary text-text-secondary' : 'bg-purple-100 text-purple-700'
                       }`}>
                         {user.subscriptionPlan}
                       </div>
-                      <div className="text-xs text-gray-500 mt-1">{new Date(user.createdAt).toLocaleDateString()}</div>
+                      <div className="text-xs text-text-tertiary mt-1">{new Date(user.createdAt).toLocaleDateString()}</div>
                     </div>
                   </div>
                 ))}
@@ -1348,7 +1391,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-                <p className="text-gray-600 mt-1">Manage all platform users</p>
+                <p className="text-text-secondary mt-1">Manage all platform users</p>
               </div>
               <Button onClick={() => exportData('users')}>
                 <Download className="w-4 h-4 mr-2" />
@@ -1357,10 +1400,10 @@ export default function AdminDashboard() {
             </div>
 
             {/* Filters */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+            <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-4 mb-6">
               <div className="flex flex-wrap gap-4 items-end">
                 <div className="flex-1 min-w-[260px]">
-                  <label className="block text-xs font-semibold text-gray-500 mb-1">Search</label>
+                  <label className="block text-xs font-semibold text-text-tertiary mb-1">Search</label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <Input
@@ -1374,7 +1417,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="min-w-[170px]">
-                  <label className="block text-xs font-semibold text-gray-500 mb-1">Status / Plan</label>
+                  <label className="block text-xs font-semibold text-text-tertiary mb-1">Status / Plan</label>
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
@@ -1392,7 +1435,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="min-w-[170px]">
-                  <label className="block text-xs font-semibold text-gray-500 mb-1">Country</label>
+                  <label className="block text-xs font-semibold text-text-tertiary mb-1">Country</label>
                   <select
                     value={filterCountry}
                     onChange={(e) => setFilterCountry(e.target.value)}
@@ -1408,7 +1451,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="min-w-[170px]">
-                  <label className="block text-xs font-semibold text-gray-500 mb-1">Tribe</label>
+                  <label className="block text-xs font-semibold text-text-tertiary mb-1">Tribe</label>
                   <select
                     value={filterTribe}
                     onChange={(e) => setFilterTribe(e.target.value)}
@@ -1426,22 +1469,22 @@ export default function AdminDashboard() {
             </div>
 
             {/* Users Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                  <thead className="bg-background-tertiary border-b border-border-gold/10">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subscription</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activity</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">User</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">Location</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">Subscription</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">Activity</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-background-secondary divide-y divide-border-gold/10">
                     {filteredUsers.map(user => (
-                      <tr key={user._id} className="hover:bg-gray-50">
+                      <tr key={user._id} className="hover:bg-background-tertiary">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             {user.profilePhoto ? (
@@ -1456,17 +1499,17 @@ export default function AdminDashboard() {
                                 {user.name}
                                 {user.verified && <CheckCircle className="w-4 h-4 text-green-500" />}
                               </div>
-                              <div className="text-sm text-gray-500">{user.email}</div>
+                              <div className="text-sm text-text-tertiary">{user.email}</div>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">{user.city}, {user.country}</div>
-                          <div className="text-sm text-gray-500">{user.tribe}</div>
+                          <div className="text-sm text-text-tertiary">{user.tribe}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            user.subscriptionPlan === 'free' ? 'bg-gray-100 text-gray-800' :
+                            user.subscriptionPlan === 'free' ? 'bg-background-tertiary text-text-primary' :
                             user.subscriptionPlan === 'monthly' ? 'bg-blue-100 text-blue-800' :
                             user.subscriptionPlan === '3-months' ? 'bg-purple-100 text-purple-800' :
                             'bg-orange-100 text-orange-800'
@@ -1483,7 +1526,7 @@ export default function AdminDashboard() {
                             {user.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-text-tertiary">
                           <div>{user.totalMatches} matches</div>
                           <div>{user.totalMessages} messages</div>
                           {user.reportCount > 0 && (
@@ -1548,7 +1591,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Revenue & Billing</h1>
-                <p className="text-gray-600 mt-1">Track all financial transactions</p>
+                <p className="text-text-secondary mt-1">Track all financial transactions</p>
               </div>
               <Button onClick={() => exportData('transactions')}>
                 <Download className="w-4 h-4 mr-2" />
@@ -1565,26 +1608,26 @@ export default function AdminDashboard() {
               ].map((stat, index) => {
                 const Icon = stat.icon
                 return (
-                  <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                  <div key={index} className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
                     <div className={`${stat.color} p-3 rounded-lg w-fit mb-4`}>
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                     <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                    <div className="text-sm text-gray-600">{stat.label}</div>
+                    <div className="text-sm text-text-secondary">{stat.label}</div>
                   </div>
                 )
               })}
             </div>
 
             {/* Wallet Providers Admin */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
+            <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 mb-8">
               <div className="px-6 py-4 border-b border-gray-200 flex flex-wrap items-center gap-4 justify-between">
                 <div>
                   <div className="flex items-center gap-2 text-gray-900 font-semibold">
                     <WalletCards className="w-5 h-5 text-purple-600" />
                     Wallet Providers
                   </div>
-                  <p className="text-sm text-gray-600 mt-1">Control Apple Pay & Google Pay availability by region</p>
+                  <p className="text-sm text-text-secondary mt-1">Control Apple Pay & Google Pay availability by region</p>
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -1621,13 +1664,13 @@ export default function AdminDashboard() {
                 <div className="grid gap-6 lg:grid-cols-2">
                   <div>
                     {walletConfigsLoading ? (
-                      <p className="text-sm text-gray-500">Loading wallet configurations…</p>
+                      <p className="text-sm text-text-tertiary">Loading wallet configurations…</p>
                     ) : walletConfigsError ? (
                       <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                         {walletConfigsError}
                       </div>
                     ) : walletConfigs.length === 0 ? (
-                      <div className="rounded-lg border border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">
+                      <div className="rounded-lg border border-dashed border-gray-300 p-6 text-center text-sm text-text-tertiary">
                         No wallet regions configured yet. Use the form to add one.
                       </div>
                     ) : (
@@ -1646,7 +1689,7 @@ export default function AdminDashboard() {
                               <div className="flex items-center justify-between gap-4">
                                 <div>
                                   <p className="text-sm font-semibold uppercase tracking-wide text-gray-900">{config.region}</p>
-                                  <p className="text-xs text-gray-500">
+                                  <p className="text-xs text-text-tertiary">
                                     Currency {config.currency} · Country {config.countryCode}
                                   </p>
                                 </div>
@@ -1656,7 +1699,7 @@ export default function AdminDashboard() {
                               </div>
                               <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
                                 <div>
-                                  <p className="text-[11px] uppercase text-gray-500">Apple Pay</p>
+                                  <p className="text-[11px] uppercase text-text-tertiary">Apple Pay</p>
                                   <span className={`inline-flex items-center px-2 py-1 rounded-full font-semibold ${
                                     appleEnabled ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'
                                   }`}>
@@ -1664,7 +1707,7 @@ export default function AdminDashboard() {
                                   </span>
                                 </div>
                                 <div>
-                                  <p className="text-[11px] uppercase text-gray-500">Google Pay</p>
+                                  <p className="text-[11px] uppercase text-text-tertiary">Google Pay</p>
                                   <span className={`inline-flex items-center px-2 py-1 rounded-full font-semibold ${
                                     googleEnabled ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'
                                   }`}>
@@ -1672,16 +1715,16 @@ export default function AdminDashboard() {
                                   </span>
                                 </div>
                                 <div>
-                                  <p className="text-[11px] uppercase text-gray-500">Fallback</p>
+                                  <p className="text-[11px] uppercase text-text-tertiary">Fallback</p>
                                   <span className="font-medium text-gray-800">{config.fallbackProvider === 'stripe' ? 'Stripe' : 'Paystack'}</span>
                                 </div>
                                 <div>
-                                  <p className="text-[11px] uppercase text-gray-500">Updated</p>
+                                  <p className="text-[11px] uppercase text-text-tertiary">Updated</p>
                                   <span className="font-medium text-gray-800">{lastUpdated || '—'}</span>
                                 </div>
                               </div>
                               {config.notes && (
-                                <p className="mt-3 text-xs text-gray-600">{config.notes}</p>
+                                <p className="mt-3 text-xs text-text-secondary">{config.notes}</p>
                               )}
                             </div>
                           )
@@ -1694,7 +1737,7 @@ export default function AdminDashboard() {
                       <p className="text-sm font-semibold text-gray-900">
                         {editingWalletRegion ? `Editing ${editingWalletRegion}` : 'Create new wallet region'}
                       </p>
-                      <p className="text-xs text-gray-500">Region keys are normalized automatically (ex: africa_west, diaspora_eu).</p>
+                      <p className="text-xs text-text-tertiary">Region keys are normalized automatically (ex: africa_west, diaspora_eu).</p>
                     </div>
                     {walletConfigFormError && (
                       <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -1702,7 +1745,7 @@ export default function AdminDashboard() {
                       </div>
                     )}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Region Key</label>
+                      <label className="block text-sm font-medium text-text-secondary mb-1">Region Key</label>
                       <Input
                         value={walletConfigForm.region}
                         onChange={(e) => updateWalletConfigField('region', e.target.value)}
@@ -1712,7 +1755,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="grid gap-4 md:grid-cols-2">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Currency (ISO)</label>
+                        <label className="block text-sm font-medium text-text-secondary mb-1">Currency (ISO)</label>
                         <Input
                           value={walletConfigForm.currency}
                           onChange={(e) => updateWalletConfigField('currency', e.target.value.toUpperCase())}
@@ -1720,7 +1763,7 @@ export default function AdminDashboard() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Country Code</label>
+                        <label className="block text-sm font-medium text-text-secondary mb-1">Country Code</label>
                         <Input
                           value={walletConfigForm.countryCode}
                           onChange={(e) => updateWalletConfigField('countryCode', e.target.value.toUpperCase())}
@@ -1729,7 +1772,7 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Fallback Provider</label>
+                      <label className="block text-sm font-medium text-text-secondary mb-1">Fallback Provider</label>
                       <select
                         value={walletConfigForm.fallbackProvider}
                         onChange={(e) => updateWalletConfigField('fallbackProvider', e.target.value as WalletFallbackProvider)}
@@ -1740,7 +1783,7 @@ export default function AdminDashboard() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                      <label className="block text-sm font-medium text-text-secondary mb-1">Notes</label>
                       <textarea
                         value={walletConfigForm.notes}
                         onChange={(e) => updateWalletConfigField('notes', e.target.value)}
@@ -1756,10 +1799,10 @@ export default function AdminDashboard() {
                         <div key={providerKey} className="border border-gray-200 rounded-lg p-4 space-y-3">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 font-semibold text-gray-900">
-                              <Smartphone className="w-4 h-4 text-gray-500" />
+                              <Smartphone className="w-4 h-4 text-text-tertiary" />
                               {label}
                             </div>
-                            <label className="flex items-center gap-2 text-xs font-medium text-gray-600">
+                            <label className="flex items-center gap-2 text-xs font-medium text-text-secondary">
                               <span>{providerForm.enabled ? 'Enabled' : 'Disabled'}</span>
                               <input
                                 type="checkbox"
@@ -1771,7 +1814,7 @@ export default function AdminDashboard() {
                           </div>
                           <div className="grid gap-3 md:grid-cols-2">
                             <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Merchant Name</label>
+                              <label className="block text-xs font-medium text-text-secondary mb-1">Merchant Name</label>
                               <Input
                                 value={providerForm.merchantName}
                                 onChange={(e) => updateWalletProviderField(providerKey, 'merchantName', e.target.value)}
@@ -1779,7 +1822,7 @@ export default function AdminDashboard() {
                               />
                             </div>
                             <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Merchant ID</label>
+                              <label className="block text-xs font-medium text-text-secondary mb-1">Merchant ID</label>
                               <Input
                                 value={providerForm.merchantId}
                                 onChange={(e) => updateWalletProviderField(providerKey, 'merchantId', e.target.value)}
@@ -1787,7 +1830,7 @@ export default function AdminDashboard() {
                               />
                             </div>
                             <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Country Code</label>
+                              <label className="block text-xs font-medium text-text-secondary mb-1">Country Code</label>
                               <Input
                                 value={providerForm.countryCode}
                                 onChange={(e) => updateWalletProviderField(providerKey, 'countryCode', e.target.value.toUpperCase())}
@@ -1795,7 +1838,7 @@ export default function AdminDashboard() {
                               />
                             </div>
                             <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Currency Code</label>
+                              <label className="block text-xs font-medium text-text-secondary mb-1">Currency Code</label>
                               <Input
                                 value={providerForm.currencyCode}
                                 onChange={(e) => updateWalletProviderField(providerKey, 'currencyCode', e.target.value.toUpperCase())}
@@ -1803,7 +1846,7 @@ export default function AdminDashboard() {
                               />
                             </div>
                             <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Gateway</label>
+                              <label className="block text-xs font-medium text-text-secondary mb-1">Gateway</label>
                               <Input
                                 value={providerForm.gateway}
                                 onChange={(e) => updateWalletProviderField(providerKey, 'gateway', e.target.value)}
@@ -1811,7 +1854,7 @@ export default function AdminDashboard() {
                               />
                             </div>
                             <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Environment</label>
+                              <label className="block text-xs font-medium text-text-secondary mb-1">Environment</label>
                               <select
                                 value={providerForm.environment}
                                 onChange={(e) => updateWalletProviderField(providerKey, 'environment', e.target.value as 'test' | 'production')}
@@ -1824,25 +1867,25 @@ export default function AdminDashboard() {
                           </div>
                           <div className="space-y-3">
                             <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Merchant Capabilities</label>
+                              <label className="block text-xs font-medium text-text-secondary mb-1">Merchant Capabilities</label>
                               <Input
                                 value={providerForm.merchantCapabilities}
                                 onChange={(e) => updateWalletProviderField(providerKey, 'merchantCapabilities', e.target.value)}
                                 placeholder="supports3DS, debit"
                               />
-                              <p className="text-[11px] text-gray-500 mt-1">Comma separated list (ex: supports3DS, credit)</p>
+                              <p className="text-[11px] text-text-tertiary mt-1">Comma separated list (ex: supports3DS, credit)</p>
                             </div>
                             <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Supported Networks</label>
+                              <label className="block text-xs font-medium text-text-secondary mb-1">Supported Networks</label>
                               <Input
                                 value={providerForm.supportedNetworks}
                                 onChange={(e) => updateWalletProviderField(providerKey, 'supportedNetworks', e.target.value)}
                                 placeholder="visa, mastercard"
                               />
-                              <p className="text-[11px] text-gray-500 mt-1">Comma separated list (ex: visa, mastercard, amex)</p>
+                              <p className="text-[11px] text-text-tertiary mt-1">Comma separated list (ex: visa, mastercard, amex)</p>
                             </div>
                             <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Minimum OS Version</label>
+                              <label className="block text-xs font-medium text-text-secondary mb-1">Minimum OS Version</label>
                               <Input
                                 value={providerForm.minOSVersion}
                                 onChange={(e) => updateWalletProviderField(providerKey, 'minOSVersion', e.target.value)}
@@ -1862,27 +1905,27 @@ export default function AdminDashboard() {
             </div>
 
             {/* Transactions Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h3 className="text-lg font-bold text-gray-900">Recent Transactions</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+                  <thead className="bg-background-tertiary border-b border-border-gold/10">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">User</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">Plan</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">Amount</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">Date</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-background-secondary divide-y divide-border-gold/10">
                     {transactions.map(transaction => (
-                      <tr key={transaction._id} className="hover:bg-gray-50">
+                      <tr key={transaction._id} className="hover:bg-background-tertiary">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">{transaction.userName}</div>
-                          <div className="text-sm text-gray-500">{transaction.userEmail}</div>
+                          <div className="text-sm text-text-tertiary">{transaction.userEmail}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
@@ -1901,7 +1944,7 @@ export default function AdminDashboard() {
                             {transaction.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-text-tertiary">
                           {new Date(transaction.date).toLocaleDateString()}
                         </td>
                       </tr>
@@ -1919,7 +1962,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Reports & Flags</h1>
-                <p className="text-gray-600 mt-1">Review and moderate reported content</p>
+                <p className="text-text-secondary mt-1">Review and moderate reported content</p>
               </div>
               <div className="flex gap-2">
                 <Button onClick={() => exportData('reports')} variant="outline">
@@ -1932,7 +1975,7 @@ export default function AdminDashboard() {
             {/* Reports Grid */}
             <div className="grid gap-4">
               {reports.map(report => (
-                <div key={report._id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div key={report._id} className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-4">
                       <div className="p-3 bg-red-100 rounded-lg">
@@ -1940,8 +1983,8 @@ export default function AdminDashboard() {
                       </div>
                       <div>
                         <h3 className="text-lg font-bold text-gray-900">{report.reason}</h3>
-                        <p className="text-sm text-gray-600 mt-1">Reported by: {report.reporterUserName}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">
+                        <p className="text-sm text-text-secondary mt-1">Reported by: {report.reporterUserName}</p>
+                        <p className="text-xs text-text-tertiary mt-0.5">
                           Reported user: <span className="font-semibold text-gray-900">{report.reportedUserName}</span>
                         </p>
                         {(report.reportedUserTribe || report.reportedUserCountry || report.reportedUserSubscriptionPlan || report.totalReportsForUser) && (
@@ -1979,20 +2022,20 @@ export default function AdminDashboard() {
                     </span>
                   </div>
 
-                  <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                    <p className="text-sm text-gray-700">{report.description}</p>
+                  <div className="bg-background-tertiary rounded-lg p-4 mb-4">
+                    <p className="text-sm text-text-secondary">{report.description}</p>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="text-xs text-gray-500 space-y-0.5">
+                    <div className="text-xs text-text-tertiary space-y-0.5">
                       <div>
                         Created: {new Date(report.createdAt).toLocaleString()}
                       </div>
                       <div className="flex flex-wrap gap-2 mt-1">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-[10px] font-medium text-gray-700">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-background-tertiary text-[10px] font-medium text-text-secondary">
                           Reporter ID: {report.reporterUserId}
                         </span>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-[10px] font-medium text-gray-700">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-background-tertiary text-[10px] font-medium text-text-secondary">
                           Reported ID: {report.reportedUserId}
                         </span>
                       </div>
@@ -2025,10 +2068,10 @@ export default function AdminDashboard() {
               ))}
 
               {reports.length === 0 && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+                <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-12 text-center">
                   <CheckCircle className="w-16 h-16 mx-auto mb-4 text-green-500" />
                   <h3 className="text-xl font-bold text-gray-900 mb-2">No Reports</h3>
-                  <p className="text-gray-600">All reports have been reviewed</p>
+                  <p className="text-text-secondary">All reports have been reviewed</p>
                 </div>
               )}
             </div>
@@ -2041,7 +2084,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Testimonials & Success Stories</h1>
-                <p className="text-gray-600 mt-1">Curate social proof from real members and publish official Tribal Mingle success stories.</p>
+                <p className="text-text-secondary mt-1">Curate social proof from real members and publish official Tribal Mingle success stories.</p>
               </div>
               <Button onClick={fetchTestimonials} variant="outline">
                 <RefreshCw className="w-4 h-4 mr-2" />
@@ -2055,12 +2098,12 @@ export default function AdminDashboard() {
                 <div className="flex items-center justify-between mb-2">
                   <h2 className="text-lg font-semibold text-gray-900">Community stories</h2>
                   {loadingTestimonials && (
-                    <span className="text-xs text-gray-500">Loading…</span>
+                    <span className="text-xs text-text-tertiary">Loading…</span>
                   )}
                 </div>
 
                 {testimonials.length === 0 && !loadingTestimonials && (
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center text-sm text-gray-500">
+                  <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-8 text-center text-sm text-text-tertiary">
                     No testimonials found yet.
                   </div>
                 )}
@@ -2069,7 +2112,7 @@ export default function AdminDashboard() {
                   {testimonials.map((t) => (
                     <div
                       key={t._id}
-                      className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex items-start gap-3"
+                      className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-4 flex items-start gap-3"
                     >
                       <div className="shrink-0">
                         {t.profilePhoto ? (
@@ -2090,13 +2133,13 @@ export default function AdminDashboard() {
                             <div className="flex items-center gap-2 text-sm font-semibold text-gray-900">
                               {t.name}
                               {typeof t.age === 'number' && t.age > 0 && (
-                                <span className="text-gray-500">· {t.age}</span>
+                                <span className="text-text-tertiary">· {t.age}</span>
                               )}
-                              <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                              <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-background-tertiary text-text-secondary">
                                 {t.sourceType === 'admin' ? 'Admin story' : 'Member story'}
                               </span>
                             </div>
-                            <div className="text-[11px] text-gray-500 flex items-center gap-2 mt-0.5">
+                            <div className="text-[11px] text-text-tertiary flex items-center gap-2 mt-0.5">
                               {[t.city, t.country].filter(Boolean).join(', ') || t.tribe || 'Location not set'}
                             </div>
                           </div>
@@ -2126,10 +2169,10 @@ export default function AdminDashboard() {
                             </span>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-700 leading-relaxed line-clamp-4">
+                        <p className="text-xs text-text-secondary leading-relaxed line-clamp-4">
                           {t.content}
                         </p>
-                        <div className="mt-2 flex items-center gap-2 text-[11px] text-gray-500">
+                        <div className="mt-2 flex items-center gap-2 text-[11px] text-text-tertiary">
                           {t.createdAt && (
                             <>
                               <Clock className="w-3 h-3" />
@@ -2164,7 +2207,7 @@ export default function AdminDashboard() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="text-xs h-7 px-3 text-gray-600 hover:bg-gray-50"
+                              className="text-xs h-7 px-3 text-text-secondary hover:bg-background-tertiary"
                               onClick={() => updateTestimonialStatus(t._id, 'pending')}
                             >
                               Mark pending
@@ -2178,14 +2221,14 @@ export default function AdminDashboard() {
               </div>
 
               {/* Create admin testimonial */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-1">Add Admin Story</h2>
-                <p className="text-xs text-gray-500 mb-4">
+                <p className="text-xs text-text-tertiary mb-4">
                   Create official success stories that will appear alongside user testimonials.
                 </p>
                 <form onSubmit={handleCreateAdminTestimonial} className="space-y-3 text-sm">
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Name *</label>
+                    <label className="block text-xs font-medium text-text-secondary mb-1">Name *</label>
                     <Input
                       value={newTestimonial.name}
                       onChange={(e) => setNewTestimonial({ ...newTestimonial, name: e.target.value })}
@@ -2194,7 +2237,7 @@ export default function AdminDashboard() {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">Age</label>
+                      <label className="block text-xs font-medium text-text-secondary mb-1">Age</label>
                       <Input
                         type="number"
                         min={18}
@@ -2203,7 +2246,7 @@ export default function AdminDashboard() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">Rating (1–5)</label>
+                      <label className="block text-xs font-medium text-text-secondary mb-1">Rating (1–5)</label>
                       <Input
                         type="number"
                         min={1}
@@ -2215,14 +2258,14 @@ export default function AdminDashboard() {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">City</label>
+                      <label className="block text-xs font-medium text-text-secondary mb-1">City</label>
                       <Input
                         value={newTestimonial.city}
                         onChange={(e) => setNewTestimonial({ ...newTestimonial, city: e.target.value })}
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">Country</label>
+                      <label className="block text-xs font-medium text-text-secondary mb-1">Country</label>
                       <Input
                         value={newTestimonial.country}
                         onChange={(e) => setNewTestimonial({ ...newTestimonial, country: e.target.value })}
@@ -2230,21 +2273,21 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Tribe</label>
+                    <label className="block text-xs font-medium text-text-secondary mb-1">Tribe</label>
                     <Input
                       value={newTestimonial.tribe}
                       onChange={(e) => setNewTestimonial({ ...newTestimonial, tribe: e.target.value })}
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Story *</label>
+                    <label className="block text-xs font-medium text-text-secondary mb-1">Story *</label>
                     <textarea
                       className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[120px]"
                       value={newTestimonial.content}
                       onChange={(e) => setNewTestimonial({ ...newTestimonial, content: e.target.value })}
                       placeholder="Describe how Tribal Mingle helped them meet, connect or build a relationship."
                     />
-                    <p className="mt-1 text-[11px] text-gray-500">
+                    <p className="mt-1 text-[11px] text-text-tertiary">
                       Minimum 20 characters. You can anonymise names and locations if needed.
                     </p>
                   </div>
@@ -2264,7 +2307,7 @@ export default function AdminDashboard() {
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Trust &amp; Safety Automation</h1>
-                <p className="text-gray-600 mt-1">Monitor liveness escalations, guardian invites, and audit trails.</p>
+                <p className="text-text-secondary mt-1">Monitor liveness escalations, guardian invites, and audit trails.</p>
               </div>
               <Button
                 variant="outline"
@@ -2297,7 +2340,7 @@ export default function AdminDashboard() {
             )}
 
             {trustLoading && !trustSnapshot && (
-              <div className="mb-6 bg-white border border-gray-200 rounded-xl p-6 flex items-center gap-3 text-gray-600">
+              <div className="mb-6 bg-background-secondary border border-border-gold/20 rounded-xl p-6 flex items-center gap-3 text-text-secondary">
                 <div className="w-5 h-5 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
                 Fetching trust automation data…
               </div>
@@ -2327,7 +2370,7 @@ export default function AdminDashboard() {
                   }].map((card, index) => {
                     const Icon = card.icon
                     return (
-                      <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                      <div key={index} className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
                         <div className="flex items-center justify-between mb-4">
                           <div className={`${card.color} p-3 rounded-lg`}>
                             <Icon className="w-6 h-6 text-white" />
@@ -2335,26 +2378,26 @@ export default function AdminDashboard() {
                           <span className="text-3xl font-bold text-gray-900">{card.value.toLocaleString()}</span>
                         </div>
                         <p className="text-sm font-semibold text-gray-900">{card.label}</p>
-                        <p className="text-xs text-gray-500 mt-1">{card.caption}</p>
+                        <p className="text-xs text-text-tertiary mt-1">{card.caption}</p>
                       </div>
                     )
                   })}
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                  <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <h3 className="text-lg font-bold text-gray-900">Manual review queue</h3>
-                        <p className="text-sm text-gray-600">Sessions needing human decisions.</p>
+                        <p className="text-sm text-text-secondary">Sessions needing human decisions.</p>
                       </div>
-                      <div className="text-right text-sm text-gray-500">
+                      <div className="text-right text-sm text-text-tertiary">
                         <p className="font-semibold text-gray-900">{trustSnapshot.livenessQueue.pendingSessions} pending</p>
                         <p className="text-xs">{trustSnapshot.livenessQueue.totalEvents} escalations total</p>
                       </div>
                     </div>
                     {trustSnapshot.livenessQueue.items.length === 0 ? (
-                      <div className="mt-6 rounded-lg border border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">
+                      <div className="mt-6 rounded-lg border border-dashed border-gray-300 p-6 text-center text-sm text-text-tertiary">
                         All clear — no sessions require manual review.
                       </div>
                     ) : (
@@ -2371,7 +2414,7 @@ export default function AdminDashboard() {
                                     </span>
                                   )}
                                 </p>
-                                <p className="text-xs text-gray-500">
+                                <p className="text-xs text-text-tertiary">
                                   Session {item.sessionToken ?? '—'} · {formatRelativeTime(item.createdAt)}
                                 </p>
                               </div>
@@ -2379,7 +2422,7 @@ export default function AdminDashboard() {
                                 {(item.status ?? 'pending').replace(/_/g, ' ')}
                               </span>
                             </div>
-                            <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
+                            <div className="flex flex-wrap items-center gap-2 text-xs text-text-secondary">
                               {item.reasons?.length ? (
                                 item.reasons.map((reason) => (
                                   <span key={`${item.id}-${reason}`} className="px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700">
@@ -2387,26 +2430,26 @@ export default function AdminDashboard() {
                                   </span>
                                 ))
                               ) : (
-                                <span className="text-gray-500">Provider did not supply reasons.</span>
+                                <span className="text-text-tertiary">Provider did not supply reasons.</span>
                               )}
                               {typeof item.retryCount === 'number' && item.retryCount > 0 && (
-                                <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
+                                <span className="px-2 py-0.5 rounded-full bg-background-tertiary text-text-secondary">
                                   {item.retryCount} retries
                                 </span>
                               )}
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-text-tertiary">
                               Score {formatTrustScoreDelta(item.scoreDelta)} · Aggregate {formatAggregateScore(item.aggregateScore)}
                             </div>
-                            <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-gray-500">
+                            <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-text-tertiary">
                               <div className="space-x-2">
                                 {item.providerDecision && (
-                                  <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-gray-600">
+                                  <span className="inline-flex items-center rounded-full bg-background-tertiary px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-text-secondary">
                                     Provider: {item.providerDecision.replace(/_/g, ' ')}
                                   </span>
                                 )}
                                 {typeof item.providerConfidence === 'number' && (
-                                  <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold text-gray-600">
+                                  <span className="inline-flex items-center rounded-full bg-background-tertiary px-2 py-0.5 text-[11px] font-semibold text-text-secondary">
                                     Confidence {Math.round(item.providerConfidence * 100)}%
                                   </span>
                                 )}
@@ -2426,40 +2469,40 @@ export default function AdminDashboard() {
                     )}
                   </div>
 
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                  <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <h3 className="text-lg font-bold text-gray-900">Guardian requests</h3>
-                        <p className="text-sm text-gray-600">Family portal invites that need responses.</p>
+                        <p className="text-sm text-text-secondary">Family portal invites that need responses.</p>
                       </div>
-                      <div className="text-right text-sm text-gray-500">
+                      <div className="text-right text-sm text-text-tertiary">
                         <p className="font-semibold text-gray-900">{trustSnapshot.guardianInvites.pendingCount} received</p>
                         <p className="text-xs">{trustSnapshot.guardianInvites.queuedCount} queued for follow-up</p>
                       </div>
                     </div>
                     {trustSnapshot.guardianInvites.items.length === 0 ? (
-                      <div className="mt-6 rounded-lg border border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">
+                      <div className="mt-6 rounded-lg border border-dashed border-gray-300 p-6 text-center text-sm text-text-tertiary">
                         No guardian outreach requests at the moment.
                       </div>
                     ) : (
                       <div className="mt-4 space-y-4">
                         {trustSnapshot.guardianInvites.items.map((item) => (
-                          <div key={item.id} className="p-4 border border-gray-100 rounded-lg bg-gray-50">
+                          <div key={item.id} className="p-4 border border-border-gold/10 rounded-lg bg-background-tertiary">
                             <div className="flex items-center justify-between">
                               <div>
                                 <p className="text-sm font-semibold text-gray-900">{item.memberName}</p>
-                                <p className="text-xs text-gray-500">{item.contact}</p>
+                                <p className="text-xs text-text-tertiary">{item.contact}</p>
                               </div>
-                              <div className="text-right text-xs text-gray-500">
-                                <p className="font-semibold text-gray-700">{item.locale.toUpperCase()}</p>
+                              <div className="text-right text-xs text-text-tertiary">
+                                <p className="font-semibold text-text-secondary">{item.locale.toUpperCase()}</p>
                                 <p>{formatRelativeTime(item.createdAt)}</p>
                               </div>
                             </div>
-                            <p className="text-xs text-gray-500 mt-2">
+                            <p className="text-xs text-text-tertiary mt-2">
                               Status {item.status} · Source {item.source}{item.regionHint ? ` · ${item.regionHint}` : ''}
                             </p>
                             {item.context && (
-                              <p className="text-sm text-gray-700 mt-2">{item.context}</p>
+                              <p className="text-sm text-text-secondary mt-2">{item.context}</p>
                             )}
                           </div>
                         ))}
@@ -2469,15 +2512,15 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4">Recent trust signals</h3>
+                  <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
+                    <h3 className="text-lg font-bold text-text-primary mb-4">Recent trust signals</h3>
                     {trustSnapshot.trustSignals.items.length === 0 ? (
-                      <p className="text-sm text-gray-500">No trust events recorded yet.</p>
+                      <p className="text-sm text-text-tertiary">No trust events recorded yet.</p>
                     ) : (
                       <div className="overflow-x-auto">
                         <table className="min-w-full text-sm">
                           <thead>
-                            <tr className="text-left text-xs uppercase tracking-wide text-gray-500">
+                            <tr className="text-left text-xs uppercase tracking-wide text-text-tertiary">
                               <th className="pb-2 pr-4">Event</th>
                               <th className="pb-2 pr-4">Score</th>
                               <th className="pb-2 pr-4">Aggregate</th>
@@ -2486,16 +2529,16 @@ export default function AdminDashboard() {
                           </thead>
                           <tbody>
                             {trustSnapshot.trustSignals.items.map((event) => (
-                              <tr key={event.id} className="border-t border-gray-100">
+                              <tr key={event.id} className="border-t border-border-gold/10">
                                 <td className="py-2 pr-4">
                                   <p className="font-semibold text-gray-900 text-xs">{event.eventType.replace(/_/g, ' ')}</p>
-                                  <p className="text-xs text-gray-500">Source {event.source}</p>
+                                  <p className="text-xs text-text-tertiary">Source {event.source}</p>
                                 </td>
                                 <td className="py-2 pr-4 text-sm font-semibold text-gray-900">
                                   {formatTrustScoreDelta(event.scoreDelta)}
                                 </td>
                                 <td className="py-2 pr-4 text-sm text-gray-900">{formatAggregateScore(event.aggregateScore)}</td>
-                                <td className="py-2 pr-4 text-xs text-gray-500">{formatRelativeTime(event.createdAt)}</td>
+                                <td className="py-2 pr-4 text-xs text-text-tertiary">{formatRelativeTime(event.createdAt)}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -2504,22 +2547,22 @@ export default function AdminDashboard() {
                     )}
                   </div>
 
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4">Latest audit trail</h3>
+                  <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
+                    <h3 className="text-lg font-bold text-text-primary mb-4">Latest audit trail</h3>
                     {trustSnapshot.activityLogs.items.length === 0 ? (
-                      <p className="text-sm text-gray-500">No activity has been logged yet.</p>
+                      <p className="text-sm text-text-tertiary">No activity has been logged yet.</p>
                     ) : (
                       <div className="space-y-4">
                         {trustSnapshot.activityLogs.items.map((log) => (
-                          <div key={log.id} className="border border-gray-100 rounded-lg p-4 bg-gray-50">
+                          <div key={log.id} className="border border-border-gold/10 rounded-lg p-4 bg-background-tertiary">
                             <p className="text-sm font-semibold text-gray-900">{log.action}</p>
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-xs text-text-tertiary mt-1">
                               {log.resource.collection}
                               {log.resource.id ? ` · ${log.resource.id}` : ''}
                             </p>
-                            <p className="text-xs text-gray-500 mt-1">{formatRelativeTime(log.createdAt)}</p>
+                            <p className="text-xs text-text-tertiary mt-1">{formatRelativeTime(log.createdAt)}</p>
                             {log.metadata && (
-                              <pre className="mt-2 text-[11px] text-gray-600 bg-white rounded-md p-2 overflow-auto">
+                              <pre className="mt-2 text-[11px] text-text-secondary bg-background-tertiary rounded-md p-2 overflow-auto">
                                 {JSON.stringify(log.metadata, null, 2)}
                               </pre>
                             )}
@@ -2530,11 +2573,11 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div className="mt-6 bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
                   <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <div>
                       <h3 className="text-lg font-bold text-gray-900">Verification media queue</h3>
-                      <p className="text-sm text-gray-600">Review ID + selfie uploads and approve them manually.</p>
+                      <p className="text-sm text-text-secondary">Review ID + selfie uploads and approve them manually.</p>
                     </div>
                     <div className="flex items-center gap-2">
                       {moderationError && (
@@ -2554,13 +2597,13 @@ export default function AdminDashboard() {
                   </div>
 
                   {moderationLoading && (
-                    <div className="mt-4 rounded-lg border border-dashed border-gray-300 p-4 text-sm text-gray-500">
+                    <div className="mt-4 rounded-lg border border-dashed border-gray-300 p-4 text-sm text-text-tertiary">
                       Loading verification jobs…
                     </div>
                   )}
 
                   {!moderationLoading && moderationJobs.length === 0 && (
-                    <div className="mt-4 rounded-lg border border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">
+                    <div className="mt-4 rounded-lg border border-dashed border-gray-300 p-6 text-center text-sm text-text-tertiary">
                       All identity uploads are reviewed. New submissions will show up here automatically.
                     </div>
                   )}
@@ -2570,23 +2613,23 @@ export default function AdminDashboard() {
                       {moderationJobs.map((job) => {
                         const aiScoreLabel = formatAiScoreLabel(job.aiScore)
                         return (
-                        <div key={job.id} className="border border-gray-100 rounded-xl p-4">
+                        <div key={job.id} className="border border-border-gold/10 rounded-xl p-4">
                           <div className="flex flex-wrap items-center justify-between gap-3">
                             <div>
                               <p className="text-sm font-semibold text-gray-900">
                                 {formatMediaTypeLabel(job.mediaType)}
                                 {job.email && (
-                                  <span className="ml-2 text-xs text-gray-500">· {job.email}</span>
+                                  <span className="ml-2 text-xs text-text-tertiary">· {job.email}</span>
                                 )}
                               </p>
-                              <p className="text-xs text-gray-500">{formatRelativeTimeSafe(job.createdAt)}</p>
+                              <p className="text-xs text-text-tertiary">{formatRelativeTimeSafe(job.createdAt)}</p>
                             </div>
                             <span className="text-xs font-semibold px-2 py-1 rounded-full bg-yellow-50 text-yellow-700">
                               {job.status}
                             </span>
                           </div>
 
-                          <div className="mt-3 rounded-lg bg-gray-50 p-3">
+                          <div className="mt-3 rounded-lg bg-background-tertiary p-3">
                             {job.mediaType === 'voice' ? (
                               <audio controls src={job.fileUrl} className="w-full" />
                             ) : job.mediaType === 'video' ? (
@@ -2594,7 +2637,7 @@ export default function AdminDashboard() {
                             ) : (
                               <img src={job.fileUrl} alt={`${job.mediaType} upload`} className="w-full max-h-64 object-contain rounded-lg" />
                             )}
-                            <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
+                            <div className="mt-2 flex items-center justify-between text-xs text-text-tertiary">
                               <span>Upload key {job.uploadKey.slice(0, 6)}…</span>
                               <a href={job.fileUrl} target="_blank" rel="noreferrer" className="text-purple-600 font-semibold">
                                 Open original
@@ -2602,32 +2645,32 @@ export default function AdminDashboard() {
                             </div>
                           </div>
 
-                          <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-gray-600">
+                          <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-text-secondary">
                             {aiScoreLabel && (
-                              <span className="inline-flex items-center rounded-full bg-white px-2 py-0.5 border border-gray-200 text-gray-700">
+                              <span className="inline-flex items-center rounded-full bg-background-tertiary px-2 py-0.5 border border-border-gold/20 text-text-secondary">
                                 {aiScoreLabel}
                               </span>
                             )}
                             {job.partner && (
-                              <span className="inline-flex items-center rounded-full bg-white px-2 py-0.5 border border-gray-200 text-gray-700">
+                              <span className="inline-flex items-center rounded-full bg-background-tertiary px-2 py-0.5 border border-border-gold/20 text-text-secondary">
                                 Partner {job.partner}
                               </span>
                             )}
-                            <span className="inline-flex items-center rounded-full bg-white px-2 py-0.5 border border-gray-200 text-gray-700">
+                            <span className="inline-flex items-center rounded-full bg-background-tertiary px-2 py-0.5 border border-border-gold/20 text-text-secondary">
                               Attempts {job.attempts}
                             </span>
-                            <span className="inline-flex items-center rounded-full bg-white px-2 py-0.5 border border-gray-200 text-gray-700">
+                            <span className="inline-flex items-center rounded-full bg-background-tertiary px-2 py-0.5 border border-border-gold/20 text-text-secondary">
                               Prospect {job.prospectId.slice(0, 6)}…
                             </span>
                             {job.mediaStatus && (
-                              <span className="inline-flex items-center rounded-full bg-white px-2 py-0.5 border border-gray-200 text-gray-700">
+                              <span className="inline-flex items-center rounded-full bg-background-tertiary px-2 py-0.5 border border-border-gold/20 text-text-secondary">
                                 Media {job.mediaStatus}
                               </span>
                             )}
                           </div>
 
                           {(job.mediaMessage || job.mediaStatus) && (
-                            <div className="mt-2 text-xs text-gray-600">
+                            <div className="mt-2 text-xs text-text-secondary">
                               {job.mediaMessage || job.mediaStatus}
                             </div>
                           )}
@@ -2681,7 +2724,7 @@ export default function AdminDashboard() {
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Insights & KPIs</h1>
-                <p className="text-gray-600 mt-1">Live snapshots from the trust & monetization pipeline.</p>
+                <p className="text-text-secondary mt-1">Live snapshots from the trust & monetization pipeline.</p>
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <Button onClick={() => router.push('/admin/analytics')}>
@@ -2690,7 +2733,7 @@ export default function AdminDashboard() {
                 <select
                   value={snapshotType}
                   onChange={(e) => setSnapshotType(e.target.value as SnapshotType)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm font-medium capitalize"
+                  className="px-4 py-2 border border-border-gold/20 rounded-lg bg-background-secondary text-sm font-medium capitalize"
                 >
                   {[
                     { value: 'activation', label: 'Activation' },
@@ -2706,7 +2749,7 @@ export default function AdminDashboard() {
                 <select
                   value={snapshotRange}
                   onChange={(e) => setSnapshotRange(e.target.value as SnapshotRange)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm font-medium capitalize"
+                  className="px-4 py-2 border border-border-gold/20 rounded-lg bg-background-secondary text-sm font-medium capitalize"
                 >
                   {[
                     { value: 'daily', label: 'Daily' },
@@ -2737,14 +2780,14 @@ export default function AdminDashboard() {
             )}
 
             {snapshotLoading && analyticsSnapshots.length === 0 && (
-              <div className="mb-6 bg-white border border-gray-200 rounded-xl p-6 flex items-center gap-3 text-gray-600">
+              <div className="mb-6 bg-background-secondary border border-border-gold/20 rounded-xl p-6 flex items-center gap-3 text-text-secondary">
                 <div className="w-5 h-5 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
                 Fetching analytics snapshots…
               </div>
             )}
 
             {!snapshotLoading && analyticsSnapshots.length === 0 && !snapshotError && (
-              <div className="bg-white border border-dashed border-gray-300 rounded-xl p-10 text-center text-gray-600">
+              <div className="bg-background-secondary border border-dashed border-border-gold/30 rounded-xl p-10 text-center text-text-secondary">
                 <BarChart3 className="w-12 h-12 mx-auto mb-4 text-gray-400" />
                 <p className="text-lg font-semibold text-gray-900 mb-2">No snapshots yet</p>
                 <p className="text-sm mb-4">Kick off a snapshot to populate this dashboard.</p>
@@ -2756,42 +2799,42 @@ export default function AdminDashboard() {
 
             {analyticsSnapshots.length > 0 && latestSnapshot && (
               <>
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
                     <div>
-                      <p className="text-xs uppercase tracking-wide text-gray-500">Snapshot window</p>
+                      <p className="text-xs uppercase tracking-wide text-text-tertiary">Snapshot window</p>
                       <h3 className="text-2xl font-bold text-gray-900">{formatSnapshotWindow(latestSnapshot)}</h3>
-                      <p className="text-xs text-gray-500 mt-1">Generated {formatSnapshotTimestamp(latestSnapshot.generatedAt)}</p>
+                      <p className="text-xs text-text-tertiary mt-1">Generated {formatSnapshotTimestamp(latestSnapshot.generatedAt)}</p>
                       {latestSnapshot.notes && (
                         <p className="text-xs text-purple-600 mt-2">{latestSnapshot.notes}</p>
                       )}
                     </div>
-                    <div className="text-sm text-right text-gray-600">
+                    <div className="text-sm text-right text-text-secondary">
                       <p className="font-semibold text-gray-900">{latestSnapshot.type.charAt(0).toUpperCase() + latestSnapshot.type.slice(1)} · {latestSnapshot.range}</p>
-                      <p className="text-xs text-gray-500">Source: {latestSnapshot.source}</p>
+                      <p className="text-xs text-text-tertiary">Source: {latestSnapshot.source}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {latestSnapshotMetrics.map(([key, value]) => (
-                      <div key={key} className="border border-gray-100 rounded-lg p-4 bg-gray-50">
-                        <p className="text-xs uppercase tracking-wide text-gray-500">{formatMetricLabel(key)}</p>
+                      <div key={key} className="border border-border-gold/10 rounded-lg p-4 bg-background-tertiary">
+                        <p className="text-xs uppercase tracking-wide text-text-tertiary">{formatMetricLabel(key)}</p>
                         <p className="text-2xl font-semibold text-gray-900 mt-1">{formatMetricValue(key, value)}</p>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-6">
+                <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6 mt-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="text-lg font-bold text-gray-900">Recent windows</h3>
-                      <p className="text-xs text-gray-500">Comparing up to the last six snapshots.</p>
+                      <p className="text-xs text-text-tertiary">Comparing up to the last six snapshots.</p>
                     </div>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="min-w-full text-left text-sm">
                       <thead>
-                        <tr className="text-gray-500 text-xs uppercase tracking-wide">
+                        <tr className="text-text-tertiary text-xs uppercase tracking-wide">
                           <th className="py-2 pr-4">Window</th>
                           {snapshotColumns.map((column) => (
                             <th key={column} className="py-2 pr-4">
@@ -2804,14 +2847,14 @@ export default function AdminDashboard() {
                       </thead>
                       <tbody>
                         {analyticsSnapshots.map((snapshot) => (
-                          <tr key={snapshot.id ?? snapshot.windowStart} className="border-t border-gray-100">
+                          <tr key={snapshot.id ?? snapshot.windowStart} className="border-t border-border-gold/10">
                             <td className="py-2 pr-4 font-medium text-gray-900">{formatSnapshotWindow(snapshot)}</td>
                             {snapshotColumns.map((column) => (
-                              <td key={`${snapshot.windowStart}-${column}`} className="py-2 pr-4 text-gray-700">
+                              <td key={`${snapshot.windowStart}-${column}`} className="py-2 pr-4 text-text-secondary">
                                 {snapshot.metrics[column] !== undefined ? formatMetricValue(column, snapshot.metrics[column]) : '—'}
                               </td>
                             ))}
-                            <td className="py-2 pr-4 text-gray-500">{formatSnapshotTimestamp(snapshot.generatedAt)}</td>
+                            <td className="py-2 pr-4 text-text-tertiary">{formatSnapshotTimestamp(snapshot.generatedAt)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -2821,17 +2864,17 @@ export default function AdminDashboard() {
               </>
             )}
 
-            <div className="mt-10 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="mt-10 bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">Cohort explorer</h2>
-                  <p className="text-sm text-gray-600">Follow week-over-week retention and monetization performance by cohort.</p>
+                  <p className="text-sm text-text-secondary">Follow week-over-week retention and monetization performance by cohort.</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <select
                     value={cohortDimension}
                     onChange={(event) => setCohortDimension(event.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm font-medium capitalize"
+                    className="px-4 py-2 border border-border-gold/20 rounded-lg bg-background-secondary text-sm font-medium capitalize"
                   >
                     {COHORT_DIMENSION_OPTIONS.map((option) => (
                       <option key={option.value} value={option.value} className="capitalize">
@@ -2842,7 +2885,7 @@ export default function AdminDashboard() {
                   <select
                     value={cohortLimit}
                     onChange={(event) => setCohortLimit(Number(event.target.value))}
-                    className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm font-medium"
+                    className="px-4 py-2 border border-border-gold/20 rounded-lg bg-background-secondary text-sm font-medium"
                   >
                     {COHORT_LIMIT_OPTIONS.map((option) => (
                       <option key={option} value={option}>
@@ -2869,7 +2912,7 @@ export default function AdminDashboard() {
               )}
 
               {cohortLoading && (!cohortData || cohortData.rows.length === 0) && (
-                <div className="mt-6 flex items-center gap-3 text-gray-600">
+                <div className="mt-6 flex items-center gap-3 text-text-secondary">
                   <div className="w-5 h-5 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
                   Fetching cohort metrics…
                 </div>
@@ -2878,20 +2921,20 @@ export default function AdminDashboard() {
               {cohortData && cohortData.rows.length > 0 && (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                    <div className="border border-gray-100 rounded-lg p-4 bg-gray-50">
-                      <p className="text-xs uppercase tracking-wide text-gray-500">Tracked cohorts</p>
+                    <div className="border border-border-gold/10 rounded-lg p-4 bg-background-tertiary">
+                      <p className="text-xs uppercase tracking-wide text-text-tertiary">Tracked cohorts</p>
                       <p className="text-2xl font-bold text-gray-900 mt-1">{cohortData.summary.cohortCount}</p>
-                      <p className="text-xs text-gray-500 mt-1">Dimension: {cohortData.summary.dimension ?? 'all'}</p>
+                      <p className="text-xs text-text-tertiary mt-1">Dimension: {cohortData.summary.dimension ?? 'all'}</p>
                     </div>
-                    <div className="border border-gray-100 rounded-lg p-4 bg-gray-50">
-                      <p className="text-xs uppercase tracking-wide text-gray-500">Avg retention</p>
+                    <div className="border border-border-gold/10 rounded-lg p-4 bg-background-tertiary">
+                      <p className="text-xs uppercase tracking-wide text-text-tertiary">Avg retention</p>
                       <p className="text-2xl font-bold text-gray-900 mt-1">{formatRetentionRate(cohortData.summary.averageRetentionRate)}</p>
-                      <p className="text-xs text-gray-500 mt-1">Across {cohortWeekNumbers.length} recorded weeks</p>
+                      <p className="text-xs text-text-tertiary mt-1">Across {cohortWeekNumbers.length} recorded weeks</p>
                     </div>
-                    <div className="border border-gray-100 rounded-lg p-4 bg-gray-50">
-                      <p className="text-xs uppercase tracking-wide text-gray-500">Avg revenue / user</p>
+                    <div className="border border-border-gold/10 rounded-lg p-4 bg-background-tertiary">
+                      <p className="text-xs uppercase tracking-wide text-text-tertiary">Avg revenue / user</p>
                       <p className="text-2xl font-bold text-gray-900 mt-1">{formatCurrencyCompact(cohortData.summary.averageRevenuePerUser)}</p>
-                      <p className="text-xs text-gray-500 mt-1">Rolling weekly ARPU</p>
+                      <p className="text-xs text-text-tertiary mt-1">Rolling weekly ARPU</p>
                     </div>
                   </div>
 
@@ -2899,7 +2942,7 @@ export default function AdminDashboard() {
                     <div className="overflow-x-auto mt-6">
                       <table className="min-w-full text-left text-sm">
                         <thead>
-                          <tr className="text-gray-500 text-xs uppercase tracking-wide">
+                          <tr className="text-text-tertiary text-xs uppercase tracking-wide">
                             <th className="py-2 pr-4">Cohort</th>
                             {cohortWeekNumbers.map((week) => (
                               <th key={week} className="py-2 pr-4">Week {week}</th>
@@ -2908,11 +2951,11 @@ export default function AdminDashboard() {
                         </thead>
                         <tbody>
                           {cohortData.rows.map((row) => (
-                            <tr key={row.cohortKey} className="border-t border-gray-100">
+                            <tr key={row.cohortKey} className="border-t border-border-gold/10">
                               <td className="py-3 pr-4 align-top">
                                 <p className="font-semibold text-gray-900 text-sm">{row.cohortKey}</p>
-                                <p className="text-xs text-gray-500">{formatCohortDate(row.cohortDate)}</p>
-                                <p className="text-xs text-gray-500">Dimension: {row.dimension}</p>
+                                <p className="text-xs text-text-tertiary">{formatCohortDate(row.cohortDate)}</p>
+                                <p className="text-xs text-text-tertiary">Dimension: {row.dimension}</p>
                               </td>
                               {cohortWeekNumbers.map((week) => {
                                 const metric = row.metrics.find((item) => item.weekNumber === week)
@@ -2927,7 +2970,7 @@ export default function AdminDashboard() {
                                 return (
                                   <td key={`${row.cohortKey}-w${week}`} className="py-3 pr-4">
                                     <p className="text-sm font-semibold text-gray-900">{formatRetentionRate(metric.retentionRate)}</p>
-                                    <p className="text-xs text-gray-500">{formatCurrencyCompact(metric.revenuePerUser)} ARPU</p>
+                                    <p className="text-xs text-text-tertiary">{formatCurrencyCompact(metric.revenuePerUser)} ARPU</p>
                                     {metric.notes && (
                                       <p className="text-[11px] text-gray-400 mt-1">{metric.notes}</p>
                                     )}
@@ -2940,24 +2983,24 @@ export default function AdminDashboard() {
                       </table>
                     </div>
                   ) : (
-                    <p className="mt-6 text-sm text-gray-600">No weekly metrics recorded yet for this dimension.</p>
+                    <p className="mt-6 text-sm text-text-secondary">No weekly metrics recorded yet for this dimension.</p>
                   )}
                 </>
               )}
 
               {!cohortLoading && !cohortError && (!cohortData || cohortData.rows.length === 0) && (
-                <div className="mt-6 border border-dashed border-gray-300 rounded-lg p-6 text-center text-gray-600">
+                <div className="mt-6 border border-dashed border-gray-300 rounded-lg p-6 text-center text-text-secondary">
                   <p className="text-sm font-semibold text-gray-900 mb-1">No cohort metrics yet</p>
-                  <p className="text-xs text-gray-500">Switch dimensions or lower the limit to backfill data as metrics are generated.</p>
+                  <p className="text-xs text-text-tertiary">Switch dimensions or lower the limit to backfill data as metrics are generated.</p>
                 </div>
               )}
             </div>
 
-            <div className="mt-10 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="mt-10 bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
               <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">Retention experiment suite</h2>
-                  <p className="text-sm text-gray-600">AI nudges, guardian loops, and reactivation drips currently staged.</p>
+                  <p className="text-sm text-text-secondary">AI nudges, guardian loops, and reactivation drips currently staged.</p>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => router.push('/admin/experiments')}>
                   Manage experiments
@@ -2965,16 +3008,16 @@ export default function AdminDashboard() {
               </div>
               <div className="mt-6 grid gap-4 md:grid-cols-3">
                 {retentionExperimentCatalog.map((experiment) => (
-                  <div key={experiment.id} className="border border-gray-100 rounded-lg p-4 bg-gray-50">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{experiment.type.replace(/_/g, ' ')}</p>
+                  <div key={experiment.id} className="border border-border-gold/10 rounded-lg p-4 bg-background-tertiary">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-text-tertiary">{experiment.type.replace(/_/g, ' ')}</p>
                     <p className="mt-1 text-lg font-semibold text-gray-900">{experiment.name}</p>
-                    <p className="text-xs text-gray-500">{experiment.hypothesis}</p>
-                    <div className="mt-3 text-xs text-gray-500">
-                      <p className="font-semibold text-gray-700">Targeting</p>
+                    <p className="text-xs text-text-tertiary">{experiment.hypothesis}</p>
+                    <div className="mt-3 text-xs text-text-tertiary">
+                      <p className="font-semibold text-text-secondary">Targeting</p>
                       <p>{experiment.targeting}</p>
                     </div>
-                    <div className="mt-3 text-xs text-gray-500">
-                      <p className="font-semibold text-gray-700">Metrics</p>
+                    <div className="mt-3 text-xs text-text-tertiary">
+                      <p className="font-semibold text-text-secondary">Metrics</p>
                       <p>{experiment.metrics.join(', ')}</p>
                     </div>
                     <span className="mt-3 inline-flex rounded-full bg-purple-50 px-3 py-1 text-[11px] font-semibold text-purple-700">
@@ -2999,13 +3042,13 @@ export default function AdminDashboard() {
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Boost Auction Control</h1>
-                <p className="text-gray-600 mt-1">Monitor auction queues, inspect bids, and force clear windows when needed.</p>
+                <p className="text-text-secondary mt-1">Monitor auction queues, inspect bids, and force clear windows when needed.</p>
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <select
                   value={boostLocale}
                   onChange={(event) => setBoostLocale(event.target.value as AuctionLocale)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm font-medium"
+                  className="px-4 py-2 border border-border-gold/20 rounded-lg bg-background-secondary text-sm font-medium"
                 >
                   {BOOST_AUCTION_LOCALES.map((locale) => (
                     <option key={locale} value={locale}>
@@ -3016,7 +3059,7 @@ export default function AdminDashboard() {
                 <select
                   value={boostPlacement}
                   onChange={(event) => setBoostPlacement(event.target.value as AuctionPlacement)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm font-medium"
+                  className="px-4 py-2 border border-border-gold/20 rounded-lg bg-background-secondary text-sm font-medium"
                 >
                   {BOOST_AUCTION_PLACEMENTS.map((placement) => (
                     <option key={placement} value={placement}>
@@ -3049,67 +3092,67 @@ export default function AdminDashboard() {
             )}
 
             {boostLoading && !boostWindow && (
-              <div className="mb-6 bg-white border border-gray-200 rounded-xl p-6 flex items-center gap-3 text-gray-600">
+              <div className="mb-6 bg-background-secondary border border-border-gold/20 rounded-xl p-6 flex items-center gap-3 text-text-secondary">
                 <div className="w-5 h-5 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
                 Fetching boost auction data…
               </div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-2">Current window</h3>
                 {boostWindow ? (
-                  <div className="text-sm text-gray-600 space-y-2">
+                  <div className="text-sm text-text-secondary space-y-2">
                     <p>
-                      <span className="text-gray-500">Window start:</span> {formatDateTime(boostWindow.windowStart)}
+                      <span className="text-text-tertiary">Window start:</span> {formatDateTime(boostWindow.windowStart)}
                     </p>
                     <p>
-                      <span className="text-gray-500">Boost run:</span> {formatDateTime(boostWindow.boostStartsAt)} → {formatDateTime(boostWindow.boostEndsAt)}
+                      <span className="text-text-tertiary">Boost run:</span> {formatDateTime(boostWindow.boostStartsAt)} → {formatDateTime(boostWindow.boostEndsAt)}
                     </p>
                     <p>
-                      <span className="text-gray-500">Min bid:</span> {formatCredits(boostWindow.minBidCredits)}
+                      <span className="text-text-tertiary">Min bid:</span> {formatCredits(boostWindow.minBidCredits)}
                     </p>
                     <p>
-                      <span className="text-gray-500">Max winners:</span> {boostWindow.maxWinners}
+                      <span className="text-text-tertiary">Max winners:</span> {boostWindow.maxWinners}
                     </p>
                     <p>
-                      <span className="text-gray-500">Pending bids:</span> {boostPendingBids.length}
+                      <span className="text-text-tertiary">Pending bids:</span> {boostPendingBids.length}
                     </p>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500">No active window details available.</p>
+                  <p className="text-sm text-text-tertiary">No active window details available.</p>
                 )}
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-2">Next window</h3>
                 {boostNextWindow ? (
-                  <div className="text-sm text-gray-600 space-y-2">
+                  <div className="text-sm text-text-secondary space-y-2">
                     <p>
-                      <span className="text-gray-500">Window start:</span> {formatDateTime(boostNextWindow.windowStart)}
+                      <span className="text-text-tertiary">Window start:</span> {formatDateTime(boostNextWindow.windowStart)}
                     </p>
                     <p>
-                      <span className="text-gray-500">Boost run:</span> {formatDateTime(boostNextWindow.boostStartsAt)} → {formatDateTime(boostNextWindow.boostEndsAt)}
+                      <span className="text-text-tertiary">Boost run:</span> {formatDateTime(boostNextWindow.boostStartsAt)} → {formatDateTime(boostNextWindow.boostEndsAt)}
                     </p>
                     <p>
-                      <span className="text-gray-500">Queued bids:</span> {boostNextWindow.pendingCount ?? boostNextWindowBids.length}
+                      <span className="text-text-tertiary">Queued bids:</span> {boostNextWindow.pendingCount ?? boostNextWindowBids.length}
                     </p>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500">Awaiting next window calculation.</p>
+                  <p className="text-sm text-text-tertiary">Awaiting next window calculation.</p>
                 )}
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <h3 className="text-lg font-bold text-gray-900">Manual controls</h3>
-                    <p className="text-xs text-gray-500">Use sparingly; impacts live members.</p>
+                    <p className="text-xs text-text-tertiary">Use sparingly; impacts live members.</p>
                   </div>
                 </div>
-                <div className="space-y-3 text-sm text-gray-600">
+                <div className="space-y-3 text-sm text-text-secondary">
                   <p>
-                    <span className="text-gray-500">Active sessions:</span> {boostActiveSessions.length}
+                    <span className="text-text-tertiary">Active sessions:</span> {boostActiveSessions.length}
                   </p>
                   <Button
                     variant="destructive"
@@ -3134,21 +3177,21 @@ export default function AdminDashboard() {
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className="text-lg font-bold text-gray-900">Pending bids</h3>
-                    <p className="text-xs text-gray-500">Aligned to the current window.</p>
+                    <p className="text-xs text-text-tertiary">Aligned to the current window.</p>
                   </div>
-                  <span className="text-xs font-semibold text-gray-500">{boostPendingBids.length} queued</span>
+                  <span className="text-xs font-semibold text-text-tertiary">{boostPendingBids.length} queued</span>
                 </div>
                 {boostPendingBids.length === 0 ? (
-                  <p className="text-sm text-gray-500">No bids waiting for this window.</p>
+                  <p className="text-sm text-text-tertiary">No bids waiting for this window.</p>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="min-w-full text-left text-sm">
                       <thead>
-                        <tr className="text-gray-500 text-xs uppercase tracking-wide">
+                        <tr className="text-text-tertiary text-xs uppercase tracking-wide">
                           <th className="py-2 pr-4">Bidder</th>
                           <th className="py-2 pr-4">Bid</th>
                           <th className="py-2 pr-4">Window</th>
@@ -3157,14 +3200,14 @@ export default function AdminDashboard() {
                       </thead>
                       <tbody>
                         {boostPendingBids.map((bid) => (
-                          <tr key={bid.sessionId} className="border-t border-gray-100">
+                          <tr key={bid.sessionId} className="border-t border-border-gold/10">
                             <td className="py-2 pr-4">
                               <p className="font-mono text-xs text-gray-900">{bid.userId}</p>
-                              <p className="text-xs text-gray-500">Session {bid.sessionId}</p>
+                              <p className="text-xs text-text-tertiary">Session {bid.sessionId}</p>
                             </td>
                             <td className="py-2 pr-4 font-semibold text-gray-900">{formatCredits(bid.bidAmountCredits)}</td>
-                            <td className="py-2 pr-4 text-xs text-gray-500">{formatRelativeTimeSafe(bid.auctionWindowStart)}</td>
-                            <td className="py-2 pr-4 text-xs text-gray-500">
+                            <td className="py-2 pr-4 text-xs text-text-tertiary">{formatRelativeTimeSafe(bid.auctionWindowStart)}</td>
+                            <td className="py-2 pr-4 text-xs text-text-tertiary">
                               {bid.autoRollover ? `Enabled (${bid.rolloverCount})` : 'Disabled'}
                             </td>
                           </tr>
@@ -3175,21 +3218,21 @@ export default function AdminDashboard() {
                 )}
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className="text-lg font-bold text-gray-900">Next window queue</h3>
-                    <p className="text-xs text-gray-500">Bids already staged for the next run.</p>
+                    <p className="text-xs text-text-tertiary">Bids already staged for the next run.</p>
                   </div>
-                  <span className="text-xs font-semibold text-gray-500">{boostNextWindowBids.length} queued</span>
+                  <span className="text-xs font-semibold text-text-tertiary">{boostNextWindowBids.length} queued</span>
                 </div>
                 {boostNextWindowBids.length === 0 ? (
-                  <p className="text-sm text-gray-500">No bids queued yet for the next window.</p>
+                  <p className="text-sm text-text-tertiary">No bids queued yet for the next window.</p>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="min-w-full text-left text-sm">
                       <thead>
-                        <tr className="text-gray-500 text-xs uppercase tracking-wide">
+                        <tr className="text-text-tertiary text-xs uppercase tracking-wide">
                           <th className="py-2 pr-4">Bidder</th>
                           <th className="py-2 pr-4">Bid</th>
                           <th className="py-2 pr-4">Window</th>
@@ -3198,14 +3241,14 @@ export default function AdminDashboard() {
                       </thead>
                       <tbody>
                         {boostNextWindowBids.map((bid) => (
-                          <tr key={bid.sessionId} className="border-t border-gray-100">
+                          <tr key={bid.sessionId} className="border-t border-border-gold/10">
                             <td className="py-2 pr-4">
                               <p className="font-mono text-xs text-gray-900">{bid.userId}</p>
-                              <p className="text-xs text-gray-500">Session {bid.sessionId}</p>
+                              <p className="text-xs text-text-tertiary">Session {bid.sessionId}</p>
                             </td>
                             <td className="py-2 pr-4 font-semibold text-gray-900">{formatCredits(bid.bidAmountCredits)}</td>
-                            <td className="py-2 pr-4 text-xs text-gray-500">{formatRelativeTimeSafe(bid.auctionWindowStart)}</td>
-                            <td className="py-2 pr-4 text-xs text-gray-500">
+                            <td className="py-2 pr-4 text-xs text-text-tertiary">{formatRelativeTimeSafe(bid.auctionWindowStart)}</td>
+                            <td className="py-2 pr-4 text-xs text-text-tertiary">
                               {bid.autoRollover ? `Enabled (${bid.rolloverCount})` : 'Disabled'}
                             </td>
                           </tr>
@@ -3217,21 +3260,21 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-6">
+            <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6 mt-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-bold text-gray-900">Live boost sessions</h3>
-                  <p className="text-xs text-gray-500">Currently running placements for this locale.</p>
+                  <p className="text-xs text-text-tertiary">Currently running placements for this locale.</p>
                 </div>
-                <span className="text-xs font-semibold text-gray-500">{boostActiveSessions.length} active</span>
+                <span className="text-xs font-semibold text-text-tertiary">{boostActiveSessions.length} active</span>
               </div>
               {boostActiveSessions.length === 0 ? (
-                <p className="text-sm text-gray-500">No active boosts are running for this selection.</p>
+                <p className="text-sm text-text-tertiary">No active boosts are running for this selection.</p>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="min-w-full text-left text-sm">
                     <thead>
-                      <tr className="text-gray-500 text-xs uppercase tracking-wide">
+                      <tr className="text-text-tertiary text-xs uppercase tracking-wide">
                         <th className="py-2 pr-4">Bidder</th>
                         <th className="py-2 pr-4">Bid</th>
                         <th className="py-2 pr-4">Boost window</th>
@@ -3240,13 +3283,13 @@ export default function AdminDashboard() {
                     </thead>
                     <tbody>
                       {boostActiveSessions.map((session) => (
-                        <tr key={session.sessionId} className="border-t border-gray-100">
+                        <tr key={session.sessionId} className="border-t border-border-gold/10">
                           <td className="py-2 pr-4">
                             <p className="font-mono text-xs text-gray-900">{session.userId}</p>
-                            <p className="text-xs text-gray-500">Session {session.sessionId}</p>
+                            <p className="text-xs text-text-tertiary">Session {session.sessionId}</p>
                           </td>
                           <td className="py-2 pr-4 font-semibold text-gray-900">{formatCredits(session.bidAmountCredits)}</td>
-                          <td className="py-2 pr-4 text-xs text-gray-500">
+                          <td className="py-2 pr-4 text-xs text-text-tertiary">
                             {formatDateTime(session.startedAt)} → {formatDateTime(session.endsAt)}
                           </td>
                           <td className="py-2 pr-4">
@@ -3270,7 +3313,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Marketing & Growth</h1>
-                <p className="text-gray-600 mt-1">Early UI for future campaigns and promotions (not yet live).</p>
+                <p className="text-text-secondary mt-1">Early UI for future campaigns and promotions (not yet live).</p>
               </div>
               <Button disabled className="cursor-not-allowed opacity-60">
                 <Zap className="w-4 h-4 mr-2" />
@@ -3290,21 +3333,21 @@ export default function AdminDashboard() {
               ].map((tool, index) => {
                 const Icon = tool.icon
                 return (
-                  <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 opacity-80">
+                  <div key={index} className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6 opacity-80">
                     <div className={`${tool.color} p-3 rounded-lg w-fit mb-4`}>
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 mb-2">{tool.title}</h3>
-                    <p className="text-sm text-gray-600">{tool.count}</p>
+                    <p className="text-sm text-text-secondary">{tool.count}</p>
                   </div>
                 )
               })}
             </div>
 
             {/* Conversion Funnel - demo numbers only until analytics is wired */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
               <h3 className="text-lg font-bold text-gray-900 mb-1">Conversion Funnel</h3>
-              <p className="text-xs text-gray-500 mb-6">These funnel stages and counts are placeholders to help design decisions; they are not live traffic data yet.</p>
+              <p className="text-xs text-text-tertiary mb-6">These funnel stages and counts are placeholders to help design decisions; they are not live traffic data yet.</p>
               <div className="space-y-4">
                 {[
                   { stage: 'Visitors', count: 10000, percentage: 100 },
@@ -3315,7 +3358,7 @@ export default function AdminDashboard() {
                 ].map((stage, index) => (
                   <div key={index}>
                     <div className="flex items-center justify-between text-sm mb-2">
-                      <span className="text-gray-700 font-medium">{stage.stage}</span>
+                      <span className="text-text-secondary font-medium">{stage.stage}</span>
                       <span className="text-gray-900 font-semibold">{stage.count.toLocaleString()} ({stage.percentage}%)</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-3">
@@ -3339,27 +3382,27 @@ export default function AdminDashboard() {
             <h1 className="text-3xl font-bold text-gray-900 mb-8">Platform Settings</h1>
 
             <div className="space-y-6">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">General Settings</h3>
+              <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
+                <h3 className="text-lg font-bold text-text-primary mb-4">General Settings</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Platform Name</label>
+                    <label className="block text-sm font-medium text-text-secondary mb-2">Platform Name</label>
                     <Input defaultValue="Tribal Mingle" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Contact Email</label>
+                    <label className="block text-sm font-medium text-text-secondary mb-2">Contact Email</label>
                     <Input type="email" defaultValue="admin@tribalmingle.com" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Support Phone</label>
+                    <label className="block text-sm font-medium text-text-secondary mb-2">Support Phone</label>
                     <Input type="tel" defaultValue="+44 20 1234 5678" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-1">Feature Toggles</h3>
-                <p className="text-xs text-gray-500 mb-4">
+                <p className="text-xs text-text-tertiary mb-4">
                   These switches are UI-only for now and should mirror real configuration in your backend / infrastructure.
                 </p>
                 <div className="space-y-3">
@@ -3393,19 +3436,19 @@ export default function AdminDashboard() {
                     <label
                       key={index}
                       className={`flex items-start justify-between p-3 rounded-lg cursor-pointer transition ${
-                        feature.isPlaceholder ? 'bg-gray-50 opacity-80' : 'hover:bg-gray-50'
+                        feature.isPlaceholder ? 'bg-background-tertiary opacity-80' : 'hover:bg-background-tertiary'
                       }`}
                     >
                       <div className="mr-3">
                         <div className="text-gray-800 font-medium text-sm flex items-center gap-2">
                           {feature.label}
                           {feature.isPlaceholder && (
-                            <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-gray-200 text-gray-700">
+                            <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-gray-200 text-text-secondary">
                               UI only
                             </span>
                           )}
                         </div>
-                        <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">
+                        <p className="text-[11px] text-text-tertiary mt-0.5 leading-snug">
                           {feature.description}
                         </p>
                       </div>
@@ -3420,30 +3463,30 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-1">Security & Audit</h3>
-                <p className="text-xs text-gray-500 mb-4">
+                <p className="text-xs text-text-tertiary mb-4">
                   These controls are placeholders for future security tooling. Actual enforcement should live in your auth provider / backend.
                 </p>
                 <div className="space-y-3">
                   <Button variant="outline" className="w-full justify-start opacity-80 cursor-not-allowed" disabled>
                     <Shield className="w-4 h-4 mr-2" />
                     Configure 2FA
-                    <span className="ml-2 text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                    <span className="ml-2 text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-background-tertiary text-text-secondary">
                       Coming soon
                     </span>
                   </Button>
                   <Button variant="outline" className="w-full justify-start opacity-80 cursor-not-allowed" disabled>
                     <Lock className="w-4 h-4 mr-2" />
                     Password Policy
-                    <span className="ml-2 text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                    <span className="ml-2 text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-background-tertiary text-text-secondary">
                       Configure in auth provider
                     </span>
                   </Button>
                   <Button variant="outline" className="w-full justify-start opacity-80 cursor-not-allowed" disabled>
                     <FileText className="w-4 h-4 mr-2" />
                     View Audit Logs
-                    <span className="ml-2 text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                    <span className="ml-2 text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-background-tertiary text-text-secondary">
                       Integrate with logging stack
                     </span>
                   </Button>
@@ -3456,10 +3499,10 @@ export default function AdminDashboard() {
 
       {selectedLivenessItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-8">
-          <div className="relative w-full max-w-3xl rounded-2xl bg-white p-6 shadow-2xl">
+          <div className="relative w-full max-w-3xl rounded-2xl bg-background-secondary p-6 shadow-2xl">
             <button
               type="button"
-              className="absolute right-4 top-4 rounded-full border border-gray-200 p-2 text-gray-500 hover:text-gray-800"
+              className="absolute right-4 top-4 rounded-full border border-gray-200 p-2 text-text-tertiary hover:text-gray-800"
               onClick={closeLivenessReviewModal}
               aria-label="Close manual review modal"
             >
@@ -3468,7 +3511,7 @@ export default function AdminDashboard() {
             <div className="pr-10">
               <p className="text-xs font-semibold uppercase tracking-wide text-purple-600">Manual review</p>
               <h2 className="text-2xl font-semibold text-gray-900">Resolve liveness session</h2>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-text-secondary">
                 Session {selectedLivenessItem.sessionToken ?? '—'} · {formatRelativeTime(selectedLivenessItem.createdAt)} · Intent{' '}
                 {(selectedLivenessItem.intent ?? 'manual_review').replace(/_/g, ' ')}
               </p>
@@ -3482,27 +3525,27 @@ export default function AdminDashboard() {
 
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               <div className="rounded-lg border border-gray-200 p-4">
-                <p className="text-xs uppercase tracking-wide text-gray-500">Member</p>
+                <p className="text-xs uppercase tracking-wide text-text-tertiary">Member</p>
                 <p className="text-base font-semibold text-gray-900">{selectedLivenessItem.userId}</p>
-                <p className="text-xs text-gray-500 mt-1">Locale {formatLocaleTag(selectedLivenessItem.locale)}</p>
-                <p className="text-xs text-gray-500">Status {(selectedLivenessItem.status ?? 'manual_review').replace(/_/g, ' ')}</p>
+                <p className="text-xs text-text-tertiary mt-1">Locale {formatLocaleTag(selectedLivenessItem.locale)}</p>
+                <p className="text-xs text-text-tertiary">Status {(selectedLivenessItem.status ?? 'manual_review').replace(/_/g, ' ')}</p>
               </div>
               <div className="rounded-lg border border-gray-200 p-4">
-                <p className="text-xs uppercase tracking-wide text-gray-500">Provider signal</p>
+                <p className="text-xs uppercase tracking-wide text-text-tertiary">Provider signal</p>
                 <p className="text-base font-semibold text-gray-900">
                   {(selectedLivenessItem.providerDecision ?? 'pending').replace(/_/g, ' ')}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-text-tertiary mt-1">
                   Confidence {selectedLivenessItem.providerConfidence != null ? `${Math.round(selectedLivenessItem.providerConfidence * 100)}%` : '—'}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-text-tertiary">
                   Score delta {formatTrustScoreDelta(selectedLivenessItem.scoreDelta)} · Aggregate {formatAggregateScore(selectedLivenessItem.aggregateScore)}
                 </p>
               </div>
             </div>
 
-            <div className="mt-4 rounded-lg border border-gray-100 bg-gray-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-600 mb-2">Flagged reasons</p>
+            <div className="mt-4 rounded-lg border border-border-gold/10 bg-background-tertiary p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-text-secondary mb-2">Flagged reasons</p>
               {selectedLivenessItem.reasons?.length ? (
                 <div className="flex flex-wrap gap-2">
                   {selectedLivenessItem.reasons.map((reason) => (
@@ -3512,13 +3555,13 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               ) : (
-                <p className="text-xs text-gray-500">Provider did not send concrete reasons. Use your judgement.</p>
+                <p className="text-xs text-text-tertiary">Provider did not send concrete reasons. Use your judgement.</p>
               )}
             </div>
 
             <form onSubmit={handleSubmitLivenessReview} className="mt-6 space-y-5">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-gray-600 mb-2">Resolution</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-text-secondary mb-2">Resolution</p>
                 <div className="grid gap-3 md:grid-cols-3">
                   {LIVENESS_RESOLUTION_OPTIONS.map((option) => (
                     <button
@@ -3532,14 +3575,14 @@ export default function AdminDashboard() {
                       }`}
                     >
                       <p className="text-sm font-semibold">{option.label}</p>
-                      <p className="text-xs text-gray-600">{option.helper}</p>
+                      <p className="text-xs text-text-secondary">{option.helper}</p>
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-700" htmlFor="liveness-review-note">Reviewer note (optional)</label>
+                <label className="text-sm font-medium text-text-secondary" htmlFor="liveness-review-note">Reviewer note (optional)</label>
                 <textarea
                   id="liveness-review-note"
                   className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none"
@@ -3548,7 +3591,7 @@ export default function AdminDashboard() {
                   onChange={(event) => setLivenessReviewNote(event.target.value)}
                   placeholder="Summarize why you approved, rejected, or need a reshoot."
                 />
-                <p className="mt-1 text-xs text-gray-500">Notes help future reviewers understand the decision trail.</p>
+                <p className="mt-1 text-xs text-text-tertiary">Notes help future reviewers understand the decision trail.</p>
               </div>
 
               {!selectedLivenessItem.sessionToken && (
@@ -3562,7 +3605,7 @@ export default function AdminDashboard() {
                   Cancel
                 </Button>
                 <div className="flex items-center gap-3">
-                  <p className="text-xs text-gray-500">Decision notifies trust signals automatically.</p>
+                  <p className="text-xs text-text-tertiary">Decision notifies trust signals automatically.</p>
                   <Button type="submit" disabled={livenessReviewLoading || !selectedLivenessItem.sessionToken}>
                     {livenessReviewLoading ? 'Saving…' : 'Record decision'}
                   </Button>
@@ -3675,7 +3718,7 @@ function EmailUsersSection({ users }: { users: User[] }) {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Email Users</h1>
-          <p className="text-gray-600 mt-1">Send targeted, on-brand emails to your members</p>
+          <p className="text-text-secondary mt-1">Send targeted, on-brand emails to your members</p>
         </div>
         <Button onClick={handleSendEmail} disabled={sendingEmail || selectedUsers.length === 0} className="bg-purple-600 hover:bg-purple-700">
           <Mail className="w-4 h-4 mr-2" />
@@ -3699,21 +3742,21 @@ function EmailUsersSection({ users }: { users: User[] }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Column - Compose Email */}
         <div className="space-y-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                 <Mail className="w-6 h-6 text-purple-600" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-gray-900">Compose Email</h3>
-                <p className="text-sm text-gray-600">Create your message</p>
+                <p className="text-sm text-text-secondary">Create your message</p>
               </div>
             </div>
 
             <div className="space-y-4">
               {/* Template Presets */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Template</label>
+                <label className="block text-sm font-medium text-text-secondary mb-2">Template</label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
@@ -3723,11 +3766,11 @@ function EmailUsersSection({ users }: { users: User[] }) {
                     className={`text-left px-3 py-2 rounded-lg border text-sm transition ${
                       template === 'custom'
                         ? 'border-purple-500 bg-purple-50 text-purple-900'
-                        : 'border-gray-200 hover:bg-gray-50'
+                        : 'border-gray-200 hover:bg-background-tertiary'
                     }`}
                   >
                     <span className="block font-semibold">Custom</span>
-                    <span className="block text-xs text-gray-600">Write any message</span>
+                    <span className="block text-xs text-text-secondary">Write any message</span>
                   </button>
                   <button
                     type="button"
@@ -3743,11 +3786,11 @@ function EmailUsersSection({ users }: { users: User[] }) {
                     className={`text-left px-3 py-2 rounded-lg border text-sm transition ${
                       template === 'welcome'
                         ? 'border-purple-500 bg-purple-50 text-purple-900'
-                        : 'border-gray-200 hover:bg-gray-50'
+                        : 'border-gray-200 hover:bg-background-tertiary'
                     }`}
                   >
                     <span className="block font-semibold">Welcome new members</span>
-                    <span className="block text-xs text-gray-600">Gently nudge profile completion</span>
+                    <span className="block text-xs text-text-secondary">Gently nudge profile completion</span>
                   </button>
                   <button
                     type="button"
@@ -3763,11 +3806,11 @@ function EmailUsersSection({ users }: { users: User[] }) {
                     className={`text-left px-3 py-2 rounded-lg border text-sm transition ${
                       template === 'winback'
                         ? 'border-purple-500 bg-purple-50 text-purple-900'
-                        : 'border-gray-200 hover:bg-gray-50'
+                        : 'border-gray-200 hover:bg-background-tertiary'
                     }`}
                   >
                     <span className="block font-semibold">Win back inactive users</span>
-                    <span className="block text-xs text-gray-600">Encourage another visit</span>
+                    <span className="block text-xs text-text-secondary">Encourage another visit</span>
                   </button>
                   <button
                     type="button"
@@ -3783,19 +3826,19 @@ function EmailUsersSection({ users }: { users: User[] }) {
                     className={`text-left px-3 py-2 rounded-lg border text-sm transition ${
                       template === 'upgrade'
                         ? 'border-purple-500 bg-purple-50 text-purple-900'
-                        : 'border-gray-200 hover:bg-gray-50'
+                        : 'border-gray-200 hover:bg-background-tertiary'
                     }`}
                   >
                     <span className="block font-semibold">Promote Premium</span>
-                    <span className="block text-xs text-gray-600">Upsell to paid plans</span>
+                    <span className="block text-xs text-text-secondary">Upsell to paid plans</span>
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-text-tertiary mt-1">
                   Selecting a template can prefill subject and copy if those fields are empty. You can always edit the text below.
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email Subject *</label>
+                <label className="block text-sm font-medium text-text-secondary mb-2">Email Subject *</label>
                 <Input
                   placeholder="Enter email subject..."
                   value={emailSubject}
@@ -3805,7 +3848,7 @@ function EmailUsersSection({ users }: { users: User[] }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email Message *</label>
+                <label className="block text-sm font-medium text-text-secondary mb-2">Email Message *</label>
                 <textarea
                   placeholder="Write your message here... This will be beautifully formatted in the email template."
                   value={emailMessage}
@@ -3813,7 +3856,7 @@ function EmailUsersSection({ users }: { users: User[] }) {
                   rows={12}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none"
                 />
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-text-tertiary mt-2">
                   Your message will be wrapped in a professional email template with Tribal Mingle branding
                 </p>
               </div>
@@ -3826,13 +3869,13 @@ function EmailUsersSection({ users }: { users: User[] }) {
               <Eye className="w-5 h-5 text-purple-600" />
               Email Preview
             </h4>
-            <div className="bg-white rounded-lg p-4 shadow-sm">
+            <div className="bg-background-secondary rounded-lg p-4 shadow-sm">
               <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-200">
                 <img src="/triballogo.png" alt="Logo" className="w-8 h-8" />
                 <span className="font-bold text-purple-900">Tribal Mingle</span>
               </div>
               <h3 className="font-bold text-lg mb-2">{emailSubject || 'Your Subject Here'}</h3>
-              <div className="text-gray-700 whitespace-pre-wrap text-sm">
+              <div className="text-text-secondary whitespace-pre-wrap text-sm">
                 {emailMessage || 'Your message will appear here...'}
               </div>
             </div>
@@ -3841,11 +3884,11 @@ function EmailUsersSection({ users }: { users: User[] }) {
 
         {/* Right Column - Select Recipients */}
         <div className="space-y-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-lg font-bold text-gray-900">Select Recipients</h3>
-                <p className="text-sm text-gray-600">{selectedUsers.length} selected</p>
+                <p className="text-sm text-text-secondary">{selectedUsers.length} selected</p>
               </div>
               <Button variant="outline" onClick={handleSelectAll} size="sm">
                 {selectedUsers.length === filteredUsers.length ? 'Deselect All' : 'Select All'}
@@ -3854,7 +3897,7 @@ function EmailUsersSection({ users }: { users: User[] }) {
 
             {/* Segments */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Audience segment</label>
+              <label className="block text-sm font-medium text-text-secondary mb-2">Audience segment</label>
               <div className="flex flex-wrap gap-2 text-xs">
                 <button
                   type="button"
@@ -3862,7 +3905,7 @@ function EmailUsersSection({ users }: { users: User[] }) {
                   className={`px-3 py-1 rounded-full border transition ${
                     segment === 'all'
                       ? 'border-purple-500 bg-purple-50 text-purple-900'
-                      : 'border-gray-200 hover:bg-gray-50'
+                      : 'border-gray-200 hover:bg-background-tertiary'
                   }`}
                 >
                   All users
@@ -3873,7 +3916,7 @@ function EmailUsersSection({ users }: { users: User[] }) {
                   className={`px-3 py-1 rounded-full border transition ${
                     segment === 'free'
                       ? 'border-purple-500 bg-purple-50 text-purple-900'
-                      : 'border-gray-200 hover:bg-gray-50'
+                      : 'border-gray-200 hover:bg-background-tertiary'
                   }`}
                 >
                   Free only
@@ -3884,7 +3927,7 @@ function EmailUsersSection({ users }: { users: User[] }) {
                   className={`px-3 py-1 rounded-full border transition ${
                     segment === 'premium'
                       ? 'border-purple-500 bg-purple-50 text-purple-900'
-                      : 'border-gray-200 hover:bg-gray-50'
+                      : 'border-gray-200 hover:bg-background-tertiary'
                   }`}
                 >
                   Paying members
@@ -3895,13 +3938,13 @@ function EmailUsersSection({ users }: { users: User[] }) {
                   className={`px-3 py-1 rounded-full border transition ${
                     segment === 'inactive'
                       ? 'border-purple-500 bg-purple-50 text-purple-900'
-                      : 'border-gray-200 hover:bg-gray-50'
+                      : 'border-gray-200 hover:bg-background-tertiary'
                   }`}
                 >
                   Inactive (30+ days)
                 </button>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-text-tertiary mt-1">
                 Segments help you narrow the list before manually picking recipients.
               </p>
             </div>
@@ -3922,7 +3965,7 @@ function EmailUsersSection({ users }: { users: User[] }) {
             {/* User List */}
             <div className="space-y-2 max-h-[600px] overflow-y-auto">
               {filteredUsers.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-text-tertiary">
                   <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
                   <p>No users found</p>
                 </div>
@@ -3933,7 +3976,7 @@ function EmailUsersSection({ users }: { users: User[] }) {
                     className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${
                       selectedUsers.includes(user._id)
                         ? 'bg-purple-50 border-2 border-purple-300'
-                        : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
+                        : 'bg-background-tertiary border-2 border-transparent hover:bg-background-tertiary'
                     }`}
                   >
                     <input
@@ -3951,7 +3994,7 @@ function EmailUsersSection({ users }: { users: User[] }) {
                     )}
                     <div className="flex-1">
                       <div className="font-semibold text-gray-900 text-sm">{user.name}</div>
-                      <div className="text-xs text-gray-600">{user.email}</div>
+                      <div className="text-xs text-text-secondary">{user.email}</div>
                     </div>
                     {user.subscriptionPlan === 'premium' && (
                       <Crown className="w-4 h-4 text-orange-500" />
@@ -4191,13 +4234,13 @@ function getStatusBadgeClass(status?: string) {
       return 'bg-blue-100 text-blue-800'
     case 'awaiting_upload':
     case 'created':
-      return 'bg-gray-100 text-gray-800'
+      return 'bg-background-tertiary text-text-primary'
     case 'passed':
       return 'bg-green-100 text-green-800'
     case 'failed':
       return 'bg-red-100 text-red-800'
     default:
-      return 'bg-gray-100 text-gray-800'
+      return 'bg-background-tertiary text-text-primary'
   }
 }
 
@@ -4205,3 +4248,6 @@ function safeDate(value: string) {
   const date = new Date(value)
   return Number.isNaN(date.getTime()) ? null : date
 }
+
+
+

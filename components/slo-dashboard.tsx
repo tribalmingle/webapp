@@ -82,38 +82,38 @@ export function SLODashboard() {
   return (
     <div className="space-y-6">
       {/* Overall Health */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-background-secondary rounded-lg border border-border-gold/20 p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl font-bold">Platform Health</h2>
-            <p className="text-gray-600">Service Level Objectives</p>
+            <h2 className="text-2xl font-bold text-purple-royal">Platform Health</h2>
+            <p className="text-text-tertiary">Service Level Objectives</p>
           </div>
           <div className="text-right">
-            <div className="text-3xl font-bold text-indigo-600">
+            <div className="text-3xl font-bold text-purple-royal">
               {overallHealth.toFixed(2)}%
             </div>
-            <div className="text-sm text-gray-500">Overall Availability</div>
+            <div className="text-sm text-text-tertiary">Overall Availability</div>
           </div>
         </div>
 
         <div className="grid grid-cols-3 gap-4 mt-6">
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-gold-warm">
               {slos.filter(s => s.status === 'healthy').length}
             </div>
-            <div className="text-sm text-gray-600">Healthy</div>
+            <div className="text-sm text-text-secondary">Healthy</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-yellow-600">
+            <div className="text-2xl font-bold text-purple-royal-light">
               {slos.filter(s => s.status === 'warning').length}
             </div>
-            <div className="text-sm text-gray-600">Warning</div>
+            <div className="text-sm text-text-secondary">Warning</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-2xl font-bold text-destructive">
               {slos.filter(s => s.status === 'critical').length}
             </div>
-            <div className="text-sm text-gray-600">Critical</div>
+            <div className="text-sm text-text-secondary">Critical</div>
           </div>
         </div>
       </div>
@@ -123,7 +123,7 @@ export function SLODashboard() {
         {slos.map((slo) => (
           <div
             key={slo.slo.id}
-            className={`bg-white rounded-lg border p-6 ${getStatusColor(slo.status)}`}
+            className={`bg-background-secondary rounded-lg border p-6 ${getStatusColor(slo.status)}`}
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-start gap-3">

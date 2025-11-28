@@ -659,8 +659,8 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="h-screen overflow-hidden bg-linear-to-br from-blue-50 via-background to-purple-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md max-h-[95vh] bg-white rounded-2xl shadow-lg overflow-y-auto">
+    <div className="min-h-dvh bg-background-primary flex items-center justify-center p-4">
+      <div className="w-full max-w-md max-h-[95vh] bg-background-secondary/95 backdrop-blur-xl rounded-2xl shadow-premium border border-border-gold/30 overflow-y-auto">
         {/* Dark Purple Header Section */}
         <div className="bg-purple-900 px-6 py-3 sticky top-0 z-10">
           {/* Logo */}
@@ -962,7 +962,7 @@ export default function SignUpPage() {
 
             <div className="space-y-4">
               {COMPATIBILITY_QUESTIONS.map(question => (
-                <div key={question.id} className="rounded-2xl border border-border/70 bg-white/80 p-4 shadow-sm space-y-3">
+                <div key={question.id} className="rounded-2xl border border-border-gold/30 bg-background-tertiary/50 p-4 shadow-sm space-y-3">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="font-semibold text-sm md:text-base">{question.title}</p>
@@ -1051,7 +1051,7 @@ export default function SignUpPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-border bg-white/80 p-4 shadow-sm space-y-3">
+            <div className="rounded-2xl border border-border-gold/30 bg-background-tertiary/50 p-4 shadow-sm space-y-3">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-base font-semibold">Create a passkey</p>
@@ -1098,7 +1098,7 @@ export default function SignUpPage() {
               </div>
             </div>
 
-            <div className="space-y-3 rounded-2xl border border-border bg-white/80 p-4 shadow-sm">
+            <div className="space-y-3 rounded-2xl border border-border-gold/30 bg-background-tertiary/50 p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-base font-semibold">Verify your phone</p>
@@ -1183,7 +1183,7 @@ export default function SignUpPage() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-3 rounded-2xl border border-border/80 bg-white/80 p-4 shadow-sm">
+              <div className="space-y-3 rounded-2xl border border-border-gold/30 bg-background-tertiary/50 p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-semibold">Government ID</p>
@@ -1224,7 +1224,7 @@ export default function SignUpPage() {
                 {mediaState.id.message && <p className="text-xs text-muted-foreground">{mediaState.id.message}</p>}
               </div>
 
-              <div className="space-y-3 rounded-2xl border border-border/80 bg-white/80 p-4 shadow-sm">
+              <div className="space-y-3 rounded-2xl border border-border-gold/30 bg-background-tertiary/50 p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-semibold">Selfie photo</p>
@@ -1266,7 +1266,7 @@ export default function SignUpPage() {
                 {mediaState.selfie.message && <p className="text-xs text-muted-foreground">{mediaState.selfie.message}</p>}
               </div>
 
-              <div className="space-y-3 rounded-2xl border border-border/80 bg-white/80 p-4 shadow-sm">
+              <div className="space-y-3 rounded-2xl border border-border-gold/30 bg-background-tertiary/50 p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-semibold">Voice introduction</p>
@@ -1308,7 +1308,7 @@ export default function SignUpPage() {
                 {mediaState.voice.message && <p className="text-xs text-muted-foreground">{mediaState.voice.message}</p>}
               </div>
 
-              <div className="space-y-3 rounded-2xl border border-border/80 bg-white/80 p-4 shadow-sm">
+              <div className="space-y-3 rounded-2xl border border-border-gold/30 bg-background-tertiary/50 p-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-semibold">Video greeting</p>
