@@ -93,8 +93,8 @@ interface ChatUser {
   profilePhoto: string
 }
 
-type ActiveView = 'home' | 'profile' | 'likes' | 'chat' | 'chat-conversation' | 'subscription' | 'settings' | 'profile-view'
-type SpaNavKey = 'home' | 'likes' | 'chat' | 'profile' | 'subscription' | 'settings'
+type ActiveView = 'home' | 'profile' | 'likes' | 'chat' | 'chat-conversation' | 'subscription' | 'settings' | 'profile-view' | 'referrals' | 'spotlight'
+type SpaNavKey = 'home' | 'likes' | 'chat' | 'profile' | 'subscription' | 'settings' | 'referrals' | 'spotlight'
 
 const SPA_NAV_ITEMS: Array<{ id: SpaNavKey; label: string }> = [
   { id: 'home', label: 'Home' },
@@ -1749,7 +1749,7 @@ export default function UnifiedDashboard() {
           </div>
         }
       >
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-10 pt-2">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-10 pt-2 overflow-x-hidden">
         {globalMessage && (
           <div
             className={`mb-4 p-3 rounded-lg text-sm border flex items-start justify-between gap-3 ${
@@ -1890,16 +1890,6 @@ export default function UnifiedDashboard() {
                 </div>
               </section>
             )}
-
-            {/* Boost auction member experience */}
-            <div className="mb-6 md:mb-10">
-              {renderBoostSection()}
-            </div>
-
-            {/* Referral tiers member experience */}
-            <div className="mb-6 md:mb-10">
-              {renderReferralSection()}
-            </div>
 
             {/* Who Likes You - Premium Section (Mobile First) */}
             {peopleWhoLikedMe.length > 0 && (

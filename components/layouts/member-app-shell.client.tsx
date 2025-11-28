@@ -18,6 +18,9 @@ import {
   Eye,
   Home,
   X,
+  Gift,
+  Zap,
+  Menu,
 } from "lucide-react"
 
 import { useAuth } from "@/contexts/auth-context"
@@ -75,6 +78,9 @@ export default function MemberAppShellClient({ children, title, description, act
   const { tokens } = useDesignSystem()
   const { track } = useAnalytics()
   const attributionMemo = useRef<string | null>(null)
+  
+  // Mobile menu state
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
   
   // Search modal state
   const [showSearch, setShowSearch] = useState(false)
@@ -139,8 +145,7 @@ export default function MemberAppShellClient({ children, title, description, act
   }, [searchParams, track, pathname])
 
   return (
-    <div className="relative flex min-h-screen text-foreground">
-      {/* Premium background effects */}
+    <div className="relative flex min-h-screen text-foreground overflow-x-hidden max-w-full">\n      {/* Premium background effects */}
       <div className="fixed inset-0 -z-50 bg-hero-gradient">
         <div className="absolute top-20 left-20 w-48 h-48 md:w-96 md:h-96 bg-purple-royal/30 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-gold-warm/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
@@ -150,7 +155,8 @@ export default function MemberAppShellClient({ children, title, description, act
       {/* Grid overlay */}
       <div className="fixed inset-0 -z-40 bg-[url('/grid.svg')] opacity-10" />
       
-      <aside className="hidden lg:flex lg:w-64 lg:flex-col border-r border-border bg-card/60 backdrop-blur-sm sticky top-0 h-screen overflow-y-auto">
+      {/* Desktop Sidebar - Fixed */}
+      <aside className="hidden lg:flex lg:w-64 lg:flex-col border-r border-border bg-card/60 backdrop-blur-sm fixed top-0 left-0 h-screen overflow-y-auto z-40">
         <div className="px-4 lg:px-6 pb-4 lg:pb-6 pt-6 lg:pt-8">
           <Link href="/dashboard-spa" className="flex items-center gap-2">
             <img src="/triballogo.png" alt="Tribal Mingle" className="h-10 lg:h-12 w-auto" />
@@ -194,6 +200,34 @@ export default function MemberAppShellClient({ children, title, description, act
               </Link>
             )
           })}
+          
+          {/* Spotlight Link */}
+          <Link
+            href="/spotlight"
+            className={cn(
+              "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+              pathname?.startsWith("/spotlight")
+                ? "bg-primary/10 text-primary"
+                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+            )}
+          >
+            <Zap className="h-5 w-5" />
+            <span className="flex-1">Spotlight</span>
+          </Link>
+          
+          {/* Referrals Link */}
+          <Link
+            href="/referrals"
+            className={cn(
+              "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+              pathname?.startsWith("/referrals")
+                ? "bg-primary/10 text-primary"
+                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+            )}
+          >
+            <Gift className="h-5 w-5" />
+            <span className="flex-1">Referrals</span>
+          </Link>
           
           {/* Subscription Link */}
           <Link
@@ -242,17 +276,175 @@ export default function MemberAppShellClient({ children, title, description, act
           </div>
         </div>
       </aside>
+      
+      {/* Mobile Sidebar */}
+      {showMobileMenu && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+            onClick={() => setShowMobileMenu(false)}
+          />
+          
+          {/* Sliding Sidebar */}
+          <aside className="fixed top-0 left-0 h-screen w-64 bg-card/95 backdrop-blur-xl border-r border-border z-50 lg:hidden overflow-y-auto animate-in slide-in-from-left duration-300">
+            <div className="px-4 pb-4 pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <Link href="/dashboard-spa" className="flex items-center gap-2" onClick={() => setShowMobileMenu(false)}>
+                  <img src="/triballogo.png" alt="Tribal Mingle" className="h-10 w-auto" />
+                </Link>
+                <button
+                  onClick={() => setShowMobileMenu(false)}
+                  className="p-2 hover:bg-muted/50 rounded-lg transition-colors"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground">Your daily member workspace</p>
+            </div>
 
-      <div className="flex flex-1 flex-col">
+            <div className="px-3">
+              <div className="rounded-xl border border-border bg-card/80 backdrop-blur-sm p-3">
+                <p className="text-xs font-medium text-muted-foreground">Signed in as</p>
+                <p className="mt-1 text-sm font-semibold truncate">{user?.name || user?.email || "Member"}</p>
+                {user?.location && <p className="text-xs text-muted-foreground truncate">{user.location}</p>}
+                <Badge variant="secondary" className="mt-2 text-xs">
+                  {user?.subscriptionPlan ? user.subscriptionPlan : "Trial"}
+                </Badge>
+              </div>
+            </div>
+
+            <nav className="mt-6 flex-1 space-y-1 px-2">
+              {NAV_ITEMS.map((item) => {
+                const Icon = item.icon
+                const active = pathname?.startsWith(item.href)
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setShowMobileMenu(false)}
+                    className={cn(
+                      "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                      active
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                    )}
+                  >
+                    <Icon className="h-5 w-5" />
+                    <span className="flex-1">{item.label}</span>
+                    {item.badge && (
+                      <span className="rounded-full bg-primary/20 px-2 text-xs font-semibold text-primary">
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                )
+              })}
+              
+              {/* Spotlight Link */}
+              <Link
+                href="/spotlight"
+                onClick={() => setShowMobileMenu(false)}
+                className={cn(
+                  "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                  pathname?.startsWith("/spotlight")
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                )}
+              >
+                <Zap className="h-5 w-5" />
+                <span className="flex-1">Spotlight</span>
+              </Link>
+              
+              {/* Referrals Link */}
+              <Link
+                href="/referrals"
+                onClick={() => setShowMobileMenu(false)}
+                className={cn(
+                  "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                  pathname?.startsWith("/referrals")
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                )}
+              >
+                <Gift className="h-5 w-5" />
+                <span className="flex-1">Referrals</span>
+              </Link>
+              
+              {/* Subscription Link */}
+              <Link
+                href="/subscription"
+                onClick={() => setShowMobileMenu(false)}
+                className={cn(
+                  "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                  pathname?.startsWith("/subscription")
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                )}
+              >
+                <Crown className="h-5 w-5" />
+                <span className="flex-1">
+                  {!user?.subscriptionPlan || user.subscriptionPlan === 'free' ? 'Upgrade' : 'Subscription'}
+                </span>
+              </Link>
+              
+              {/* Profile Link */}
+              <Link
+                href="/profile"
+                onClick={() => setShowMobileMenu(false)}
+                className={cn(
+                  "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                  pathname?.startsWith("/profile")
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                )}
+              >
+                <User className="h-5 w-5" />
+                <span className="flex-1">Profile</span>
+              </Link>
+            </nav>
+
+            <div className="px-4 pb-6">
+              <div
+                className="rounded-2xl p-4 text-primary-foreground"
+                style={{
+                  backgroundImage: `linear-gradient(130deg, ${tokens.colors.primary} 0%, ${tokens.colors.accent} 100%)`,
+                  boxShadow: "0 8px 16px rgba(0, 0, 0, 0.15)",
+                }}
+              >
+                <p className="text-xs font-semibold uppercase tracking-wider">Boost visibility</p>
+                <p className="mt-1.5 text-sm font-medium">Turn on concierge boost to stay on top of your tribe.</p>
+                <Link 
+                  href="/premium" 
+                  onClick={() => setShowMobileMenu(false)}
+                  className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide"
+                >
+                  <Sparkles className="h-3.5 w-3.5" /> Upgrade now
+                </Link>
+              </div>
+            </div>
+          </aside>
+        </>
+      )}
+
+      <div className="flex flex-1 flex-col lg:ml-64">
         <header
-          className="sticky top-0 z-30 border-b border-border/50 bg-background/60 backdrop-blur-md"
+          className="fixed top-0 left-0 right-0 lg:left-64 z-40 border-b border-border/50 bg-background/60 backdrop-blur-md"
           style={{ boxShadow: `0 1px 0 ${tokens.colors.border}` }}
         >
           <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3 lg:px-10">
-            {/* Logo */}
-            <Link href="/dashboard-spa" className="flex items-center">
-              <img src="/triballogo.png" alt="Tribal Mingle" className="h-8 w-auto" />
-            </Link>
+            {/* Mobile Menu Button + Logo */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowMobileMenu(true)}
+                className="lg:hidden p-2 hover:bg-muted/50 rounded-lg transition-colors"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+              <Link href="/dashboard-spa" className="flex items-center lg:hidden">
+                <img src="/triballogo.png" alt="Tribal Mingle" className="h-8 w-auto" />
+              </Link>
+            </div>
             
             {/* Right side icons */}
             <div className="flex items-center gap-2 sm:gap-3">
@@ -379,7 +571,7 @@ export default function MemberAppShellClient({ children, title, description, act
           ) : null}
         </header>
 
-        <main className="flex-1">
+        <main className="flex-1 pt-[72px]">
           <div className="mx-auto w-full max-w-6xl px-3 sm:px-4 pb-20 lg:pb-12 pt-4 sm:pt-6 lg:px-10">
             <div className="mb-4 sm:mb-6">
               <MemberQuickActions />

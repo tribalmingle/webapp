@@ -41,8 +41,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark" style={{ colorScheme: 'dark' }}>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} font-sans antialiased`}>
+    <html lang="en" className="dark overflow-x-hidden" style={{ colorScheme: 'dark' }}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} font-sans antialiased overflow-x-hidden max-w-full`}>
         <AppShellProviders>{children}</AppShellProviders>
       </body>
     </html>
