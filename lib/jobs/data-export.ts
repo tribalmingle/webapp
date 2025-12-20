@@ -8,7 +8,7 @@ import { getQueue, redisConnection, QueueNames } from './queue-setup'
 import { getDb } from '@/lib/db/mongodb'
 import { CollectionNames } from '@/lib/data/collection-names'
 import { ObjectId } from 'mongodb'
-import { uploadToS3 } from '@/lib/vendors/s3-client'
+import { uploadToHostGator } from '@/lib/vendors/hostgator-client'
 import { sendNotification } from '@/lib/services/notification-service'
 
 // Job data types
@@ -255,23 +255,18 @@ async function processDataExport(job: Job<DataExportJobData>) {
       contentType = 'application/json'
     }
 
-    // Upload to S3
+    // Upload to HostGator
     await job.updateProgress(70)
-    const filename = `user-data-export/${userId}/export-${Date.now()}.${fileExtension}`
+    const filename = `export-${Date.now()}.${fileExtension}`
     const buffer = Buffer.from(fileContent, 'utf-8')
+    const folder = 'data-exports'
 
-    const uploadResult = await uploadToS3(buffer, filename, {
+    const uploadResult = await uploadToHostGator(buffer, filename, folder, {
       contentType,
-      metadata: {
-        userId,
-        exportedAt: new Date().toISOString(),
-        requestedAt: requestedAt.toISOString(),
-      },
     })
 
-    // Generate signed URL (valid for 7 days)
-    const expiresIn = 7 * 24 * 60 * 60 // 7 days in seconds
-    const downloadUrl = uploadResult.url // Would need to generate signed URL
+    // Use the public URL directly from HostGator
+    const downloadUrl = uploadResult.url
 
     await job.updateProgress(90)
 

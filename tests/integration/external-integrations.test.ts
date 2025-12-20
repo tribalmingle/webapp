@@ -199,65 +199,60 @@ describe('Translation API', () => {
   })
 })
 
-// S3 Integration Tests
-describe('AWS S3 Integration', () => {
-  const testKey = `test/${Date.now()}/test.txt`
+// HostGator Integration Tests
+describe('HostGator File Server Integration', () => {
+  const testFolder = 'test'
+  const testFilename = `test-${Date.now()}.txt`
   const testContent = 'Hello from integration tests'
 
-  it.skip('should upload file to S3', async () => {
-    const { uploadToS3 } = await import('@/lib/vendors/s3-client')
+  it.skip('should upload file to HostGator', async () => {
+    const { uploadToHostGator } = await import('@/lib/vendors/hostgator-client')
     
-    const result = await uploadToS3({
-      key: testKey,
-      body: Buffer.from(testContent),
-      contentType: 'text/plain',
-    })
+    const result = await uploadToHostGator(
+      Buffer.from(testContent),
+      testFilename,
+      testFolder
+    )
     
-    expect(result.success).toBe(true)
-    expect(result.key).toBe(testKey)
+    expect(result).toBeDefined()
+    expect(result.filename).toBe(testFilename)
+    expect(result.url).toContain('tm.dnd.ng')
   })
 
   it.skip('should check file exists', async () => {
-    const { fileExists } = await import('@/lib/vendors/s3-client')
+    const { hostGatorFileExists } = await import('@/lib/vendors/hostgator-client')
     
-    const exists = await fileExists(testKey)
+    const exists = await hostGatorFileExists(testFolder, testFilename)
     
     expect(exists).toBe(true)
   })
 
-  it.skip('should generate signed download URL', async () => {
-    const { getSignedDownloadUrl } = await import('@/lib/vendors/s3-client')
+  it.skip('should get file metadata', async () => {
+    const { getHostGatorMetadata } = await import('@/lib/vendors/hostgator-client')
     
-    const result = await getSignedDownloadUrl({
-      key: testKey,
-      expiresIn: 3600,
-    })
+    const result = await getHostGatorMetadata(testFolder, testFilename)
     
-    expect(result.success).toBe(true)
-    expect(result.url).toBeDefined()
-    expect(result.url).toContain('X-Amz-Signature')
+    expect(result).toBeDefined()
+    expect(result.filename).toBe(testFilename)
+    expect(result.size).toBeGreaterThan(0)
   })
 
-  it.skip('should delete file from S3', async () => {
-    const { deleteFromS3 } = await import('@/lib/vendors/s3-client')
+  it.skip('should delete file from HostGator', async () => {
+    const { deleteFromHostGator } = await import('@/lib/vendors/hostgator-client')
     
-    const result = await deleteFromS3({
-      key: testKey,
-    })
+    const result = await deleteFromHostGator(testFolder, testFilename)
     
-    expect(result.success).toBe(true)
+    expect(result.deleted).toBe(true)
   })
 
-  it.skip('should list files', async () => {
-    const { listFiles } = await import('@/lib/vendors/s3-client')
+  it.skip('should get public file URL', async () => {
+    const { getHostGatorFileUrl } = await import('@/lib/vendors/hostgator-client')
     
-    const result = await listFiles({
-      prefix: 'test/',
-      maxKeys: 10,
-    })
+    const url = getHostGatorFileUrl(testFolder, testFilename)
     
-    expect(result.success).toBe(true)
-    expect(Array.isArray(result.files)).toBe(true)
+    expect(url).toBeDefined()
+    expect(url).toContain('tm.dnd.ng')
+    expect(url).toContain('media')
   })
 })
 

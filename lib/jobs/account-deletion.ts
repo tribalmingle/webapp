@@ -8,7 +8,7 @@ import { getQueue, redisConnection, QueueNames } from './queue-setup'
 import { getDb } from '@/lib/db/mongodb'
 import { CollectionNames } from '@/lib/data/collection-names'
 import { ObjectId } from 'mongodb'
-import { deleteFromS3 } from '@/lib/vendors/s3-client'
+import { deleteFromHostGator } from '@/lib/vendors/hostgator-client'
 import { sendNotification } from '@/lib/services/notification-service'
 
 // Job data types
@@ -42,12 +42,18 @@ async function deleteUserData(userId: string) {
 
   for (const photo of photos) {
     try {
-      // Extract S3 key from URL
+      // Extract HostGator path info from URL
+      // URL format: https://tm.dnd.ng/media/folder/filename
       const url = new URL(photo.photo_url)
-      const key = url.pathname.substring(1) // Remove leading /
-      await deleteFromS3(key)
+      const pathParts = url.pathname.split('/')
+      const folder = pathParts[pathParts.length - 2] || 'general'
+      const filename = pathParts[pathParts.length - 1]
+      
+      if (filename) {
+        await deleteFromHostGator(folder, filename)
+      }
     } catch (error) {
-      console.error(`[account-deletion] Failed to delete photo from S3`, {
+      console.error(`[account-deletion] Failed to delete photo from HostGator`, {
         photoId: photo._id,
         error,
       })
