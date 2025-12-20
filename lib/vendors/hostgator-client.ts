@@ -1,9 +1,9 @@
 /**
  * HostGator File Server Client
- * Handles file uploads/downloads to tm.dnd.ng
+ * Handles file uploads/downloads to tm.d2d.ng
  */
 
-const HOSTGATOR_BASE_URL = 'https://tm.dnd.ng'
+const HOSTGATOR_BASE_URL = 'https://tm.d2d.ng'
 const HOSTGATOR_API_KEY = process.env.HOSTGATOR_API_KEY || '6f273bc1-23b9-435c-b9ad-53c7ec2a1b19'
 
 export interface UploadOptions {
