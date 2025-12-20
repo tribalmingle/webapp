@@ -117,9 +117,11 @@ export async function sendOTP(options: OTPOptions): Promise<SendOTPResult> {
     to: options.phoneNumber,
     provider: 'termii',
   })
+  console.log('[sms-service] TERMII_API_KEY for OTP:', process.env.TERMII_API_KEY ? 'SET' : 'NOT SET')
 
   // Try Termii first (cheaper for African numbers)
   if (process.env.TERMII_API_KEY) {
+    console.log('[sms-service] Trying Termii OTP...')
     try {
       const result = await termii.sendOTPViaTermii({
         phoneNumber: options.phoneNumber,
@@ -133,6 +135,7 @@ export async function sendOTP(options: OTPOptions): Promise<SendOTPResult> {
         to: options.phoneNumber,
       }
     } catch (error) {
+      console.error('[sms-service] Termii OTP failed:', error)
       if (isDev) console.error('[sms-service] Termii OTP failed, attempting fallback to Twilio', {
         to: options.phoneNumber,
         error: error instanceof Error ? error.message : 'Unknown error',

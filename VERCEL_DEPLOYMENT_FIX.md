@@ -90,25 +90,45 @@ vaul 0.9.9 requires React 16-18, but we're using React 19
 - ✅ Phone Number: +2348063009268
 - ✅ Sender ID: Classmigo
 - ✅ API Key: Configured
-- ❌ Build: Failing due to Next.js/Turbopack bug
+- ✅ Media Storage: tm.d2d.ng (HostGator)
+- ✅ Build: **SUCCESSFUL** (after fixes)
 
 ## 🔗 Related Files Updated
 
 - `lib/services/sms-service.ts` - Fixed imports
 - `lib/vendors/termii-client.ts` - Runtime env vars, Classmigo sender ID
+- `lib/vendors/hostgator-client.ts` - Already configured for tm.d2d.ng
 - `test-termii-sms.ts` - Fixed readonly env var assignment
-- `package.json` - baseline-browser-mapping updated
+- `package.json` - Downgraded Next.js, added AWS SDK
+- `app/dashboard-spa/page.tsx` - Added Suspense boundary
+- Multiple redirect pages - Cleaned duplicate exports
+
+## 📦 Media Storage Configuration
+
+**Current Setup**: Using **tm.d2d.ng** (HostGator) for all media hosting
+
+```env
+HOSTGATOR_API_KEY=6f273bc1-23b9-435c-b9ad-53c7ec2a1b19
+HOSTGATOR_BASE_URL=https://tm.d2d.ng
+```
+
+- Profile photos, videos, and all user media uploaded to tm.d2d.ng
+- AWS S3 is optional (falls back to HostGator if not configured)
+- Media URLs: `https://tm.d2d.ng/media/{folder}/{filename}`
 
 ## 📞 Next Steps After Deployment
 
-1. Test SMS functionality in production
-2. Verify OTP flow works
-3. Monitor error logs in Vercel Dashboard
-4. Update Next.js when 16.0.4+ fixes the Turbopack issue
+1. ✅ Test SMS functionality in production (Termii with Classmigo sender)
+2. ✅ Verify OTP flow works
+3. ✅ Test media uploads to tm.d2d.ng
+4. Monitor error logs in Vercel Dashboard
+5. Update Next.js when 16.0.4+ fixes the Turbopack issue
 
 ## 💡 Notes
 
-- The test file uses +2348063009268 as the default test number
-- Classmigo is now the default sender ID (was N-Alert)
+- The test file uses **+2348063009268** as the default test number
+- **Classmigo** is now the default sender ID (was N-Alert)
 - All SMS/OTP functions working locally
-- Only build/deployment is blocked
+- **Media hosting**: All uploads go to **tm.d2d.ng** (HostGator)
+- AWS S3 is optional - system automatically falls back to HostGator
+- Build and deployment: **✅ FIXED AND DEPLOYED**

@@ -1,6 +1,10 @@
 import React from 'react'
 import { AnalyticsService, getRealtimeStats, listRecentSnapshots } from '../../../lib/services/analytics-service'
 
+// Force this page to be dynamic to avoid MongoDB connection during build
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 async function loadData() {
   const [realtime, snapshots, recentEvents] = await Promise.all([
     getRealtimeStats(),

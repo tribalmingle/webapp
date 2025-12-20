@@ -15,7 +15,7 @@ async function testTermiiSMS() {
   
   // Test phone number - CHANGE THIS to your actual phone number
   // Format: +[country code][number] (e.g., +2348012345678 for Nigeria)
-  const testPhoneNumber = process.env.TEST_PHONE || '+2348063009268'
+  const testPhoneNumber = process.env.TEST_PHONE || '+2347064849292'
   
   console.log('📋 Test Configuration:')
   console.log('- API Key:', process.env.TERMII_API_KEY ? `✅ Set (${process.env.TERMII_API_KEY.substring(0, 10)}...)` : '❌ Not set')

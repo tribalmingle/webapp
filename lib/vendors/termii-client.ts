@@ -97,28 +97,39 @@ export async function sendOTPViaTermii(options: SendOTPOptions) {
 
   try {
     const senderId = getSenderId()
+    const requestBody = {
+      api_key: apiKey,
+      message_type: 'ALPHANUMERIC',
+      to: options.phoneNumber,
+      from: senderId,
+      length: options.length || 6,
+      expiry: options.expiry || 10,
+    }
+    
+    console.log('[termii] Sending OTP request:', {
+      url: `${TERMII_BASE_URL}/otp/send`,
+      body: { ...requestBody, api_key: apiKey.substring(0, 10) + '...' }
+    })
+    
     const response = await fetch(`${TERMII_BASE_URL}/otp/send`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        api_key: apiKey,
-        message_type: 'ALPHANUMERIC',
-        to: options.phoneNumber,
-        from: senderId,
-        length: options.length || 6,
-        expiry: options.expiry || 10,
-      }),
+      body: JSON.stringify(requestBody),
     })
 
+    console.log('[termii] OTP Response status:', response.status, response.statusText)
+
     if (!response.ok) {
+      const errorText = await response.text()
+      console.log('[termii] OTP Error response body:', errorText)
       throw new Error(`Termii API error: ${response.statusText}`)
     }
 
     const data = await response.json()
 
-    if (!data.code || data.code !== 'success') {
+    if (!data.code || (data.code !== 'ok' && data.code !== 'success')) {
       throw new Error(data.message || 'Failed to send OTP via Termii')
     }
 
