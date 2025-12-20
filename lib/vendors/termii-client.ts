@@ -5,8 +5,11 @@
  */
 
 const TERMII_BASE_URL = 'https://api.termii.com/api'
-const TERMII_API_KEY = process.env.TERMII_API_KEY || ''
 const isDev = process.env.NODE_ENV === 'development'
+
+// Helper to get config at runtime
+const getApiKey = () => process.env.TERMII_API_KEY || ''
+const getSenderId = () => process.env.TERMII_SENDER_ID || 'Classmigo' // Classmigo is the registered sender ID
 
 export interface SendSMSOptions {
   to: string // Phone number in international format
@@ -30,33 +33,39 @@ export interface VerifyOTPOptions {
  * Send SMS via Termii
  */
 export async function sendSMSViaTermii(options: SendSMSOptions) {
-  if (!TERMII_API_KEY) {
+  const apiKey = getApiKey()
+  if (!apiKey) {
     throw new Error('TERMII_API_KEY not configured')
   }
 
   try {
+    const senderId = getSenderId()
+    const requestBody = {
+      to: options.to,
+      from: senderId,
+      sms: options.message,
+      type: options.type || 'plain',
+      channel: options.channel || 'generic',
+      api_key: apiKey,
+    }
+    
     const response = await fetch(`${TERMII_BASE_URL}/sms/send`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        to: options.to,
-        from: 'Tribal Mingle',
-        sms: options.message,
-        type: options.type || 'plain',
-        channel: options.channel || 'generic',
-        api_key: TERMII_API_KEY,
-      }),
+      body: JSON.stringify(requestBody),
     })
-
+    
     if (!response.ok) {
+      const errorText = await response.text()
+      if (isDev) console.error('[termii] API error:', response.status, errorText)
       throw new Error(`Termii API error: ${response.statusText}`)
     }
 
     const data = await response.json()
 
-    if (!data.code || data.code !== 'success') {
+    if (!data.code || (data.code !== 'ok' && data.code !== 'success')) {
       throw new Error(data.message || 'Failed to send SMS via Termii')
     }
 
@@ -81,21 +90,23 @@ export async function sendSMSViaTermii(options: SendSMSOptions) {
  * Send OTP via Termii
  */
 export async function sendOTPViaTermii(options: SendOTPOptions) {
-  if (!TERMII_API_KEY) {
+  const apiKey = getApiKey()
+  if (!apiKey) {
     throw new Error('TERMII_API_KEY not configured')
   }
 
   try {
+    const senderId = getSenderId()
     const response = await fetch(`${TERMII_BASE_URL}/otp/send`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        api_key: TERMII_API_KEY,
+        api_key: apiKey,
         message_type: 'ALPHANUMERIC',
         to: options.phoneNumber,
-        from: 'Tribal Mingle',
+        from: senderId,
         length: options.length || 6,
         expiry: options.expiry || 10,
       }),
@@ -132,7 +143,8 @@ export async function sendOTPViaTermii(options: SendOTPOptions) {
  * Verify OTP via Termii
  */
 export async function verifyOTPViaTermii(options: VerifyOTPOptions) {
-  if (!TERMII_API_KEY) {
+  const apiKey = getApiKey()
+  if (!apiKey) {
     throw new Error('TERMII_API_KEY not configured')
   }
 
@@ -143,7 +155,7 @@ export async function verifyOTPViaTermii(options: VerifyOTPOptions) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        api_key: TERMII_API_KEY,
+        api_key: apiKey,
         phone_number: options.phoneNumber,
         code: options.otp,
       }),
@@ -177,7 +189,8 @@ export async function verifyOTPViaTermii(options: VerifyOTPOptions) {
  * Check if phone number is valid and can receive SMS in Termii
  */
 export async function validatePhoneNumberViaTermii(phoneNumber: string) {
-  if (!TERMII_API_KEY) {
+  const apiKey = getApiKey()
+  if (!apiKey) {
     throw new Error('TERMII_API_KEY not configured')
   }
 

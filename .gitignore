@@ -3,6 +3,8 @@
 .env.local
 .env.production.local
 .env.development.local
+.env.production
+VERCEL_ENV_VARIABLES.txt
 
 # Dependencies
 node_modules/

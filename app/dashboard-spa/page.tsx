@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -252,7 +252,8 @@ const WALLET_PROVIDER_META: Record<WalletProvider, { label: string; icon: Lucide
   apple_pay: { label: 'Apple Pay', icon: Apple },
   google_pay: { label: 'Google Pay', icon: WalletCards },
 }
-export default function UnifiedDashboard() {
+
+function UnifiedDashboard() {
   const { user, logout, updateUser, loading: authLoading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -4659,3 +4660,10 @@ function SpaViewSwitcher({ activeView, onNavigate }: { activeView: SpaNavKey; on
   )
 }
 
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <UnifiedDashboard />
+    </Suspense>
+  )
+}

@@ -1,25 +1,14 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-
-export default function ChatRedirect() {
-  const router = useRouter()
-  
-  useEffect(() => {
-    router.replace('/dashboard-spa?view=chat')
-  }, [router])
-  
-  return (
-    <div className="flex items-center justify-center min-h-screen">
-      <p className="text-muted-foreground">Redirecting to chat...</p>
-    </div>
-  )
-}
-
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { useSessionStore } from '@/lib/state/session-store'
 import { trackClientEvent } from '@/lib/analytics/client'
+import { Sparkles, MessageCircle, Pause, Shield, HeartHandshake, Plus, Filter, Search } from 'lucide-react'
+import { MemberAppShell } from '@/components/layouts/member-app-shell'
 
 const FOLDERS = [
   { id: 'spark', label: 'Spark', description: 'Fresh intros waiting on you', icon: Sparkles, badgeTone: 'bg-pink-500/20 text-pink-600' },

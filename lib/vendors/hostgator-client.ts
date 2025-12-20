@@ -24,7 +24,9 @@ export async function uploadToHostGator(
 ) {
   try {
     const formData = new FormData()
-    formData.append('file', new Blob([buffer]), filename)
+    // Convert Buffer to ArrayBuffer for browser compatibility
+    const arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer
+    formData.append('file', new Blob([arrayBuffer]), filename)
     formData.append('folder', folder)
 
     const response = await fetch(`${HOSTGATOR_BASE_URL}/api/upload`, {

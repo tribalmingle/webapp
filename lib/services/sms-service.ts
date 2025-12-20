@@ -4,8 +4,8 @@
  * Fallback: Twilio (premium reliability)
  */
 
-import * as termii from './termii-client'
-import * as twilio from './twilio-client'
+import * as termii from '../vendors/termii-client'
+import * as twilio from '../vendors/twilio-client'
 
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -204,16 +204,16 @@ export async function verifyOTP(options: VerifyOTPOptions): Promise<VerifyOTPRes
   // Fallback to Twilio Verify
   if (process.env.TWILIO_VERIFY_SERVICE_SID) {
     try {
-      const result = await twilio.verifyCode({
+      const result = await twilio.checkVerificationCode({
         to: options.phoneNumber,
         code: options.otp,
       })
 
       return {
-        success: result.status === 'verified',
-        verified: result.status === 'verified',
+        success: result.valid,
+        verified: result.valid,
         provider: 'twilio',
-        error: result.status === 'failed' ? result.error : undefined,
+        error: result.valid ? undefined : result.error,
       }
     } catch (error) {
       if (isDev) console.error('[sms-service] Twilio Verify verification also failed', {
