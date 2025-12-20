@@ -1,6 +1,8 @@
 import React from 'react'
 import { getCurrentUser } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AccountManagementPage() {
   const user = await getCurrentUser()
   if (!user) return <div className='p-6'>Please sign in</div>

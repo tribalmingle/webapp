@@ -4,6 +4,8 @@ import { getSnapshot, credit, debit } from '@/lib/services/wallet-service'
 import { revalidatePath } from 'next/cache'
 import { useFeatureFlag } from '@/lib/hooks/use-feature-flag'
 
+export const dynamic = 'force-dynamic'
+
 async function getData(userId: string) {
   return getSnapshot(userId)
 }

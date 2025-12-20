@@ -1,6 +1,8 @@
 import React from 'react'
 import { useFeatureFlag } from '@/lib/hooks/use-feature-flag'
 
+export const dynamic = 'force-dynamic'
+
 async function fetchState() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/gamification/state`, { cache: 'no-store', headers: { 'x-user-id': 'demo-user' } })
   if (!res.ok) return null
