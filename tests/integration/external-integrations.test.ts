@@ -21,33 +21,44 @@
 // @ts-nocheck
 import { describe, it, expect, beforeAll } from 'vitest'
 
-// Twilio Integration Tests
-describe('Twilio Integration', () => {
-  it.skip('should send SMS', async () => {
-    const { sendSMS } = await import('@/lib/vendors/twilio-client')
+// SMS Service Integration Tests (Termii + Twilio Fallback)
+describe('SMS Service Integration', () => {
+  it.skip('should send SMS via primary/fallback providers', async () => {
+    const { sendSMS } = await import('@/lib/services/sms-service')
     
     const result = await sendSMS({
-      to: '+15005550006', // Twilio test number
+      to: '+2348012345678', // Nigerian number for Termii
       message: 'Test message from TribalMingle integration tests',
     })
     
-    expect(result.status).toBe('sent')
-    expect(result).toHaveProperty('sid')
+    expect(result.success).toBe(true)
+    expect(['termii', 'twilio']).toContain(result.provider)
+    expect(result.to).toBe('+2348012345678')
   })
 
-  it.skip('should validate phone number', async () => {
-    const { validatePhoneNumber } = await import('@/lib/vendors/twilio-client')
+  it.skip('should send OTP', async () => {
+    const { sendOTP } = await import('@/lib/services/sms-service')
     
-    const result = await validatePhoneNumber('+15005550006')
+    const result = await sendOTP({
+      phoneNumber: '+2348012345678',
+      length: 6,
+      expiry: 10,
+    })
     
-    expect(result.valid).toBe(true)
-    expect(result.formatted).toBeDefined()
+    expect(result.success).toBe(true)
+    expect(['termii', 'twilio']).toContain(result.provider)
   })
 
-  it.skip('should handle invalid phone number', async () => {
-    const { validatePhoneNumber } = await import('@/lib/vendors/twilio-client')
+  it.skip('should verify OTP', async () => {
+    const { verifyOTP } = await import('@/lib/services/sms-service')
     
-    const result = await validatePhoneNumber('+15005550001')
+    const result = await verifyOTP({
+      phoneNumber: '+2348012345678',
+      otp: '123456',
+    })
+    
+    expect(result.success).toBeDefined()
+    expect(['termii', 'twilio']).toContain(result.provider)
     
     expect(result.valid).toBe(false)
   })
