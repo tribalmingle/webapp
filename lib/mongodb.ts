@@ -4,19 +4,23 @@ if (!process.env.MONGODB_URI) {
   throw new Error('Invalid/Missing environment variable: "MONGODB_URI"')
 }
 
-const uri = process.env.MONGODB_URI
+// Ensure the URI has the proper SSL parameters
+let uri = process.env.MONGODB_URI
+
+// Add SSL parameters if not present
+if (!uri.includes('retryWrites')) {
+  const separator = uri.includes('?') ? '&' : '?'
+  uri = `${uri}${separator}retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=false`
+}
+
 const options: MongoClientOptions = {
   maxPoolSize: 10,
-  minPoolSize: 5,
+  minPoolSize: 1,
   serverSelectionTimeoutMS: 10000,
   socketTimeoutMS: 45000,
   connectTimeoutMS: 10000,
   retryWrites: true,
   retryReads: true,
-  // SSL/TLS configuration for Vercel serverless
-  tls: true,
-  tlsAllowInvalidCertificates: false,
-  tlsAllowInvalidHostnames: false,
 }
 
 let client: MongoClient
