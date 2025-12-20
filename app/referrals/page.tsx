@@ -266,6 +266,3 @@ export default function ReferralsPage() {
     </MemberAppShell>
   )
 }
-    </FeatureGate>
-  )
-}
