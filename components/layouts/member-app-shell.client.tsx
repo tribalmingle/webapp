@@ -179,7 +179,10 @@ export default function MemberAppShellClient({ children, title, description, act
         <nav className="mt-6 flex-1 space-y-1 px-2">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon
-            const active = pathname?.startsWith(item.href)
+            // Extract view parameter from item.href
+            const itemView = item.href.includes('?view=') ? item.href.split('?view=')[1] : 'home'
+            const currentView = searchParams?.get('view') || 'home'
+            const active = currentView === itemView
             
             if (onNavigate) {
               return (
