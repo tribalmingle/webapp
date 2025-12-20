@@ -5,7 +5,7 @@
 
 // Set environment variables BEFORE importing
 process.env.TERMII_API_KEY = 'TLV90GetIWWqamdROrodTl3QUF6Crr6atRpxQ6S4f4Wilp61QWzxftmXSTNbNv'
-process.env.TERMII_SENDER_ID = 'Classmigo'
+process.env.TERMII_SENDER_ID = 'tribemingle'
 process.env.NODE_ENV = 'development'
 
 const TERMII_BASE_URL = 'https://api.termii.com/api'

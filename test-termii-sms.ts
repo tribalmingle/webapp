@@ -6,6 +6,7 @@
 
 // Set API key BEFORE importing (important!)
 process.env.TERMII_API_KEY = process.env.TERMII_API_KEY || 'TLV90GetIWWqamdROrodTl3QUF6Crr6atRpxQ6S4f4Wilp61QWzxftmXSTNbNv'
+process.env.TERMII_SENDER_ID = 'tribemingle'
 
 
 import { sendSMS, sendOTP, verifyOTP } from './lib/services/sms-service'

@@ -9,7 +9,7 @@ const isDev = process.env.NODE_ENV === 'development'
 
 // Helper to get config at runtime
 const getApiKey = () => process.env.TERMII_API_KEY || ''
-const getSenderId = () => process.env.TERMII_SENDER_ID || 'Classmigo' // Classmigo is the registered sender ID
+const getSenderId = () => process.env.TERMII_SENDER_ID || 'tribemingle' // tribemingle is the registered sender ID for Tribal Mingle
 
 export interface SendSMSOptions {
   to: string // Phone number in international format
