@@ -3,6 +3,8 @@ import { getCurrentUser } from '@/lib/auth'
 import { getSubscription, startTrial, activateSubscription, cancelSubscription, downgradeToFree } from '@/lib/services/subscription-service'
 import { revalidatePath } from 'next/cache'
 
+export const dynamic = 'force-dynamic'
+
 async function ensureInitialTrial(userId: string) {
   const sub = await getSubscription(userId)
   if (!sub) {
