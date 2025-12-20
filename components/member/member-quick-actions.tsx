@@ -16,6 +16,10 @@ interface QuickActionItem {
   icon: typeof Sparkles
 }
 
+interface MemberQuickActionsProps {
+  onNavigate?: (href: string) => void
+}
+
 const STORAGE_KEY = "tm-shell-dismissed-actions"
 
 function getInitialDismissed(): string[] {
@@ -31,7 +35,7 @@ function getInitialDismissed(): string[] {
   }
 }
 
-export function MemberQuickActions() {
+export function MemberQuickActions({ onNavigate }: MemberQuickActionsProps = {}) {
   const user = useSessionStore((state) => state.user)
   const [dismissed, setDismissed] = useState<string[]>(() => getInitialDismissed())
 
@@ -56,7 +60,7 @@ export function MemberQuickActions() {
         title: "Verify your account",
         description: "Add a selfie and confirm your identity so matches trust your profile.",
         actionLabel: "Verify now",
-        actionHref: "/safety",
+        actionHref: "/dashboard-spa?view=safety",
         icon: ShieldCheck,
       })
     }
@@ -67,7 +71,7 @@ export function MemberQuickActions() {
         title: "Complete your story",
         description: "Upload photos and add more details so the concierge can boost you.",
         actionLabel: "Update profile",
-        actionHref: "/profile",
+        actionHref: "/dashboard-spa?view=profile",
         icon: Camera,
       })
     }
@@ -78,7 +82,7 @@ export function MemberQuickActions() {
         title: "Pick your tribe",
         description: "Tell us the communities and intentions you vibe with to refine matches.",
         actionLabel: "Edit preferences",
-        actionHref: "/discover",
+        actionHref: "/dashboard-spa?view=discover",
         icon: Compass,
       })
     }
@@ -89,7 +93,7 @@ export function MemberQuickActions() {
         title: "Unlock concierge perks",
         description: "Boost visibility, read receipts, and weekly curated intros with Premium.",
         actionLabel: "View plans",
-        actionHref: "/premium",
+        actionHref: "/dashboard-spa?view=subscription",
         icon: Sparkles,
       })
     }
@@ -154,15 +158,27 @@ export function MemberQuickActions() {
                 </button>
               </div>
               <div className="flex items-center gap-2">
-                <Link
-                  href={action.actionHref}
-                  className={cn(
-                    "inline-flex flex-1 items-center justify-center rounded-xl px-3 py-2 text-sm font-semibold",
-                    "bg-primary text-primary-foreground transition hover:bg-primary/90",
-                  )}
-                >
-                  {action.actionLabel}
-                </Link>
+                {onNavigate ? (
+                  <button
+                    onClick={() => onNavigate(action.actionHref)}
+                    className={cn(
+                      "inline-flex flex-1 items-center justify-center rounded-xl px-3 py-2 text-sm font-semibold",
+                      "bg-primary text-primary-foreground transition hover:bg-primary/90",
+                    )}
+                  >
+                    {action.actionLabel}
+                  </button>
+                ) : (
+                  <Link
+                    href={action.actionHref}
+                    className={cn(
+                      "inline-flex flex-1 items-center justify-center rounded-xl px-3 py-2 text-sm font-semibold",
+                      "bg-primary text-primary-foreground transition hover:bg-primary/90",
+                    )}
+                  >
+                    {action.actionLabel}
+                  </Link>
+                )}
               </div>
             </article>
           )

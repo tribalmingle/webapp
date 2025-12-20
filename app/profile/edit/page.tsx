@@ -56,6 +56,7 @@ export default function EditProfilePage() {
       const response = await fetch('/api/profile/update', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(formData),
       })
 
@@ -87,7 +88,7 @@ export default function EditProfilePage() {
     <MemberAppShell title="Edit profile" description="Refresh your story, rituals, and concierge view." actions={shellActions}>
       <div className="space-y-8">
         <Button variant="ghost" size="sm" className="w-fit px-0" asChild>
-          <Link href="/profile" className="inline-flex items-center gap-2">
+          <Link href="/dashboard-spa?view=profile" className="inline-flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" /> Back to profile
           </Link>
         </Button>

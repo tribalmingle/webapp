@@ -5,6 +5,7 @@
 
 const HOSTGATOR_BASE_URL = 'https://tm.d2d.ng'
 const HOSTGATOR_API_KEY = process.env.HOSTGATOR_API_KEY || '6f273bc1-23b9-435c-b9ad-53c7ec2a1b19'
+const isDev = process.env.NODE_ENV === 'development'
 
 export interface UploadOptions {
   contentType?: string
@@ -47,7 +48,7 @@ export async function uploadToHostGator(
     // Construct the media URL
     const mediaUrl = `${HOSTGATOR_BASE_URL}/media/${data.path}`
 
-    console.log('[hostgator] File uploaded', { filename, folder, url: mediaUrl })
+    if (isDev) console.log('[hostgator] File uploaded', { filename, folder, url: mediaUrl })
 
     return {
       filename: data.filename,
@@ -57,7 +58,7 @@ export async function uploadToHostGator(
       size: data.size,
     }
   } catch (error) {
-    console.error('[hostgator] Upload error:', error)
+    if (isDev) console.error('[hostgator] Upload error:', error)
     throw error
   }
 }
@@ -86,11 +87,11 @@ export async function deleteFromHostGator(folder: string, filename: string) {
       throw new Error(data.error || 'Delete failed')
     }
 
-    console.log('[hostgator] File deleted', { folder, filename })
+    if (isDev) console.log('[hostgator] File deleted', { folder, filename })
 
     return { deleted: true, folder, filename }
   } catch (error) {
-    console.error('[hostgator] Delete error:', error)
+    if (isDev) console.error('[hostgator] Delete error:', error)
     throw error
   }
 }
@@ -122,7 +123,7 @@ export async function getHostGatorMetadata(folder: string, filename: string) {
 
     return data
   } catch (error) {
-    console.error('[hostgator] Metadata fetch error:', error)
+    if (isDev) console.error('[hostgator] Metadata fetch error:', error)
     throw error
   }
 }

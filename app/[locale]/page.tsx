@@ -81,7 +81,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
   return (
     <div className="min-h-screen bg-background-primary">
       {/* Premium Header */}
-      <header className="sticky top-0 z-50 border-b border-border-gold/20">
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-border-gold/20">
         {/* Animated gradient background matching hero */}
         <div className="absolute inset-0 bg-hero-gradient">
           <div className="absolute top-0 left-20 w-64 h-64 bg-purple-royal/30 rounded-full blur-3xl animate-pulse" />
@@ -122,7 +122,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
 
       <main className="flex-1">
         {/* Premium Hero Section */}
-        <section className="relative min-h-[calc(100dvh-4rem)] md:min-h-screen flex items-center justify-center overflow-hidden px-4 pt-4 md:pt-8 pb-12">
+        <section className="relative min-h-[calc(100dvh-4rem)] md:min-h-screen flex items-center justify-center overflow-hidden px-4 pt-24 md:pt-28 pb-12">
           {/* Animated gradient background */}
           <div className="absolute inset-0 bg-hero-gradient">
             <MouseParallax strength={0.02}>
@@ -229,14 +229,14 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
               {featureDeck.map((feature) => {
                 const Icon = ICON_MAP[feature.iconName as keyof typeof ICON_MAP] ?? Zap
                 return (
-                  <GlowCard key={`${feature.key}-grid`} className="p-8 card-lift bg-white border-border-gold/10 shadow-lg">
-                    <div className="flex items-start gap-4 mb-4">
+                  <GlowCard key={`${feature.key}-grid`} className="p-4 sm:p-6 md:p-8 card-lift bg-white border-border-gold/10 shadow-lg">
+                    <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 mb-4">
                       <div className="shrink-0 w-14 h-14 rounded-xl bg-gold-gradient flex items-center justify-center shadow-glow-gold group-hover:scale-110 transition-transform">
                         <Icon className="h-7 w-7 text-white" />
                       </div>
-                      <div>
-                        <h3 className="text-h2 text-neutral-900 mb-2">{feature.title}</h3>
-                        <p className="text-body text-neutral-600 leading-relaxed">{feature.description}</p>
+                      <div className="min-w-0">
+                        <h3 className="text-h3 sm:text-h2 text-neutral-900 mb-1 sm:mb-2 break-words">{feature.title}</h3>
+                        <p className="text-sm sm:text-body text-neutral-600 leading-relaxed">{feature.description}</p>
                       </div>
                     </div>
                   </GlowCard>

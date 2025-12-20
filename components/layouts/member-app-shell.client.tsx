@@ -53,6 +53,7 @@ interface MemberAppShellProps {
   description?: string
   actions?: ReactNode
   contextualNav?: ReactNode
+  onNavigate?: (path: string) => void
 }
 
 interface NavItem {
@@ -64,14 +65,14 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard-spa", icon: LayoutDashboard },
-  { label: "Discover", href: "/discover", icon: Compass },
-  { label: "Chat", href: "/chat", icon: MessageSquare, badge: "3" },
-  { label: "Likes", href: "/likes", icon: Heart },
-  { label: "Safety", href: "/safety", icon: ShieldCheck },
-  { label: "Settings", href: "/settings", icon: Settings },
+  { label: "Discover", href: "/dashboard-spa?view=discover", icon: Compass },
+  { label: "Chat", href: "/dashboard-spa?view=chat", icon: MessageSquare, badge: "3" },
+  { label: "Likes", href: "/dashboard-spa?view=likes", icon: Heart },
+  { label: "Safety", href: "/dashboard-spa?view=safety", icon: ShieldCheck },
+  { label: "Settings", href: "/dashboard-spa?view=settings", icon: Settings },
 ]
 
-export default function MemberAppShellClient({ children, title, description, actions, contextualNav }: MemberAppShellProps) {
+export default function MemberAppShellClient({ children, title, description, actions, contextualNav, onNavigate }: MemberAppShellProps) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const { user } = useAuth()
@@ -179,6 +180,30 @@ export default function MemberAppShellClient({ children, title, description, act
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon
             const active = pathname?.startsWith(item.href)
+            
+            if (onNavigate) {
+              return (
+                <button
+                  key={item.href}
+                  onClick={() => onNavigate(item.href)}
+                  className={cn(
+                    "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors w-full",
+                    active
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                  )}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span className="flex-1 text-left">{item.label}</span>
+                  {item.badge && (
+                    <span className="rounded-full bg-primary/20 px-2 text-xs font-semibold text-primary">
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              )
+            }
+            
             return (
               <Link
                 key={item.href}
@@ -202,62 +227,124 @@ export default function MemberAppShellClient({ children, title, description, act
           })}
           
           {/* Spotlight Link */}
-          <Link
-            href="/spotlight"
-            className={cn(
-              "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
-              pathname?.startsWith("/spotlight")
-                ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-            )}
-          >
-            <Zap className="h-5 w-5" />
-            <span className="flex-1">Spotlight</span>
-          </Link>
+          {onNavigate ? (
+            <button
+              onClick={() => onNavigate('/dashboard-spa?view=spotlight')}
+              className={cn(
+                "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors w-full",
+                pathname?.startsWith("/spotlight") || searchParams?.get('view') === 'spotlight'
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+              )}
+            >
+              <Zap className="h-5 w-5" />
+              <span className="flex-1 text-left">Spotlight</span>
+            </button>
+          ) : (
+            <Link
+              href="/dashboard-spa?view=spotlight"
+              className={cn(
+                "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                pathname?.startsWith("/spotlight") || searchParams?.get('view') === 'spotlight'
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+              )}
+            >
+              <Zap className="h-5 w-5" />
+              <span className="flex-1">Spotlight</span>
+            </Link>
+          )}
           
           {/* Referrals Link */}
-          <Link
-            href="/referrals"
-            className={cn(
-              "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
-              pathname?.startsWith("/referrals")
-                ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-            )}
-          >
-            <Gift className="h-5 w-5" />
-            <span className="flex-1">Referrals</span>
-          </Link>
+          {onNavigate ? (
+            <button
+              onClick={() => onNavigate('/dashboard-spa?view=referrals')}
+              className={cn(
+                "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors w-full",
+                pathname?.startsWith("/referrals") || searchParams?.get('view') === 'referrals'
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+              )}
+            >
+              <Gift className="h-5 w-5" />
+              <span className="flex-1 text-left">Referrals</span>
+            </button>
+          ) : (
+            <Link
+              href="/dashboard-spa?view=referrals"
+              className={cn(
+                "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                pathname?.startsWith("/referrals") || searchParams?.get('view') === 'referrals'
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+              )}
+            >
+              <Gift className="h-5 w-5" />
+              <span className="flex-1">Referrals</span>
+            </Link>
+          )}
           
           {/* Subscription Link */}
-          <Link
-            href="/subscription"
-            className={cn(
-              "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
-              pathname?.startsWith("/subscription")
-                ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-            )}
-          >
-            <Crown className="h-5 w-5" />
-            <span className="flex-1">
-              {!user?.subscriptionPlan || user.subscriptionPlan === 'free' ? 'Upgrade' : 'Subscription'}
-            </span>
-          </Link>
+          {onNavigate ? (
+            <button
+              onClick={() => onNavigate('/dashboard-spa?view=subscription')}
+              className={cn(
+                "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors w-full",
+                pathname?.startsWith("/subscription") || searchParams?.get('view') === 'subscription'
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+              )}
+            >
+              <Crown className="h-5 w-5" />
+              <span className="flex-1 text-left">
+                {!user?.subscriptionPlan || user.subscriptionPlan === 'free' ? 'Upgrade' : 'Subscription'}
+              </span>
+            </button>
+          ) : (
+            <Link
+              href="/dashboard-spa?view=subscription"
+              className={cn(
+                "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                pathname?.startsWith("/subscription") || searchParams?.get('view') === 'subscription'
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+              )}
+            >
+              <Crown className="h-5 w-5" />
+              <span className="flex-1">
+                {!user?.subscriptionPlan || user.subscriptionPlan === 'free' ? 'Upgrade' : 'Subscription'}
+              </span>
+            </Link>
+          )}
           
           {/* Profile Link */}
-          <Link
-            href="/profile"
-            className={cn(
-              "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
-              pathname?.startsWith("/profile")
-                ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-            )}
-          >
-            <User className="h-5 w-5" />
-            <span className="flex-1">Profile</span>
-          </Link>
+          {onNavigate ? (
+            <button
+              onClick={() => onNavigate('/dashboard-spa?view=profile')}
+              className={cn(
+                "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors w-full",
+                pathname?.startsWith("/profile") || searchParams?.get('view') === 'profile'
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+              )}
+            >
+              <User className="h-5 w-5" />
+              <span className="flex-1 text-left">Profile</span>
+            </button>
+          ) : (
+            <Link
+              href="/dashboard-spa?view=profile"
+              className={cn(
+                "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                pathname?.startsWith("/profile") || searchParams?.get('view') === 'profile'
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+              )}
+            >
+              <User className="h-5 w-5" />
+              <span className="flex-1">Profile</span>
+            </Link>
+          )}
         </nav>
 
         <div className="px-4 pb-6">
@@ -270,7 +357,7 @@ export default function MemberAppShellClient({ children, title, description, act
           >
             <p className="text-xs font-semibold uppercase tracking-wider">Boost visibility</p>
             <p className="mt-1.5 text-sm font-medium">Turn on concierge boost to stay on top of your tribe.</p>
-            <Link href="/premium" className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide">
+            <Link href="/dashboard-spa?view=subscription" className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide">
               <Sparkles className="h-3.5 w-3.5" /> Upgrade now
             </Link>
           </div>
@@ -318,6 +405,33 @@ export default function MemberAppShellClient({ children, title, description, act
               {NAV_ITEMS.map((item) => {
                 const Icon = item.icon
                 const active = pathname?.startsWith(item.href)
+                
+                if (onNavigate) {
+                  return (
+                    <button
+                      key={item.href}
+                      onClick={() => {
+                        onNavigate(item.href)
+                        setShowMobileMenu(false)
+                      }}
+                      className={cn(
+                        "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors w-full",
+                        active
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                      )}
+                    >
+                      <Icon className="h-5 w-5" />
+                      <span className="flex-1 text-left">{item.label}</span>
+                      {item.badge && (
+                        <span className="rounded-full bg-primary/20 px-2 text-xs font-semibold text-primary">
+                          {item.badge}
+                        </span>
+                      )}
+                    </button>
+                  )
+                }
+                
                 return (
                   <Link
                     key={item.href}
@@ -343,11 +457,11 @@ export default function MemberAppShellClient({ children, title, description, act
               
               {/* Spotlight Link */}
               <Link
-                href="/spotlight"
+                href="/dashboard-spa?view=spotlight"
                 onClick={() => setShowMobileMenu(false)}
                 className={cn(
                   "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
-                  pathname?.startsWith("/spotlight")
+                  pathname?.startsWith("/spotlight") || searchParams?.get('view') === 'spotlight'
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
                 )}
@@ -358,11 +472,11 @@ export default function MemberAppShellClient({ children, title, description, act
               
               {/* Referrals Link */}
               <Link
-                href="/referrals"
+                href="/dashboard-spa?view=referrals"
                 onClick={() => setShowMobileMenu(false)}
                 className={cn(
                   "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
-                  pathname?.startsWith("/referrals")
+                  pathname?.startsWith("/referrals") || searchParams?.get('view') === 'referrals'
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
                 )}
@@ -373,11 +487,11 @@ export default function MemberAppShellClient({ children, title, description, act
               
               {/* Subscription Link */}
               <Link
-                href="/subscription"
+                href="/dashboard-spa?view=subscription"
                 onClick={() => setShowMobileMenu(false)}
                 className={cn(
                   "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
-                  pathname?.startsWith("/subscription")
+                  pathname?.startsWith("/subscription") || searchParams?.get('view') === 'subscription'
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
                 )}
@@ -389,19 +503,37 @@ export default function MemberAppShellClient({ children, title, description, act
               </Link>
               
               {/* Profile Link */}
-              <Link
-                href="/profile"
-                onClick={() => setShowMobileMenu(false)}
-                className={cn(
-                  "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
-                  pathname?.startsWith("/profile")
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-                )}
-              >
-                <User className="h-5 w-5" />
-                <span className="flex-1">Profile</span>
-              </Link>
+              {onNavigate ? (
+                <button
+                  onClick={() => {
+                    onNavigate('/dashboard-spa?view=profile')
+                    setShowMobileMenu(false)
+                  }}
+                  className={cn(
+                    "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors w-full",
+                    pathname?.startsWith("/profile") || searchParams?.get('view') === 'profile'
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                  )}
+                >
+                  <User className="h-5 w-5" />
+                  <span className="flex-1 text-left">Profile</span>
+                </button>
+              ) : (
+                <Link
+                  href="/dashboard-spa?view=profile"
+                  onClick={() => setShowMobileMenu(false)}
+                  className={cn(
+                    "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                    pathname?.startsWith("/profile") || searchParams?.get('view') === 'profile'
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                  )}
+                >
+                  <User className="h-5 w-5" />
+                  <span className="flex-1">Profile</span>
+                </Link>
+              )}
             </nav>
 
             <div className="px-4 pb-6">
@@ -415,7 +547,7 @@ export default function MemberAppShellClient({ children, title, description, act
                 <p className="text-xs font-semibold uppercase tracking-wider">Boost visibility</p>
                 <p className="mt-1.5 text-sm font-medium">Turn on concierge boost to stay on top of your tribe.</p>
                 <Link 
-                  href="/premium" 
+                  href="/dashboard-spa?view=subscription" 
                   onClick={() => setShowMobileMenu(false)}
                   className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide"
                 >
@@ -455,12 +587,24 @@ export default function MemberAppShellClient({ children, title, description, act
                 <Search className="h-5 w-5" />
               </button>
               <NotificationsMenu />
-              <Link href="/profile" className="p-1.5 hover:bg-muted/50 rounded-lg transition-colors">
-                <Avatar className="h-8 w-8 border border-border">
-                  <AvatarImage src={user?.profilePhoto ?? undefined} alt={user?.name ?? "Member"} />
-                  <AvatarFallback className="text-xs">{initials}</AvatarFallback>
-                </Avatar>
-              </Link>
+              {onNavigate ? (
+                <button 
+                  onClick={() => onNavigate('/dashboard-spa?view=profile')}
+                  className="p-1.5 hover:bg-muted/50 rounded-lg transition-colors"
+                >
+                  <Avatar className="h-8 w-8 border border-border">
+                    <AvatarImage src={user?.profilePhoto ?? undefined} alt={user?.name ?? "Member"} />
+                    <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+                  </Avatar>
+                </button>
+              ) : (
+                <Link href="/dashboard-spa?view=profile" className="p-1.5 hover:bg-muted/50 rounded-lg transition-colors">
+                  <Avatar className="h-8 w-8 border border-border">
+                    <AvatarImage src={user?.profilePhoto ?? undefined} alt={user?.name ?? "Member"} />
+                    <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+                  </Avatar>
+                </Link>
+              )}
             </div>
           </div>
           
@@ -574,14 +718,14 @@ export default function MemberAppShellClient({ children, title, description, act
         <main className="flex-1 pt-[72px]">
           <div className="mx-auto w-full max-w-6xl px-3 sm:px-4 pb-20 lg:pb-12 pt-4 sm:pt-6 lg:px-10">
             <div className="mb-4 sm:mb-6">
-              <MemberQuickActions />
+              <MemberQuickActions onNavigate={onNavigate} />
             </div>
             {children}
           </div>
         </main>
       </div>
 
-      <MobileBottomNav chatBadgeCount={3} />
+      <MobileBottomNav chatBadgeCount={3} onNavigate={onNavigate} />
       
       {/* Advanced Search Modal */}
       {showAdvancedSearch && (

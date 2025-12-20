@@ -1,5 +1,22 @@
 ﻿'use client'
 
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+
+export default function ProfileRedirect() {
+  const router = useRouter()
+  
+  useEffect(() => {
+    router.replace('/dashboard-spa?view=profile')
+  }, [router])
+  
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <p className="text-muted-foreground">Redirecting to profile...</p>
+    </div>
+  )
+}
+
 import { useEffect, useRef, useState } from 'react'
 import { Camera, CheckCircle, Clock, Edit2, HelpCircle, MapPin, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -85,6 +102,7 @@ export default function ProfilePage() {
       const response = await fetch('/api/profile/update', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           ...formData,
           interests: formData.interests

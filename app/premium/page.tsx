@@ -1,8 +1,21 @@
 'use client'
 
-import { Gift, Crown, Share2, TrendingUp, Zap } from 'lucide-react'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
-import { MemberAppShell } from '@/components/layouts/member-app-shell'
+export default function PremiumRedirect() {
+  const router = useRouter()
+  
+  useEffect(() => {
+    router.replace('/dashboard-spa?view=subscription')
+  }, [router])
+  
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <p className="text-muted-foreground">Redirecting to subscription...</p>
+    </div>
+  )
+}
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/auth-context'
 

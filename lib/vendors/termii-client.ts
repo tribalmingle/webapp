@@ -6,6 +6,7 @@
 
 const TERMII_BASE_URL = 'https://api.termii.com/api'
 const TERMII_API_KEY = process.env.TERMII_API_KEY || ''
+const isDev = process.env.NODE_ENV === 'development'
 
 export interface SendSMSOptions {
   to: string // Phone number in international format
@@ -59,7 +60,7 @@ export async function sendSMSViaTermii(options: SendSMSOptions) {
       throw new Error(data.message || 'Failed to send SMS via Termii')
     }
 
-    console.log('[termii] SMS sent', {
+    if (isDev) console.log('[termii] SMS sent', {
       to: options.to,
       messageId: data.message_id,
     })
@@ -71,7 +72,7 @@ export async function sendSMSViaTermii(options: SendSMSOptions) {
       to: options.to,
     }
   } catch (error) {
-    console.error('[termii] Send SMS error:', error)
+    if (isDev) console.error('[termii] Send SMS error:', error)
     throw error
   }
 }
@@ -110,7 +111,7 @@ export async function sendOTPViaTermii(options: SendOTPOptions) {
       throw new Error(data.message || 'Failed to send OTP via Termii')
     }
 
-    console.log('[termii] OTP sent', {
+    if (isDev) console.log('[termii] OTP sent', {
       to: options.phoneNumber,
       sessionId: data.session_id,
     })
@@ -122,7 +123,7 @@ export async function sendOTPViaTermii(options: SendOTPOptions) {
       to: options.phoneNumber,
     }
   } catch (error) {
-    console.error('[termii] Send OTP error:', error)
+    if (isDev) console.error('[termii] Send OTP error:', error)
     throw error
   }
 }
@@ -156,7 +157,7 @@ export async function verifyOTPViaTermii(options: VerifyOTPOptions) {
 
     const verified = data.verified === true
 
-    console.log('[termii] OTP verification', {
+    if (isDev) console.log('[termii] OTP verification', {
       to: options.phoneNumber,
       verified,
     })
@@ -167,7 +168,7 @@ export async function verifyOTPViaTermii(options: VerifyOTPOptions) {
       provider: 'termii',
     }
   } catch (error) {
-    console.error('[termii] Verify OTP error:', error)
+    if (isDev) console.error('[termii] Verify OTP error:', error)
     throw error
   }
 }
@@ -201,7 +202,7 @@ export async function validatePhoneNumberViaTermii(phoneNumber: string) {
       phoneNumber,
     }
   } catch (error) {
-    console.error('[termii] Phone validation error:', error)
+    if (isDev) console.error('[termii] Phone validation error:', error)
     // Return false on error but don't throw
     return {
       valid: false,

@@ -1,5 +1,22 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+
+export default function SubscriptionRedirect() {
+  const router = useRouter()
+  
+  useEffect(() => {
+    router.replace('/dashboard-spa?view=subscription')
+  }, [router])
+  
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <p className="text-muted-foreground">Redirecting to subscription...</p>
+    </div>
+  )
+}
+
 import { useState } from 'react'
 import { Check, Crown, Sparkles, Star, Zap } from 'lucide-react'
 
@@ -113,6 +130,7 @@ export default function SubscriptionPage() {
       const response = await fetch('/api/subscription/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ plan: planId }),
       })
 

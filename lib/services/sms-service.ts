@@ -7,6 +7,8 @@
 import * as termii from './termii-client'
 import * as twilio from './twilio-client'
 
+const isDev = process.env.NODE_ENV === 'development'
+
 export interface SMSOptions {
   to: string // Phone number in international format
   message: string
@@ -52,7 +54,7 @@ export interface VerifyOTPResult {
  * Try Termii first, fallback to Twilio
  */
 export async function sendSMS(options: SMSOptions): Promise<SendSMSResult> {
-  console.log('[sms-service] Attempting to send SMS', { to: options.to, provider: 'termii' })
+  if (isDev) console.log('[sms-service] Attempting to send SMS', { to: options.to, provider: 'termii' })
 
   // Try Termii first (cheaper for African numbers)
   if (process.env.TERMII_API_KEY) {
@@ -68,7 +70,7 @@ export async function sendSMS(options: SMSOptions): Promise<SendSMSResult> {
         to: options.to,
       }
     } catch (error) {
-      console.error('[sms-service] Termii failed, attempting fallback to Twilio', {
+      if (isDev) console.error('[sms-service] Termii failed, attempting fallback to Twilio', {
         to: options.to,
         error: error instanceof Error ? error.message : 'Unknown error',
       })
@@ -91,7 +93,7 @@ export async function sendSMS(options: SMSOptions): Promise<SendSMSResult> {
         error: result.status === 'failed' ? result.error : undefined,
       }
     } catch (error) {
-      console.error('[sms-service] Twilio also failed', {
+      if (isDev) console.error('[sms-service] Twilio also failed', {
         to: options.to,
         error: error instanceof Error ? error.message : 'Unknown error',
       })
@@ -111,7 +113,7 @@ export async function sendSMS(options: SMSOptions): Promise<SendSMSResult> {
  * Try Termii first, fallback to Twilio Verify
  */
 export async function sendOTP(options: OTPOptions): Promise<SendOTPResult> {
-  console.log('[sms-service] Attempting to send OTP', {
+  if (isDev) console.log('[sms-service] Attempting to send OTP', {
     to: options.phoneNumber,
     provider: 'termii',
   })
@@ -131,7 +133,7 @@ export async function sendOTP(options: OTPOptions): Promise<SendOTPResult> {
         to: options.phoneNumber,
       }
     } catch (error) {
-      console.error('[sms-service] Termii OTP failed, attempting fallback to Twilio', {
+      if (isDev) console.error('[sms-service] Termii OTP failed, attempting fallback to Twilio', {
         to: options.phoneNumber,
         error: error instanceof Error ? error.message : 'Unknown error',
       })
@@ -154,7 +156,7 @@ export async function sendOTP(options: OTPOptions): Promise<SendOTPResult> {
         error: result.status === 'failed' ? result.error : undefined,
       }
     } catch (error) {
-      console.error('[sms-service] Twilio Verify also failed', {
+      if (isDev) console.error('[sms-service] Twilio Verify also failed', {
         to: options.phoneNumber,
         error: error instanceof Error ? error.message : 'Unknown error',
       })
@@ -174,7 +176,7 @@ export async function sendOTP(options: OTPOptions): Promise<SendOTPResult> {
  * Try Termii first, fallback to Twilio Verify
  */
 export async function verifyOTP(options: VerifyOTPOptions): Promise<VerifyOTPResult> {
-  console.log('[sms-service] Attempting to verify OTP', {
+  if (isDev) console.log('[sms-service] Attempting to verify OTP', {
     to: options.phoneNumber,
     provider: 'termii',
   })
@@ -192,7 +194,7 @@ export async function verifyOTP(options: VerifyOTPOptions): Promise<VerifyOTPRes
         provider: 'termii',
       }
     } catch (error) {
-      console.error('[sms-service] Termii OTP verification failed, attempting fallback', {
+      if (isDev) console.error('[sms-service] Termii OTP verification failed, attempting fallback', {
         to: options.phoneNumber,
         error: error instanceof Error ? error.message : 'Unknown error',
       })
@@ -214,7 +216,7 @@ export async function verifyOTP(options: VerifyOTPOptions): Promise<VerifyOTPRes
         error: result.status === 'failed' ? result.error : undefined,
       }
     } catch (error) {
-      console.error('[sms-service] Twilio Verify verification also failed', {
+      if (isDev) console.error('[sms-service] Twilio Verify verification also failed', {
         to: options.phoneNumber,
         error: error instanceof Error ? error.message : 'Unknown error',
       })
@@ -234,7 +236,7 @@ export async function verifyOTP(options: VerifyOTPOptions): Promise<VerifyOTPRes
  * Uses Termii or Twilio to validate phone numbers
  */
 export async function validatePhoneNumber(phoneNumber: string): Promise<boolean> {
-  console.log('[sms-service] Validating phone number', {
+  if (isDev) console.log('[sms-service] Validating phone number', {
     phoneNumber,
     provider: 'termii',
   })
@@ -245,7 +247,7 @@ export async function validatePhoneNumber(phoneNumber: string): Promise<boolean>
       const result = await termii.validatePhoneNumberViaTermii(phoneNumber)
       return result.valid
     } catch (error) {
-      console.error('[sms-service] Termii validation failed, attempting fallback', {
+      if (isDev) console.error('[sms-service] Termii validation failed, attempting fallback', {
         phoneNumber,
         error: error instanceof Error ? error.message : 'Unknown error',
       })
@@ -258,7 +260,7 @@ export async function validatePhoneNumber(phoneNumber: string): Promise<boolean>
       const result = await twilio.validatePhoneNumber(phoneNumber)
       return result.valid
     } catch (error) {
-      console.error('[sms-service] Twilio validation also failed', {
+      if (isDev) console.error('[sms-service] Twilio validation also failed', {
         phoneNumber,
         error: error instanceof Error ? error.message : 'Unknown error',
       })

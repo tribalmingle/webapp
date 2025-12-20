@@ -50,7 +50,7 @@ export default function MatchDetailsPage() {
     >
       <div className="space-y-8">
         <Button variant="ghost" size="sm" className="w-fit px-0" asChild>
-          <Link href="/discover" className="inline-flex items-center gap-2">
+          <Link href="/dashboard-spa" className="inline-flex items-center gap-2">
             <ChevronLeft className="h-4 w-4" /> Explore matches
           </Link>
         </Button>
@@ -139,7 +139,7 @@ function ShellActions({ matchId }: { matchId?: string }) {
   return (
     <div className="flex flex-wrap gap-2" aria-label={matchId ? `Actions for match ${matchId}` : undefined}>
       <Button variant="outline" size="sm" asChild>
-        <Link href="/discover">Skip</Link>
+        <Link href="/dashboard-spa">Skip</Link>
       </Button>
       <Button variant="secondary" size="sm" className="gap-2">
         <MessageCircle className="h-4 w-4" /> Message

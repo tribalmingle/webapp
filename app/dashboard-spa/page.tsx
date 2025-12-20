@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -43,7 +43,10 @@ import {
   ChevronRight,
   WalletCards,
   Gift,
-  Share2
+  Share2,
+  HelpCircle,
+  ShieldCheck,
+  Filter
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import {
@@ -93,7 +96,7 @@ interface ChatUser {
   profilePhoto: string
 }
 
-type ActiveView = 'home' | 'profile' | 'likes' | 'chat' | 'chat-conversation' | 'subscription' | 'settings' | 'profile-view' | 'referrals' | 'spotlight'
+type ActiveView = 'home' | 'discover' | 'safety' | 'profile' | 'likes' | 'chat' | 'chat-conversation' | 'subscription' | 'settings' | 'profile-view' | 'referrals' | 'spotlight'
 type SpaNavKey = 'home' | 'likes' | 'chat' | 'profile' | 'subscription' | 'settings' | 'referrals' | 'spotlight'
 
 const SPA_NAV_ITEMS: Array<{ id: SpaNavKey; label: string }> = [
@@ -252,6 +255,7 @@ const WALLET_PROVIDER_META: Record<WalletProvider, { label: string; icon: Lucide
 export default function UnifiedDashboard() {
   const { user, logout, updateUser, loading: authLoading } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
   
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -260,8 +264,18 @@ export default function UnifiedDashboard() {
     }
   }, [authLoading, user, router])
   
+  // Initialize activeView from URL search param
+  const initialView = useMemo(() => {
+    const viewParam = searchParams.get('view')
+    const validViews: ActiveView[] = ['home', 'discover', 'safety', 'profile', 'likes', 'chat', 'subscription', 'settings', 'referrals', 'spotlight', 'chat-conversation', 'profile-view']
+    if (viewParam && validViews.includes(viewParam as ActiveView)) {
+      return viewParam as ActiveView
+    }
+    return 'home'
+  }, [searchParams])
+  
   // Navigation
-  const [activeView, setActiveView] = useState<ActiveView>('home')
+  const [activeView, setActiveView] = useState<ActiveView>(initialView)
   const [selectedChatUser, setSelectedChatUser] = useState<string | null>(null)
   
   // Profile state
@@ -395,7 +409,7 @@ export default function UnifiedDashboard() {
 
     // Free users see testimonials on dashboard
     if (!plan || plan === 'free') {
-      fetch('/api/testimonials?limit=6')
+      fetch('/api/testimonials?limit=6', { credentials: 'include' })
         .then(res => res.json())
         .then(data => {
           if (data?.success && Array.isArray(data.testimonials)) {
@@ -409,7 +423,7 @@ export default function UnifiedDashboard() {
 
     // Paid users may be prompted to submit testimonial
     if (plan && plan !== 'free') {
-      fetch('/api/testimonials/prompt-state')
+      fetch('/api/testimonials/prompt-state', { credentials: 'include' })
         .then(res => res.json())
         .then(data => {
           if (data?.success && data.showPrompt) {
@@ -425,7 +439,7 @@ export default function UnifiedDashboard() {
   const handleDismissTestimonialPrompt = async () => {
     setShowTestimonialPrompt(false)
     try {
-      await fetch('/api/testimonials/prompt-state', { method: 'POST' })
+      await fetch('/api/testimonials/prompt-state', { method: 'POST', credentials: 'include' })
     } catch (error) {
       console.error('Error updating testimonial prompt state:', error)
     }
@@ -441,6 +455,7 @@ export default function UnifiedDashboard() {
       const res = await fetch('/api/testimonials', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           content: testimonialContent.trim(),
           rating: testimonialRating
@@ -555,7 +570,7 @@ export default function UnifiedDashboard() {
 
   const fetchDashboardStats = async () => {
     try {
-      const response = await fetch('/api/dashboard/stats')
+      const response = await fetch('/api/dashboard/stats', { credentials: 'include' })
       const data = await response.json()
       if (data.success) {
         setDashboardStats(data.stats)
@@ -595,7 +610,7 @@ export default function UnifiedDashboard() {
     setReferralLoading(true)
     setReferralError(null)
     try {
-      const response = await fetch('/api/referrals/progress')
+      const response = await fetch('/api/referrals/progress', { credentials: 'include' })
       const data = await response.json()
       if (!response.ok || !data.success) {
         throw new Error(data.error || 'Unable to load referral progress')
@@ -673,6 +688,7 @@ export default function UnifiedDashboard() {
       const response = await fetch('/api/boosts/bid', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           placement: boostPlacement,
           locale: boostLocale,
@@ -766,7 +782,7 @@ export default function UnifiedDashboard() {
 
   const fetchConversations = async () => {
     try {
-      const response = await fetch('/api/messages/conversations')
+      const response = await fetch('/api/messages/conversations', { credentials: 'include' })
       const data = await response.json()
       if (data.success) {
         setConversations(data.conversations || [])
@@ -780,9 +796,9 @@ export default function UnifiedDashboard() {
     setLoading(true)
     try {
       const [likedRes, likedMeRes, viewsRes] = await Promise.all([
-        fetch('/api/likes/i-liked'),
-        fetch('/api/likes/liked-me'),
-        fetch('/api/profile/views')
+        fetch('/api/likes/i-liked', { credentials: 'include' }),
+        fetch('/api/likes/liked-me', { credentials: 'include' }),
+        fetch('/api/profile/views', { credentials: 'include' })
       ])
       
       const [likedData, likedMeData, viewsData] = await Promise.all([
@@ -812,6 +828,7 @@ export default function UnifiedDashboard() {
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({
           viewedUserId: viewedUserId,
           duration: 5 // Initial view duration in seconds
@@ -1335,6 +1352,7 @@ export default function UnifiedDashboard() {
       const response = await fetch('/api/profile/update', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           ...formData,
           interests: Array.isArray(formData.interests) ? formData.interests : formData.interests.split(',').map((i: string) => i.trim()).filter(Boolean)
@@ -1361,6 +1379,7 @@ export default function UnifiedDashboard() {
       const response = await fetch('/api/subscription/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ plan: planId })
       })
 
@@ -1390,6 +1409,7 @@ export default function UnifiedDashboard() {
         const response = await fetch('/api/payments/wallet-intent', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({
             planId,
             walletProvider: provider,
@@ -1434,6 +1454,7 @@ export default function UnifiedDashboard() {
       const response = await fetch('/api/likes/unlike', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ userId })
       })
 
@@ -1452,6 +1473,7 @@ export default function UnifiedDashboard() {
         headers: { 
           'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({ userId })
       })
 
@@ -1637,6 +1659,7 @@ export default function UnifiedDashboard() {
       const response = await fetch('/api/referrals/invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(payload),
       })
 
@@ -1738,11 +1761,49 @@ export default function UnifiedDashboard() {
     setActiveView(view)
   }
 
+  const handleSidebarNavigate = (href: string) => {
+    // Parse the href and extract view parameter or path
+    if (href === '/dashboard-spa') {
+      setActiveView('home')
+      return
+    }
+    
+    // Check if href contains query param
+    const url = new URL(href, window.location.origin)
+    const viewParam = url.searchParams.get('view')
+    
+    if (viewParam) {
+      const validViews: ActiveView[] = ['home', 'discover', 'safety', 'profile', 'likes', 'chat', 'subscription', 'settings', 'referrals', 'spotlight']
+      if (validViews.includes(viewParam as ActiveView)) {
+        setActiveView(viewParam as ActiveView)
+        return
+      }
+    }
+    
+    // Fallback: map path to view (for old-style paths)
+    const pathMap: Record<string, ActiveView> = {
+      '/discover': 'discover',
+      '/chat': 'chat',
+      '/likes': 'likes',
+      '/safety': 'safety',
+      '/settings': 'settings',
+      '/profile': 'profile',
+      '/subscription': 'subscription',
+      '/referrals': 'referrals',
+      '/spotlight': 'spotlight',
+      '/premium': 'subscription',
+    }
+    
+    const view = pathMap[url.pathname] || 'home'
+    setActiveView(view)
+  }
+
   return (
     <>
       <MemberAppShell
         title="Member workspace (beta)"
         description="Experimental concierge surface with boosts, referrals, and inbox."
+        onNavigate={handleSidebarNavigate}
         actions={
           <div className="flex flex-wrap gap-2">
             <SpaViewSwitcher activeView={derivedNavKey} onNavigate={handleShellNavigate} />
@@ -2224,6 +2285,7 @@ export default function UnifiedDashboard() {
                                     const response = await fetch('/api/likes/like', {
                                       method: 'POST',
                                       headers: { 'Content-Type': 'application/json' },
+                                      credentials: 'include',
                                       body: JSON.stringify({ userId: person.email })
                                     })
                                     const data = await response.json()
@@ -2623,18 +2685,270 @@ export default function UnifiedDashboard() {
           </>
         )}
 
+        {/* DISCOVER VIEW */}
+        {activeView === 'discover' && (
+          <div className="space-y-8">
+            <div className="flex flex-col gap-4">
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-text-primary">Discover</h1>
+                <p className="text-sm md:text-base text-muted-foreground mt-2">Find your perfect match from your tribe</p>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button variant="outline" className="gap-2" onClick={() => fetchDiscoverUsers()}>
+                  <Search className="w-4 h-4" />
+                  Refresh Matches
+                </Button>
+                <Button variant="outline" className="gap-2">
+                  <Filter className="w-4 h-4" />
+                  Filters
+                </Button>
+              </div>
+            </div>
+
+            {/* Discover Cards Grid */}
+            {discoverUsers.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {discoverUsers.map((person) => (
+                  <div key={person._id} className="group relative">
+                    <div className="absolute -inset-1 bg-gradient-to-br from-purple-royal/20 to-gold-warm/20 rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500" />
+                    
+                    <div className="relative card-premium rounded-3xl overflow-hidden">
+                      <div 
+                        className="relative h-80 cursor-pointer overflow-hidden"
+                        onClick={() => {
+                          trackProfileView(person.email)
+                          setSelectedProfile(person)
+                          setActiveView('profile-view')
+                        }}
+                      >
+                        {person.profilePhotos?.[0] ? (
+                          <img 
+                            src={person.profilePhotos[0]} 
+                            alt={person.name}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-purple-royal to-gold-warm flex items-center justify-center">
+                            <span className="text-white text-7xl font-bold opacity-50">
+                              {person.name.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                        
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                        
+                        {person.isVerified && (
+                          <div className="absolute top-4 right-4">
+                            <Badge variant="gold" className="gap-1">
+                              <CheckCircle className="w-3 h-3" />
+                              Verified
+                            </Badge>
+                          </div>
+                        )}
+                        
+                        <div className="absolute bottom-0 left-0 right-0 p-6">
+                          <h3 className="text-2xl font-bold text-white mb-2">
+                            {person.name}, {person.age}
+                          </h3>
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {person.tribe && (
+                              <Badge variant="purple">
+                                {person.tribe}
+                              </Badge>
+                            )}
+                            {person.religion && (
+                              <Badge variant="outline" className="bg-black/40 text-white border-white/20">
+                                {person.religion}
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-sm text-white/90 flex items-center gap-1">
+                            <MapPin className="w-4 h-4" />
+                            {person.city}, {person.country}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="p-4">
+                        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                          {person.bio || "No bio available"}
+                        </p>
+                        
+                        <div className="flex gap-2">
+                          <Button variant="outline" className="flex-1 gap-2">
+                            <X className="w-4 h-4" />
+                            Pass
+                          </Button>
+                          <Button className="flex-1 gap-2">
+                            <Heart className="w-4 h-4" />
+                            Like
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="card-premium rounded-3xl p-12 text-center">
+                <Users className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                <h3 className="text-xl font-semibold mb-2">No matches yet</h3>
+                <p className="text-muted-foreground mb-6">Check back later for new profiles</p>
+                <Button onClick={() => fetchDiscoverUsers()}>
+                  Refresh
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* SAFETY VIEW */}
+        {activeView === 'safety' && (
+          <div className="space-y-8">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold text-text-primary">Safety & Verification</h1>
+              <p className="text-sm md:text-base text-muted-foreground mt-2">Protect yourself and build trust in the community</p>
+            </div>
+
+            {/* Verification Status Card */}
+            <div className="card-premium rounded-3xl p-6 md:p-8">
+              <div className="flex items-start gap-4">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                  user?.verified 
+                    ? 'bg-green-500/20 text-green-500' 
+                    : 'bg-yellow-500/20 text-yellow-500'
+                }`}>
+                  {user?.verified ? (
+                    <CheckCircle className="w-6 h-6" />
+                  ) : (
+                    <Clock className="w-6 h-6" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-xl font-bold mb-2">
+                    {user?.verified ? 'Account Verified' : 'Verification Pending'}
+                  </h2>
+                  <p className="text-muted-foreground mb-4">
+                    {user?.verified 
+                      ? 'Your account is verified. You can now access all features.' 
+                      : 'Complete verification to unlock private messaging and show you\'re a real person.'}
+                  </p>
+                  {!user?.verified && (
+                    <Button className="gap-2">
+                      <ShieldCheck className="w-4 h-4" />
+                      Start Verification
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Safety Tips Grid */}
+            <div>
+              <h2 className="text-2xl font-bold mb-6">Safety Tips</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                  {
+                    icon: ShieldCheck,
+                    title: 'Verify profiles',
+                    description: 'Look for the verified badge on profiles. It means they\'ve confirmed their identity.',
+                    color: 'from-blue-500/20 to-cyan-500/20'
+                  },
+                  {
+                    icon: Lock,
+                    title: 'Keep personal info private',
+                    description: 'Don\'t share your phone number, address, or financial details until you\'ve built trust.',
+                    color: 'from-purple-500/20 to-pink-500/20'
+                  },
+                  {
+                    icon: MessageCircle,
+                    title: 'Chat on the platform first',
+                    description: 'Get to know someone through our chat before moving to other messaging apps.',
+                    color: 'from-green-500/20 to-emerald-500/20'
+                  },
+                  {
+                    icon: Eye,
+                    title: 'Meet in public places',
+                    description: 'When meeting in person, choose busy, public locations and let someone know where you\'ll be.',
+                    color: 'from-orange-500/20 to-red-500/20'
+                  },
+                  {
+                    icon: Bell,
+                    title: 'Trust your instincts',
+                    description: 'If something feels off, it probably is. Don\'t hesitate to report suspicious behavior.',
+                    color: 'from-yellow-500/20 to-orange-500/20'
+                  },
+                  {
+                    icon: X,
+                    title: 'Block & report',
+                    description: 'Use our tools to block users who make you uncomfortable and report violations.',
+                    color: 'from-red-500/20 to-pink-500/20'
+                  }
+                ].map((tip, index) => {
+                  const IconComponent = tip.icon
+                  return (
+                    <div key={index} className="group relative">
+                      <div className={`absolute -inset-1 bg-gradient-to-br ${tip.color} rounded-2xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500`} />
+                      <div className="relative card-premium rounded-2xl p-6">
+                        <div className={`w-12 h-12 bg-gradient-to-br ${tip.color} rounded-xl flex items-center justify-center mb-4`}>
+                          <IconComponent className="w-6 h-6 text-primary" />
+                        </div>
+                        <h3 className="text-lg font-semibold mb-2">{tip.title}</h3>
+                        <p className="text-sm text-muted-foreground">{tip.description}</p>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Report & Block Section */}
+            <div className="card-premium rounded-3xl p-6 md:p-8">
+              <h2 className="text-2xl font-bold mb-4">Report Concerns</h2>
+              <p className="text-muted-foreground mb-6">
+                If you encounter inappropriate behavior, fake profiles, or anything that makes you uncomfortable, let us know immediately.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button variant="destructive" className="gap-2">
+                  <Bell className="w-4 h-4" />
+                  Report a User
+                </Button>
+                <Button variant="outline" className="gap-2">
+                  <HelpCircle className="w-4 h-4" />
+                  Safety Guidelines
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* PROFILE VIEW */}
         {activeView === 'profile' && (
           <div>
-            <div className="flex items-center justify-between mb-8">
-              <h1 className="text-3xl font-bold">My Profile</h1>
-              <Button onClick={() => setIsEditing(!isEditing)} variant="outline">
-                {isEditing ? 'Cancel' : 'Edit Profile'}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+              <div>
+                <h1 className="text-3xl font-bold">My Profile</h1>
+                <p className="text-sm text-muted-foreground mt-1">Manage your personal information and photos</p>
+              </div>
+              <Button 
+                onClick={() => setIsEditing(!isEditing)} 
+                className={`min-h-10 transition-all ${
+                  isEditing 
+                    ? 'bg-red-600 hover:bg-red-700' 
+                    : 'bg-accent hover:bg-accent/90'
+                }`}
+              >
+                {isEditing ? '✕ Cancel Edit' : '✏️ Edit Profile'}
               </Button>
             </div>
 
             {profileMessage && (
-              <div className="mb-6 p-4 bg-accent/10 border border-accent rounded-lg text-accent">
+              <div className={`mb-6 p-4 rounded-lg border ${
+                profileMessage.includes('success') 
+                  ? 'bg-green-50 border-green-200 text-green-800' 
+                  : 'bg-red-50 border-red-200 text-red-800'
+              }`}>
                 {profileMessage}
               </div>
             )}
@@ -2665,7 +2979,7 @@ export default function UnifiedDashboard() {
                 </div>
               </div>
 
-              {!isEditing ? (
+              {isEditing === false && (
                 <div className="space-y-4">
                   {user.bio && <p className="text-muted-foreground">{user.bio}</p>}
                   <div className="grid md:grid-cols-2 gap-4 pt-4 border-t border-border">
@@ -2701,48 +3015,73 @@ export default function UnifiedDashboard() {
                     </div>
                   )}
                 </div>
-              ) : (
+              )}
+              {isEditing === true && formData && Object.keys(formData).length > 0 && (
                 <div className="space-y-4">
-                  <div>
-                    <Label>Photos ({formData.profilePhotos.length}/10)</Label>
-                    <Input type="file" accept="image/*" multiple onChange={handleImageUpload} className="mt-2" />
-                    {formData.profilePhotos.length > 0 && (
-                      <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mt-3">
-                        {formData.profilePhotos.map((photo: string, index: number) => (
-                          <div key={index} className="relative">
-                            <img src={photo} alt={`Photo ${index + 1}`} className="w-full h-32 object-cover rounded-lg" />
-                            <button
-                              onClick={() => removePhoto(index)}
-                              className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ))}
+                  <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6">
+                    <div className="mb-4">
+                      <Label className="text-base font-bold mb-2 block">Upload Profile Photos ({(formData.profilePhotos || []).length}/10)</Label>
+                      <p className="text-sm text-muted-foreground mb-3">Add up to 10 photos. Your first photo will be your main profile picture.</p>
+                    </div>
+                    <label className="block">
+                      <div className="border-2 border-dashed border-blue-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-100 transition">
+                        <div className="text-blue-600 font-semibold mb-2">+ Click to upload photos</div>
+                        <p className="text-xs text-muted-foreground">Select multiple images at once</p>
+                      </div>
+                      <Input type="file" accept="image/*" multiple onChange={handleImageUpload} className="hidden" />
+                    </label>
+                    {formData.profilePhotos && formData.profilePhotos.length > 0 && (
+                      <div className="mt-4">
+                        <h4 className="font-semibold mb-2 text-sm">Your Photos</h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                          {(formData.profilePhotos || []).map((photo: string, index: number) => (
+                            <div key={index} className="relative group">
+                              <img src={photo} alt={`Photo ${index + 1}`} className="w-full h-24 object-cover rounded-lg" />
+                              {index === 0 && (
+                                <div className="absolute top-1 left-1 bg-accent text-white text-xs px-2 py-1 rounded font-bold">
+                                  PRIMARY
+                                </div>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => removePhoto(index)}
+                                className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+                                title="Remove photo"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">Drag photos to reorder them, or remove with the X button</p>
                       </div>
                     )}
+                  </div>
+
+                  <div className="border-t border-border pt-6">
+                    <h3 className="text-lg font-bold mb-4">Personal Details</h3>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <Label>Name</Label>
-                      <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
+                      <Input value={formData.name || ''} onChange={(e) => setFormData({...formData, name: e.target.value})} />
                     </div>
                     <div>
                       <Label>Date of Birth</Label>
-                      <Input type="date" value={formData.dateOfBirth} onChange={(e) => setFormData({...formData, dateOfBirth: e.target.value})} />
+                      <Input type="date" value={formData.dateOfBirth || ''} onChange={(e) => setFormData({...formData, dateOfBirth: e.target.value})} />
                     </div>
                   </div>
 
                   <div>
                     <Label>Bio</Label>
-                    <Textarea value={formData.bio} onChange={(e) => setFormData({...formData, bio: e.target.value})} rows={4} />
+                    <Textarea value={formData.bio || ''} onChange={(e) => setFormData({...formData, bio: e.target.value})} rows={4} />
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <Label>Gender</Label>
-                      <select value={formData.gender} onChange={(e) => handleProfileFieldChange('gender', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
+                      <select value={formData.gender || ''} onChange={(e) => handleProfileFieldChange('gender', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
                         <option value="">Select gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -2750,7 +3089,7 @@ export default function UnifiedDashboard() {
                     </div>
                     <div>
                       <Label>Marital Status</Label>
-                      <select value={formData.maritalStatus} onChange={(e) => handleProfileFieldChange('maritalStatus', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
+                      <select value={formData.maritalStatus || ''} onChange={(e) => handleProfileFieldChange('maritalStatus', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
                         <option value="">Select status</option>
                         {MARITAL_STATUS_OPTIONS.map(status => (
                           <option key={status} value={status}>{status}</option>
@@ -2759,7 +3098,7 @@ export default function UnifiedDashboard() {
                     </div>
                     <div>
                       <Label>Height</Label>
-                      <select value={formData.height} onChange={(e) => handleProfileFieldChange('height', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
+                      <select value={formData.height || ''} onChange={(e) => handleProfileFieldChange('height', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
                         <option value="">Select height</option>
                         {HEIGHTS_IN_FEET.map(height => (
                           <option key={height} value={height}>{height}</option>
@@ -2768,7 +3107,7 @@ export default function UnifiedDashboard() {
                     </div>
                     <div>
                       <Label>Body Type</Label>
-                      <select value={formData.bodyType} onChange={(e) => handleProfileFieldChange('bodyType', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
+                      <select value={formData.bodyType || ''} onChange={(e) => handleProfileFieldChange('bodyType', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
                         <option value="">Select body type</option>
                         <option value="Slim">Slim</option>
                         <option value="Athletic">Athletic</option>
@@ -2779,7 +3118,7 @@ export default function UnifiedDashboard() {
                     </div>
                     <div>
                       <Label>Education</Label>
-                      <select value={formData.education} onChange={(e) => handleProfileFieldChange('education', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
+                      <select value={formData.education || ''} onChange={(e) => handleProfileFieldChange('education', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
                         <option value="">Select education level</option>
                         {EDUCATION_LEVELS.map(edu => (
                           <option key={edu} value={edu}>{edu}</option>
@@ -2788,7 +3127,7 @@ export default function UnifiedDashboard() {
                     </div>
                     <div>
                       <Label>Occupation</Label>
-                      <Input value={formData.occupation} onChange={(e) => handleProfileFieldChange('occupation', e.target.value)} />
+                      <Input value={formData.occupation || ''} onChange={(e) => handleProfileFieldChange('occupation', e.target.value)} />
                     </div>
                     <div>
                       <Label>Work type</Label>
@@ -2805,7 +3144,7 @@ export default function UnifiedDashboard() {
                     </div>
                     <div>
                       <Label>Religion</Label>
-                      <select value={formData.religion} onChange={(e) => handleProfileFieldChange('religion', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
+                      <select value={formData.religion || ''} onChange={(e) => handleProfileFieldChange('religion', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
                         <option value="">Select religion</option>
                         {RELIGIONS.map(religion => (
                           <option key={religion} value={religion}>{religion}</option>
@@ -2814,7 +3153,7 @@ export default function UnifiedDashboard() {
                     </div>
                     <div>
                       <Label>Looking For</Label>
-                      <select value={formData.lookingFor} onChange={(e) => handleProfileFieldChange('lookingFor', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
+                      <select value={formData.lookingFor || ''} onChange={(e) => handleProfileFieldChange('lookingFor', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
                         <option value="">Select preference</option>
                         {LOOKING_FOR_OPTIONS.map(option => (
                           <option key={option} value={option}>{option}</option>
@@ -2829,7 +3168,7 @@ export default function UnifiedDashboard() {
                       <div className="grid md:grid-cols-2 gap-4">
                         <div>
                           <Label>Country</Label>
-                          <select value={formData.country} onChange={(e) => handleProfileFieldChange('country', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
+                          <select value={formData.country || ''} onChange={(e) => handleProfileFieldChange('country', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
                             <option value="">Select country</option>
                             {COUNTRIES.map(country => (
                               <option key={country} value={country}>{country}</option>
@@ -2839,7 +3178,7 @@ export default function UnifiedDashboard() {
                         <div>
                           <Label>City</Label>
                           <select 
-                            value={formData.city} 
+                            value={formData.city || ''} 
                             onChange={(e) => handleProfileFieldChange('city', e.target.value)} 
                             className="w-full px-4 py-2 border border-border rounded-lg"
                             disabled={!formData.country}
@@ -2858,7 +3197,7 @@ export default function UnifiedDashboard() {
                       <div className="grid md:grid-cols-2 gap-4">
                         <div>
                           <Label>Country of Origin</Label>
-                          <select value={formData.countryOfOrigin} onChange={(e) => handleProfileFieldChange('countryOfOrigin', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
+                          <select value={formData.countryOfOrigin || ''} onChange={(e) => handleProfileFieldChange('countryOfOrigin', e.target.value)} className="w-full px-4 py-2 border border-border rounded-lg">
                             <option value="">Select country of origin</option>
                             {Object.keys(AFRICAN_COUNTRIES_WITH_TRIBES).map(country => (
                               <option key={country} value={country}>{country}</option>
@@ -2868,7 +3207,7 @@ export default function UnifiedDashboard() {
                         <div>
                           <Label>Tribe</Label>
                           <select 
-                            value={formData.tribe} 
+                            value={formData.tribe || ''} 
                             onChange={(e) => handleProfileFieldChange('tribe', e.target.value)} 
                             className="w-full px-4 py-2 border border-border rounded-lg"
                             disabled={!formData.countryOfOrigin}
@@ -2904,11 +3243,21 @@ export default function UnifiedDashboard() {
                     </div>
                   </div>
 
-                  <div className="flex gap-4">
-                    <Button onClick={handleSaveProfile} disabled={loading} className="flex-1">
-                      {loading ? 'Saving...' : 'Save Changes'}
+                  <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-border">
+                    <Button 
+                      onClick={handleSaveProfile} 
+                      disabled={loading} 
+                      className="flex-1 bg-green-600 hover:bg-green-700 min-h-11 text-base font-semibold"
+                    >
+                      {loading ? '⏳ Saving...' : '✓ Save All Changes'}
                     </Button>
-                    <Button onClick={() => setIsEditing(false)} variant="outline">Cancel</Button>
+                    <Button 
+                      onClick={() => setIsEditing(false)} 
+                      variant="outline"
+                      className="flex-1 min-h-11"
+                    >
+                      Cancel
+                    </Button>
                   </div>
                 </div>
               )}
@@ -3750,7 +4099,7 @@ export default function UnifiedDashboard() {
                   <label className="flex items-center justify-between cursor-pointer">
                     <div>
                       <p className="font-medium">Show Online Status</p>
-                      <p className="text-sm text-muted-foreground">Let others see when you're active</p>
+                      <p className="text-sm text-muted-foreground">Display when you are active to your matches</p>
                     </div>
                     <input
                       type="checkbox"
@@ -3759,6 +4108,68 @@ export default function UnifiedDashboard() {
                       className="w-5 h-5"
                     />
                   </label>
+                  <label className="flex items-center justify-between cursor-pointer">
+                    <div>
+                      <p className="font-medium">Allow New Messages</p>
+                      <p className="text-sm text-muted-foreground">Let verified members reach out</p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={settings.allowMessages}
+                      onChange={(e) => setSettings({...settings, allowMessages: e.target.checked})}
+                      className="w-5 h-5"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* Security */}
+              <div className="bg-card border border-border rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <ShieldCheck className="w-6 h-6 text-accent" />
+                  <h2 className="text-xl font-bold">Security</h2>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">Reinforce passkeys and guardian approvals.</p>
+                <div className="space-y-3">
+                  <button className="w-full flex items-center justify-between p-3 hover:bg-muted rounded-lg transition text-left">
+                    <span className="font-medium">Change Password</span>
+                  </button>
+                  <button className="w-full flex items-center justify-between p-3 hover:bg-muted rounded-lg transition text-left">
+                    <span className="font-medium">Setup Two-Factor Authentication</span>
+                    <span className="text-xs px-2 py-1 bg-amber-100 text-amber-800 rounded-full">Recommended</span>
+                  </button>
+                  <button className="w-full flex items-center justify-between p-3 hover:bg-muted rounded-lg transition text-left">
+                    <span className="font-medium">Manage Blocked Members</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Support & Legal */}
+              <div className="bg-card border border-border rounded-lg p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <HelpCircle className="w-6 h-6 text-accent" />
+                  <h2 className="text-xl font-bold">Support & Legal</h2>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">Docs, concierge briefings, and safety resources.</p>
+                <div className="space-y-3">
+                  <button className="w-full flex items-center justify-between p-3 hover:bg-muted rounded-lg transition text-left">
+                    <div>
+                      <p className="font-medium">Help Center</p>
+                      <p className="text-xs text-muted-foreground">Guides & FAQ</p>
+                    </div>
+                  </button>
+                  <button className="w-full flex items-center justify-between p-3 hover:bg-muted rounded-lg transition text-left">
+                    <div>
+                      <p className="font-medium">Safety Tips</p>
+                      <p className="text-xs text-muted-foreground">Playbook and escalation</p>
+                    </div>
+                  </button>
+                  <button className="w-full flex items-center justify-between p-3 hover:bg-muted rounded-lg transition text-left">
+                    <span className="font-medium">Terms of Service</span>
+                  </button>
+                  <button className="w-full flex items-center justify-between p-3 hover:bg-muted rounded-lg transition text-left">
+                    <span className="font-medium">Privacy Policy</span>
+                  </button>
                 </div>
               </div>
 
@@ -3915,6 +4326,7 @@ export default function UnifiedDashboard() {
                           headers: { 
                             'Content-Type': 'application/json'
                           },
+                          credentials: 'include',
                           body: JSON.stringify({ 
                             userId: selectedProfile.email
                           })
@@ -3950,7 +4362,8 @@ export default function UnifiedDashboard() {
                   <Button 
                     variant="outline"
                     className="w-full h-14 text-lg font-semibold rounded-xl border-2 hover:bg-accent/10 hover:border-accent"
-                    onClick={() => openChat(selectedProfile.email)}
+                    onClick={() => openChat(selectedProfile._id || selectedProfile.userId || selectedProfile.email)}
+                    disabled={!selectedProfile._id && !selectedProfile.userId && !selectedProfile.email}
                   >
                     <MessageCircle className="w-5 h-5 mr-2" />
                     Send Message

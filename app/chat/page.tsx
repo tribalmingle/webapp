@@ -1,11 +1,22 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { MessageCircle, Search, Filter, Sparkles, Shield, HeartHandshake, Pause, Plus } from 'lucide-react'
-import Link from 'next/link'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
-import { MemberAppShell } from '@/components/layouts/member-app-shell'
-import { Badge } from '@/components/ui/badge'
+export default function ChatRedirect() {
+  const router = useRouter()
+  
+  useEffect(() => {
+    router.replace('/dashboard-spa?view=chat')
+  }, [router])
+  
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <p className="text-muted-foreground">Redirecting to chat...</p>
+    </div>
+  )
+}
+
 import { Button } from '@/components/ui/button'
 import { useSessionStore } from '@/lib/state/session-store'
 import { trackClientEvent } from '@/lib/analytics/client'

@@ -102,7 +102,7 @@ export function handleSummary(data) {
 
 function textSummary(data, options) {
   const indent = options?.indent || '';
-  const enableColors = options?.enableColors || false;
+  const _enableColors = options?.enableColors || false;
 
   let summary = `
 ${indent}================================================================================

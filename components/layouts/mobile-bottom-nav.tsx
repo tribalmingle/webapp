@@ -7,16 +7,17 @@ import { cn } from '@/lib/utils'
 
 interface MobileBottomNavProps {
   chatBadgeCount?: number
+  onNavigate?: (path: string) => void
 }
 
 const MOBILE_NAV_ITEMS = [
   { label: 'Home', href: '/dashboard-spa', icon: Home },
-  { label: 'Likes', href: '/likes', icon: Heart },
-  { label: 'Chat', href: '/chat', icon: MessageCircle },
-  { label: 'Profile', href: '/profile', icon: User },
+  { label: 'Likes', href: '/dashboard-spa?view=likes', icon: Heart },
+  { label: 'Chat', href: '/dashboard-spa?view=chat', icon: MessageCircle },
+  { label: 'Profile', href: '/dashboard-spa?view=profile', icon: User },
 ]
 
-export function MobileBottomNav({ chatBadgeCount }: MobileBottomNavProps) {
+export function MobileBottomNav({ chatBadgeCount, onNavigate }: MobileBottomNavProps) {
   const pathname = usePathname()
 
   return (
@@ -28,17 +29,8 @@ export function MobileBottomNav({ chatBadgeCount }: MobileBottomNavProps) {
             const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`)
             const badge = item.href === '/chat' ? chatBadgeCount : undefined
             
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-1.5 px-3 py-2 rounded-xl transition-all flex-1 min-h-[60px]",
-                  isActive 
-                    ? "bg-primary/10 text-primary" 
-                    : "text-muted-foreground hover:bg-muted/50"
-                )}
-              >
+            const content = (
+              <>
                 <div className="relative">
                   <Icon className={cn("w-6 h-6", isActive && "text-primary")} />
                   {badge && badge > 0 && (
@@ -54,6 +46,38 @@ export function MobileBottomNav({ chatBadgeCount }: MobileBottomNavProps) {
                 )}>
                   {item.label}
                 </span>
+              </>
+            )
+            
+            if (onNavigate) {
+              return (
+                <button
+                  key={item.href}
+                  onClick={() => onNavigate(item.href)}
+                  className={cn(
+                    "flex flex-col items-center justify-center gap-1.5 px-3 py-2 rounded-xl transition-all flex-1 min-h-[60px]",
+                    isActive 
+                      ? "bg-primary/10 text-primary" 
+                      : "text-muted-foreground hover:bg-muted/50"
+                  )}
+                >
+                  {content}
+                </button>
+              )
+            }
+            
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-1.5 px-3 py-2 rounded-xl transition-all flex-1 min-h-[60px]",
+                  isActive 
+                    ? "bg-primary/10 text-primary" 
+                    : "text-muted-foreground hover:bg-muted/50"
+                )}
+              >
+                {content}
               </Link>
             )
           })}

@@ -1,5 +1,22 @@
 ﻿'use client'
 
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+
+export default function LikesRedirect() {
+  const router = useRouter()
+  
+  useEffect(() => {
+    router.replace('/dashboard-spa?view=likes')
+  }, [router])
+  
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <p className="text-muted-foreground">Redirecting to likes...</p>
+    </div>
+  )
+}
+
 import { useState, useEffect, type ReactNode } from 'react'
 import { Heart, Eye, Clock, X, Star } from 'lucide-react'
 
@@ -72,21 +89,21 @@ export default function LikesPage() {
     setLoading(true)
     try {
       // Fetch people I liked
-      const likedResponse = await fetch('/api/likes/i-liked')
+      const likedResponse = await fetch('/api/likes/i-liked', { credentials: 'include' })
       const likedData = await likedResponse.json()
       if (likedData.success) {
         setPeopleILiked(likedData.likes)
       }
 
       // Fetch people who liked me
-      const likedMeResponse = await fetch('/api/likes/liked-me')
+      const likedMeResponse = await fetch('/api/likes/liked-me', { credentials: 'include' })
       const likedMeData = await likedMeResponse.json()
       if (likedMeData.success) {
         setPeopleWhoLikedMe(likedMeData.likes)
       }
 
       // Fetch profile views
-      const viewsResponse = await fetch('/api/profile/views')
+      const viewsResponse = await fetch('/api/profile/views', { credentials: 'include' })
       const viewsData = await viewsResponse.json()
       if (viewsData.success) {
         setProfileViews(viewsData.views)
@@ -103,6 +120,7 @@ export default function LikesPage() {
       const response = await fetch('/api/likes/unlike', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ userId })
       })
 
@@ -120,6 +138,7 @@ export default function LikesPage() {
       const response = await fetch('/api/likes/like', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ userId })
       })
 

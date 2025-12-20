@@ -1,7 +1,21 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Filter, Flame, Heart, MapPin, MessageCircle, Save, Sparkles, SwitchCamera, Users, X, Star, Crown, TrendingUp, Zap } from 'lucide-react'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+
+export default function DiscoverRedirect() {
+  const router = useRouter()
+  
+  useEffect(() => {
+    router.replace('/dashboard-spa?view=discover')
+  }, [router])
+  
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <p className="text-muted-foreground">Redirecting to discover...</p>
+    </div>
+  )
+}
 
 import { MemberAppShell } from '@/components/layouts/member-app-shell'
 import { Badge } from '@/components/ui/badge'
