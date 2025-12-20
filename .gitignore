@@ -6,6 +6,22 @@
 .env.production
 VERCEL_ENV_VARIABLES.txt
 
+# Security - Test Scripts with Credentials
+test-termii-*.ts
+test-tribemingle-*.ts
+test-media-upload.ts
+test-hostgator.ts
+debug-user.ts
+get-users.ts
+scripts/create-test-user.ts
+scripts/test-hostgator.ts
+
+# Security - Documentation with Credentials
+VERCEL_ENV_SETUP.md
+VERCEL_DEPLOYMENT_FIX.md
+TEST_RESULTS_SUMMARY.md
+PRODUCTION_LAUNCH_CHECKLIST.md
+
 # Dependencies
 node_modules/
 .pnpm-store/

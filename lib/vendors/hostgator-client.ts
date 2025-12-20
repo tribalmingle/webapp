@@ -4,7 +4,7 @@
  */
 
 const HOSTGATOR_BASE_URL = 'https://tm.d2d.ng'
-const HOSTGATOR_API_KEY = process.env.HOSTGATOR_API_KEY || '6f273bc1-23b9-435c-b9ad-53c7ec2a1b19'
+const HOSTGATOR_API_KEY = process.env.HOSTGATOR_API_KEY || ''
 const isDev = process.env.NODE_ENV === 'development'
 
 export interface UploadOptions {
