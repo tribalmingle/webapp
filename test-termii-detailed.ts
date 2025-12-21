@@ -3,7 +3,7 @@
  * Check account balance, sender ID, and full API responses
  */
 
-const TERMII_API_KEY = 'TLV90GetIWWqamdROrodTl3QUF6Crr6atRpxQ6S4f4Wilp61QWzxftmXSTNbNv'
+const TERMII_API_KEY_DETAILED = 'TLV90GetIWWqamdROrodTl3QUF6Crr6atRpxQ6S4f4Wilp61QWzxftmXSTNbNv'
 const TERMII_BASE_URL = 'https://api.termii.com/api'
 const TEST_PHONES = ['+2347064849292', '+2348063009268']
 
@@ -12,7 +12,7 @@ async function checkBalance() {
   console.log('=' .repeat(50))
   
   try {
-    const response = await fetch(`${TERMII_BASE_URL}/get-balance?api_key=${TERMII_API_KEY}`)
+    const response = await fetch(`${TERMII_BASE_URL}/get-balance?api_key=${TERMII_API_KEY_DETAILED}`)
     const data = await response.json()
     
     console.log('Response Status:', response.status, response.statusText)
@@ -29,7 +29,7 @@ async function checkSenderId() {
   console.log('=' .repeat(50))
   
   try {
-    const response = await fetch(`${TERMII_BASE_URL}/sender-id?api_key=${TERMII_API_KEY}`)
+    const response = await fetch(`${TERMII_BASE_URL}/sender-id?api_key=${TERMII_API_KEY_DETAILED}`)
     const data = await response.json()
     
     console.log('Response Status:', response.status, response.statusText)
@@ -51,11 +51,11 @@ async function sendDetailedSMS(phoneNumber: string) {
     sms: `Test SMS from Tribal Mingle at ${new Date().toLocaleTimeString()}. Please reply if received!`,
     type: 'plain',
     channel: 'generic',
-    api_key: TERMII_API_KEY,
+    api_key: TERMII_API_KEY_DETAILED,
   }
   
   console.log('\nRequest Body:')
-  console.log(JSON.stringify({ ...requestBody, api_key: TERMII_API_KEY.substring(0, 15) + '...' }, null, 2))
+  console.log(JSON.stringify({ ...requestBody, api_key: TERMII_API_KEY_DETAILED.substring(0, 15) + '...' }, null, 2))
   
   try {
     const response = await fetch(`${TERMII_BASE_URL}/sms/send`, {
@@ -89,7 +89,7 @@ async function runDetailedTests() {
   console.log('🔍 DETAILED TERMII API DIAGNOSTICS')
   console.log('=' .repeat(50))
   console.log('Timestamp:', new Date().toISOString())
-  console.log('API Key:', TERMII_API_KEY.substring(0, 20) + '...')
+  console.log('API Key:', TERMII_API_KEY_DETAILED.substring(0, 20) + '...')
   console.log('Test Phones:', TEST_PHONES.join(', '))
   
   // Check account status

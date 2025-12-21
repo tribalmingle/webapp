@@ -98,6 +98,46 @@ export const COUNTRIES = [
   'Other'
 ]
 
+// Country phone codes with flags
+export const COUNTRY_PHONE_CODES: { [key: string]: { code: string; flag: string } } = {
+  'Nigeria': { code: '+234', flag: '🇳🇬' },
+  'Ghana': { code: '+233', flag: '🇬🇭' },
+  'Kenya': { code: '+254', flag: '🇰🇪' },
+  'South Africa': { code: '+27', flag: '🇿🇦' },
+  'Ethiopia': { code: '+251', flag: '🇪🇹' },
+  'Tanzania': { code: '+255', flag: '🇹🇿' },
+  'Uganda': { code: '+256', flag: '🇺🇬' },
+  'Cameroon': { code: '+237', flag: '🇨🇲' },
+  'Ivory Coast': { code: '+225', flag: '🇨🇮' },
+  'Senegal': { code: '+221', flag: '🇸🇳' },
+  'Zimbabwe': { code: '+263', flag: '🇿🇼' },
+  'Mali': { code: '+223', flag: '🇲🇱' },
+  'Zambia': { code: '+260', flag: '🇿🇲' },
+  'Rwanda': { code: '+250', flag: '🇷🇼' },
+  'Burundi': { code: '+257', flag: '🇧🇮' },
+  'Mozambique': { code: '+258', flag: '🇲🇿' },
+  'Angola': { code: '+244', flag: '🇦🇴' },
+  'Somalia': { code: '+252', flag: '🇸🇴' },
+  'Congo (DRC)': { code: '+243', flag: '🇨🇩' },
+  'Algeria': { code: '+213', flag: '🇩🇿' },
+  'Morocco': { code: '+212', flag: '🇲🇦' },
+  'Tunisia': { code: '+216', flag: '🇹🇳' },
+  'Egypt': { code: '+20', flag: '🇪🇬' },
+  'United States': { code: '+1', flag: '🇺🇸' },
+  'United Kingdom': { code: '+44', flag: '🇬🇧' },
+  'Canada': { code: '+1', flag: '🇨🇦' },
+  'Australia': { code: '+61', flag: '🇦🇺' },
+  'Germany': { code: '+49', flag: '🇩🇪' },
+  'France': { code: '+33', flag: '🇫🇷' },
+  'Italy': { code: '+39', flag: '🇮🇹' },
+  'Spain': { code: '+34', flag: '🇪🇸' },
+  'Other': { code: '+', flag: '🌍' }
+}
+
+export const getCountryPhoneCode = (country: string): { code: string; flag: string } => {
+  return COUNTRY_PHONE_CODES[country] || { code: '+', flag: '🌍' }
+}
+
 export const NIGERIAN_CITIES = [
   'Lagos',
   'Abuja',

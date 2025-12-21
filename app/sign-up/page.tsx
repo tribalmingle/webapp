@@ -16,7 +16,8 @@ import {
   RELIGIONS,
   LOOKING_FOR_OPTIONS,
   INTERESTS_OPTIONS,
-  MARITAL_STATUS_OPTIONS
+  MARITAL_STATUS_OPTIONS,
+  getCountryPhoneCode
 } from '@/lib/constants/profile-options'
 import { COMPATIBILITY_QUESTIONS, DEFAULT_COMPATIBILITY_VALUE } from '@/lib/constants/compatibility-quiz'
 
@@ -92,6 +93,7 @@ export default function SignUpPage() {
   const [phoneStatus, setPhoneStatus] = useState<'idle' | 'sending' | 'code_sent' | 'verifying' | 'verified'>('idle')
   const [phoneCode, setPhoneCode] = useState('')
   const [phoneMessage, setPhoneMessage] = useState('')
+  const [localPhone, setLocalPhone] = useState('') // Phone number without country code
   const idInputRef = useRef<HTMLInputElement>(null)
   const selfieInputRef = useRef<HTMLInputElement>(null)
   const voiceInputRef = useRef<HTMLInputElement>(null)
@@ -478,10 +480,15 @@ export default function SignUpPage() {
   }
 
   const handleSendPhoneCode = async () => {
-    if (!formData.email || !formData.phone) {
+    if (!formData.email || !localPhone) {
       setError('Please provide both email and phone number to request a code')
       return
     }
+    
+    // Combine country code with local phone number
+    const countryCode = formData.country ? getCountryPhoneCode(formData.country).code : ''
+    const fullPhone = countryCode + localPhone.replace(/^0+/, '') // Remove leading zeros
+    setFormData(prev => ({ ...prev, phone: fullPhone }))
 
     try {
       setError('')
@@ -491,7 +498,7 @@ export default function SignUpPage() {
       const response = await fetch('/api/onboarding/verify-phone', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: formData.email, phone: formData.phone, prospectId })
+        body: JSON.stringify({ email: formData.email, phone: fullPhone, prospectId })
       })
 
       const data = await response.json()
@@ -505,11 +512,12 @@ export default function SignUpPage() {
 
       setPhoneStatus('code_sent')
       setPhoneCode('')
-      setPhoneMessage('Code sent. Enter the 6-digit code below to confirm your phone number.')
+      setPhoneMessage('Verification code sent! Check your phone SMS and email inbox for the code.')
     } catch (err) {
       console.error('Phone verification send failed', err)
-      setPhoneStatus('idle')
-      setPhoneMessage('Unable to send verification code. Check your phone number and try again.')
+      // Set to code_sent anyway - email might have been sent even if SMS failed
+      setPhoneStatus('code_sent')
+      setPhoneMessage('Code may have been sent to your email. Check your inbox and enter the code below if you received it.')
     }
   }
 
@@ -556,9 +564,10 @@ export default function SignUpPage() {
   const handleNext = async () => {
     setError('')
 
+    // Step 1: Basic Info - All fields required
     if (step === 1) {
       if (!formData.name || !formData.email || !formData.password || !formData.dob) {
-        setError('Please fill in all required fields')
+        setError('Please fill in all required fields: name, email, password, and date of birth')
         return
       }
       const age = calculateAge(formData.dob)
@@ -566,8 +575,55 @@ export default function SignUpPage() {
         setError('You must be 30 years or older to use this platform')
         return
       }
+
+      // Auto-save user data after Step 1 (asynchronously, don't block UI)
+      saveEarlyRegistration().catch(err => {
+        console.warn('[signup] Failed to auto-save Step 1 data:', err)
+        // Don't block user - they can continue even if save fails
+      })
     }
 
+    // Step 2: Details - Gender, marital status, and looking for are required
+    if (step === 2) {
+      if (!formData.gender) {
+        setError('Please select your gender')
+        return
+      }
+      if (!formData.maritalStatus) {
+        setError('Please select your marital status')
+        return
+      }
+      if (!formData.lookingFor) {
+        setError('Please select what you are looking for')
+        return
+      }
+    }
+
+    // Step 3: Location & Tribe - All location fields, tribe, and interests required
+    if (step === 3) {
+      if (!formData.country) {
+        setError('Please select your country of residence')
+        return
+      }
+      if (!formData.city) {
+        setError('Please select your city of residence')
+        return
+      }
+      if (!formData.countryOfOrigin) {
+        setError('Please select your country of origin')
+        return
+      }
+      if (!formData.tribe) {
+        setError('Please select your tribe')
+        return
+      }
+      if (!formData.interests || formData.interests.length === 0) {
+        setError('Please select at least one interest')
+        return
+      }
+    }
+
+    // Step 4: Compatibility Quiz - All questions must be answered
     if (step === 4) {
       const saved = await handleSaveCompatibility()
       if (!saved) {
@@ -575,6 +631,7 @@ export default function SignUpPage() {
       }
     }
 
+    // Step 5: Security - Passkey and phone verification required
     if (step === 5) {
       if (!passkeyBypass && passkeyState !== 'verified') {
         setError('Please finish passkey setup or choose Skip for now')
@@ -588,6 +645,32 @@ export default function SignUpPage() {
     }
 
     setStep((prev) => Math.min(STEP_COUNT, prev + 1))
+  }
+
+  const saveEarlyRegistration = async () => {
+    try {
+      const response = await fetch('/api/auth/early-register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          name: formData.name,
+          dateOfBirth: formData.dob,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success && data.token) {
+        // Store token for subsequent API calls
+        sessionStorage.setItem('token', data.token)
+        console.log('[signup] Step 1 data saved successfully')
+      }
+    } catch (error) {
+      console.error('[signup] Failed to save Step 1:', error)
+      throw error
+    }
   }
 
   const handleComplete = async () => {
@@ -1111,15 +1194,32 @@ export default function SignUpPage() {
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Phone number</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="+15555555555"
-                  className="w-full rounded-lg border border-border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent"
-                />
-                <p className="text-xs text-muted-foreground">Use an E.164 formatted number (include country code).</p>
+                {!formData.country ? (
+                  <div className="rounded-lg border border-amber-500 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                    Please select your country above first to enable phone input
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 rounded-lg border border-border bg-muted px-4 py-2.5 text-base font-semibold">
+                      <span className="text-2xl">{getCountryPhoneCode(formData.country).flag}</span>
+                      <span>{getCountryPhoneCode(formData.country).code}</span>
+                    </div>
+                    <input
+                      type="tel"
+                      value={localPhone}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^0-9]/g, '')
+                        setLocalPhone(value)
+                      }}
+                      placeholder="8012345678"
+                      className="flex-1 rounded-lg border border-border px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-accent"
+                      disabled={!formData.country}
+                    />
+                  </div>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  {formData.country ? 'Enter your phone number without the country code' : 'Select your country first'}
+                </p>
               </div>
 
               <div className="space-y-2">
@@ -1149,7 +1249,7 @@ export default function SignUpPage() {
                   onChange={(event) => setPhoneCode(event.target.value.replace(/[^0-9]/g, ''))}
                   placeholder="Enter 6-digit code"
                   className="w-full rounded-lg border border-border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent"
-                  disabled={phoneStatus === 'idle' || phoneStatus === 'sending'}
+                  disabled={phoneStatus === 'sending'}
                 />
               </div>
 
@@ -1157,7 +1257,7 @@ export default function SignUpPage() {
                 Status:{' '}
                 {phoneStatus === 'idle' && 'Not started'}
                 {phoneStatus === 'sending' && 'Sending code...'}
-                {phoneStatus === 'code_sent' && 'Code sent. Check your SMS inbox.'}
+                {phoneStatus === 'code_sent' && 'Code sent. Check your SMS and email inbox.'}
                 {phoneStatus === 'verifying' && 'Confirming code...'}
                 {phoneStatus === 'verified' && 'Phone number verified'}
               </p>

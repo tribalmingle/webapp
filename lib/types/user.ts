@@ -9,6 +9,7 @@ export interface User {
   age: number
   dateOfBirth: string
   gender: 'male' | 'female' | 'other'
+  phone?: string // Phone number (locked after first use)
   tribe?: string
   bio?: string
   interests?: string[] // Now array of selected interests
@@ -22,6 +23,9 @@ export interface User {
   profilePhoto?: string
   selfiePhoto?: string
   verified: boolean
+  registrationComplete: boolean // True when user completes all registration steps
+  registrationStep?: number // Track which step user is on (1-7)
+  registrationReminderSent?: boolean // Track if 10-min reminder was sent
   subscriptionPlan?: 'free' | 'monthly' | '3-months' | '6-months'
   height?: string // Height in feet format
   bodyType?: string
@@ -42,4 +46,5 @@ export interface AuthResponse {
   message: string
   user?: UserProfile
   token?: string
+  redirectTo?: string // Where to redirect after login (dashboard or continue registration)
 }

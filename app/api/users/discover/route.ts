@@ -76,16 +76,16 @@ export async function GET(request: Request) {
       const currentUser = await db.collection('users').findOne({ email: currentUserEmail })
       if (currentUser?.gender) {
         const userGender = currentUser.gender.toLowerCase()
-        // Males only see Females, Females only see Males
+        // Males only see Females, Females only see Males (case-insensitive)
         if (userGender === 'male') {
-          query.gender = 'Female'
+          query.gender = { $regex: new RegExp('^female$', 'i') }
         } else if (userGender === 'female') {
-          query.gender = 'Male'
+          query.gender = { $regex: new RegExp('^male$', 'i') }
         }
       }
     }
     
-    // Add search functionality
+    // Add search functionality - gender filter MUST always apply
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: 'i' } },

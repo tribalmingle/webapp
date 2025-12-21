@@ -17,16 +17,26 @@ export async function GET(req: NextRequest) {
     const viewsCollection = db.collection('profile_views')
     const usersCollection = db.collection('users')
 
+    // Get current user's gender to filter opposite gender only
+    const currentUser = await usersCollection.findOne({ email: userPayload.email })
+    const userGender = currentUser?.gender?.toLowerCase()
+
     // Find all profile views
     const views = await viewsCollection
       .find({ viewedUserId: userPayload.email })
       .sort({ viewedAt: -1 })
       .toArray()
 
-    // Get user details for each view
+    // Get user details for each view - filter by opposite gender (case-insensitive)
     const viewsWithDetails = await Promise.all(
       views.map(async (view) => {
-        const user = await usersCollection.findOne({ email: view.userId })
+        const userQuery: any = { email: view.userId }
+        if (userGender === 'male') {
+          userQuery.gender = { $regex: new RegExp('^female$', 'i') }
+        } else if (userGender === 'female') {
+          userQuery.gender = { $regex: new RegExp('^male$', 'i') }
+        }
+        const user = await usersCollection.findOne(userQuery)
         if (!user) return null
 
         return {

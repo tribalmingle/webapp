@@ -3,19 +3,14 @@ import { randomUUID } from 'node:crypto'
 import { generateRegistrationOptions, verifyRegistrationResponse } from '@simplewebauthn/server'
 import type { PublicKeyCredentialCreationOptionsJSON, RegistrationResponseJSON } from '@simplewebauthn/typescript-types'
 import { ObjectId } from 'mongodb'
-import twilio from 'twilio'
 
 import { getCollection } from '@/lib/db/mongodb'
+import { sendVerificationCodeEmail } from '@/lib/vendors/resend-client'
 
 const PASSKEY_RP_ID = process.env.PASSKEY_RP_ID ?? 'localhost'
 const PASSKEY_RP_NAME = process.env.PASSKEY_RP_NAME ?? 'Tribal Mingle'
 const PASSKEY_ORIGIN = process.env.PASSKEY_ORIGIN ?? 'http://localhost:3000'
 
-const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID
-const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN
-const TWILIO_VERIFY_SERVICE_SID = process.env.TWILIO_VERIFY_SERVICE_SID
-
-const twilioClient = TWILIO_ACCOUNT_SID && TWILIO_AUTH_TOKEN ? twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN) : null
 const applicantsCollectionName = 'onboarding_applicants'
 
 interface PasskeyChallengeResult {
@@ -98,8 +93,23 @@ export async function finishPasskeyRegistration(email: string, prospectId: strin
 
 export async function sendVerificationCode(email: string, phone: string, prospectId?: string) {
   const applicants = await getCollection(applicantsCollectionName)
+  const users = await getCollection('users')
   const applicantId = prospectId ? new ObjectId(prospectId) : new ObjectId()
   const now = new Date()
+
+  // Check if phone number is already in use
+  const existingUserWithPhone = await users.findOne({ phone })
+  if (existingUserWithPhone) {
+    throw new Error('This phone number is already registered. Please log in or use a different number.')
+  }
+
+  const existingApplicantWithPhone = await applicants.findOne({ 
+    phone,
+    _id: { $ne: applicantId } // Allow current applicant to resend code
+  })
+  if (existingApplicantWithPhone) {
+    throw new Error('This phone number is already in use. Please use a different number.')
+  }
 
   await applicants.updateOne(
     { _id: applicantId },
@@ -117,36 +127,85 @@ export async function sendVerificationCode(email: string, phone: string, prospec
     { upsert: true },
   )
 
-  if (!twilioClient || !TWILIO_VERIFY_SERVICE_SID) {
-    console.warn('[onboarding] Twilio not configured, returning mock verification SID')
-    return { prospectId: applicantId.toHexString(), sid: `mock-${randomUUID()}` }
+  try {
+    // Generate 6-digit verification code
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
+    
+    console.log('[onboarding] Sending verification code to:', phone)
+    
+    // Send via SMS using Termii
+    const { sendSMSViaTermii } = await import('@/lib/vendors/termii-client')
+    const smsResult = await sendSMSViaTermii({
+      to: phone,
+      message: `Your Tribal Mingle verification code is: ${verificationCode}. Valid for 10 minutes.`,
+    })
+
+    console.log('[onboarding] SMS sent successfully')
+
+    // Store the code and session ID for verification
+    await applicants.updateOne(
+      { _id: applicantId },
+      {
+        $set: {
+          verificationCode,
+          verificationCodeExpiry: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+          otpSentAt: now,
+        },
+      },
+    )
+
+    // Also send the same code via email
+    sendVerificationCodeEmail({
+      to: email,
+      name: email.split('@')[0],
+      code: verificationCode,
+    }).catch((error) => {
+      console.warn('[onboarding] Failed to send email verification:', error)
+      // Don't fail if email send fails - SMS is primary
+    })
+
+    return { prospectId: applicantId.toHexString(), sid: smsResult.messageId }
+  } catch (error) {
+    console.error('[onboarding] Failed to send verification code:', error)
+    
+    // Provide more specific error message
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    if (errorMessage.includes('phone number')) {
+      throw new Error('Invalid phone number format. Please use international format (e.g., +2348012345678)')
+    }
+    if (errorMessage.includes('TERMII_API_KEY')) {
+      throw new Error('SMS service not configured. Please contact support.')
+    }
+    
+    throw new Error(`Unable to send verification code: ${errorMessage}`)
   }
-
-  const verification = await twilioClient.verify.v2.services(TWILIO_VERIFY_SERVICE_SID).verifications.create({
-    to: phone,
-    channel: 'sms',
-  })
-
-  return { prospectId: applicantId.toHexString(), sid: verification.sid }
 }
 
 export async function confirmVerificationCode(prospectId: string, phone: string, code: string) {
-  if (!twilioClient || !TWILIO_VERIFY_SERVICE_SID) {
-    await markPhoneVerified(prospectId)
-    return { verified: true }
+  try {
+    const applicants = await getCollection(applicantsCollectionName)
+    const applicant = await applicants.findOne({ _id: new ObjectId(prospectId) })
+
+    if (!applicant) {
+      return { verified: false }
+    }
+
+    // Check if code matches and hasn't expired
+    const now = new Date()
+    if (
+      applicant.verificationCode === code &&
+      applicant.verificationCodeExpiry &&
+      new Date(applicant.verificationCodeExpiry) > now
+    ) {
+      await markPhoneVerified(prospectId)
+      return { verified: true }
+    }
+
+    return { verified: false }
+  } catch (error) {
+    console.error('[onboarding] Failed to verify code:', error)
+    return { verified: false }
   }
-
-  const verification = await twilioClient.verify.v2.services(TWILIO_VERIFY_SERVICE_SID).verificationChecks.create({
-    to: phone,
-    code,
-  })
-
-  if (verification.status === 'approved') {
-    await markPhoneVerified(prospectId)
-    return { verified: true }
-  }
-
-  return { verified: false }
 }
 
 async function markPhoneVerified(prospectId: string) {

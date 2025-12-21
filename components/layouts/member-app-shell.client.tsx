@@ -66,7 +66,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard-spa", icon: LayoutDashboard },
   { label: "Discover", href: "/dashboard-spa?view=discover", icon: Compass },
-  { label: "Chat", href: "/dashboard-spa?view=chat", icon: MessageSquare, badge: "3" },
+  { label: "Chat", href: "/dashboard-spa?view=chat", icon: MessageSquare },
   { label: "Likes", href: "/dashboard-spa?view=likes", icon: Heart },
   { label: "Safety", href: "/dashboard-spa?view=safety", icon: ShieldCheck },
   { label: "Settings", href: "/dashboard-spa?view=settings", icon: Settings },
@@ -79,6 +79,17 @@ export default function MemberAppShellClient({ children, title, description, act
   const { tokens } = useDesignSystem()
   const { track } = useAnalytics()
   const attributionMemo = useRef<string | null>(null)
+  
+  // Unread message count state
+  const [unreadCount, setUnreadCount] = useState(0)
+  
+  // Create nav items with dynamic badge
+  const navItems = NAV_ITEMS.map(item => {
+    if (item.label === "Chat" && unreadCount > 0) {
+      return { ...item, badge: String(unreadCount) }
+    }
+    return item
+  })
   
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false)
@@ -145,6 +156,32 @@ export default function MemberAppShellClient({ children, title, description, act
     })
   }, [searchParams, track, pathname])
 
+  // Fetch unread message count
+  useEffect(() => {
+    if (!user?.userId) return
+
+    const fetchUnreadCount = async () => {
+      try {
+        const response = await fetch('/api/messages/conversations')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.conversations) {
+            // Count conversations with unread messages
+            const unread = data.conversations.filter((conv: any) => conv.unread > 0).length
+            setUnreadCount(unread)
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch unread count:', error)
+      }
+    }
+
+    fetchUnreadCount()
+    // Poll every 30 seconds
+    const interval = setInterval(fetchUnreadCount, 30000)
+    return () => clearInterval(interval)
+  }, [user?.userId])
+
   return (
     <div className="relative flex min-h-screen text-foreground overflow-x-hidden max-w-full">\n      {/* Premium background effects */}
       <div className="fixed inset-0 -z-50 bg-hero-gradient">
@@ -177,7 +214,7 @@ export default function MemberAppShellClient({ children, title, description, act
         </div>
 
         <nav className="mt-6 flex-1 space-y-1 px-2">
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const Icon = item.icon
             // Extract view parameter from item.href
             const itemView = item.href.includes('?view=') ? item.href.split('?view=')[1] : 'home'
@@ -405,9 +442,12 @@ export default function MemberAppShellClient({ children, title, description, act
             </div>
 
             <nav className="mt-6 flex-1 space-y-1 px-2">
-              {NAV_ITEMS.map((item) => {
+              {navItems.map((item) => {
                 const Icon = item.icon
-                const active = pathname?.startsWith(item.href)
+                // Extract view parameter from item.href
+                const itemView = item.href.includes('?view=') ? item.href.split('?view=')[1] : 'home'
+                const currentView = searchParams?.get('view') || 'home'
+                const active = currentView === itemView
                 
                 if (onNavigate) {
                   return (

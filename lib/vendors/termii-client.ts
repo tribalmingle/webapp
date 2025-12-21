@@ -49,6 +49,13 @@ export async function sendSMSViaTermii(options: SendSMSOptions) {
       api_key: apiKey,
     }
     
+    console.log('[termii] Sending SMS request:', {
+      url: `${TERMII_BASE_URL}/sms/send`,
+      to: options.to,
+      from: senderId,
+      channel: requestBody.channel
+    })
+    
     const response = await fetch(`${TERMII_BASE_URL}/sms/send`, {
       method: 'POST',
       headers: {
@@ -59,17 +66,18 @@ export async function sendSMSViaTermii(options: SendSMSOptions) {
     
     if (!response.ok) {
       const errorText = await response.text()
-      if (isDev) console.error('[termii] API error:', response.status, errorText)
-      throw new Error(`Termii API error: ${response.statusText}`)
+      console.error('[termii] API error:', response.status, errorText)
+      throw new Error(`Termii API error (${response.status}): ${errorText}`)
     }
 
     const data = await response.json()
+    console.log('[termii] API response:', data)
 
     if (!data.code || (data.code !== 'ok' && data.code !== 'success')) {
       throw new Error(data.message || 'Failed to send SMS via Termii')
     }
 
-    if (isDev) console.log('[termii] SMS sent', {
+    console.log('[termii] SMS sent successfully', {
       to: options.to,
       messageId: data.message_id,
     })
@@ -81,7 +89,7 @@ export async function sendSMSViaTermii(options: SendSMSOptions) {
       to: options.to,
     }
   } catch (error) {
-    if (isDev) console.error('[termii] Send SMS error:', error)
+    console.error('[termii] Send SMS error:', error)
     throw error
   }
 }

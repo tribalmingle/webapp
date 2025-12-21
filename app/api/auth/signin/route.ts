@@ -79,6 +79,7 @@ export async function POST(request: NextRequest) {
         message: 'Login successful',
         user: userWithoutPassword as any,
         token,
+        redirectTo: user.registrationComplete ? '/dashboard-spa' : '/sign-up?step=continue', // Redirect incomplete users
       },
       { status: 200 }
     )

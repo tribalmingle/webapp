@@ -17,16 +17,26 @@ export async function GET(req: NextRequest) {
     const likesCollection = db.collection('likes')
     const usersCollection = db.collection('users')
 
+    // Get current user's gender to filter opposite gender only
+    const currentUser = await usersCollection.findOne({ email: userPayload.email })
+    const userGender = currentUser?.gender?.toLowerCase()
+
     // Find all users I liked
     const likes = await likesCollection
       .find({ userId: userPayload.email })
       .sort({ createdAt: -1 })
       .toArray()
 
-    // Get user details for each like
+    // Get user details for each like - filter by opposite gender (case-insensitive)
     const likesWithDetails = await Promise.all(
       likes.map(async (like) => {
-        const user = await usersCollection.findOne({ email: like.likedUserId })
+        const userQuery: any = { email: like.likedUserId }
+        if (userGender === 'male') {
+          userQuery.gender = { $regex: new RegExp('^female$', 'i') }
+        } else if (userGender === 'female') {
+          userQuery.gender = { $regex: new RegExp('^male$', 'i') }
+        }
+        const user = await usersCollection.findOne(userQuery)
         if (!user) return null
 
         return {

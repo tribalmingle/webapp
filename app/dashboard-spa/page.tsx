@@ -4363,8 +4363,8 @@ function UnifiedDashboard() {
                   <Button 
                     variant="outline"
                     className="w-full h-14 text-lg font-semibold rounded-xl border-2 hover:bg-accent/10 hover:border-accent"
-                    onClick={() => openChat(selectedProfile._id || selectedProfile.userId || selectedProfile.email)}
-                    disabled={!selectedProfile._id && !selectedProfile.userId && !selectedProfile.email}
+                    onClick={() => openChat(selectedProfile.email)}
+                    disabled={!selectedProfile.email}
                   >
                     <MessageCircle className="w-5 h-5 mr-2" />
                     Send Message
