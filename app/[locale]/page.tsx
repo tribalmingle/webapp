@@ -22,6 +22,8 @@ import { StaggerGrid, SlideUp, FadeIn, ScaleIn } from '@/components/motion'
 import { LiveSignupFeed } from '@/components/marketing/live-signup-feed'
 import { CountdownTimer } from '@/components/marketing/countdown-timer'
 import { FeatureCard } from '@/components/marketing/feature-card'
+import { FloatingParticles } from '@/components/marketing/floating-particles'
+import { TestimonialCard } from '@/components/marketing/testimonial-card'
 
 export const revalidate = 300
 
@@ -117,14 +119,32 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
       </header>
 
       <main className="flex-1">
-        {/* Premium Hero Section */}
+        {/* Premium Hero Section with Animated Mesh Gradient */}
         <section className="relative min-h-[calc(100dvh-4rem)] md:min-h-screen flex items-center justify-center overflow-hidden px-4 pt-24 md:pt-28 pb-12">
-          {/* Animated gradient background */}
-          <div className="absolute inset-0 bg-hero-gradient">
+          {/* Animated mesh gradient background */}
+          <div 
+            className="absolute inset-0 animate-mesh-gradient"
+            style={{
+              background: 'linear-gradient(135deg, #8B5CF6 0%, #C026D3 25%, #FFD700 50%, #8B5CF6 75%, #C026D3 100%)',
+              backgroundSize: '400% 400%',
+            }}
+          >
+            {/* Dark overlay for text readability */}
+            <div className="absolute inset-0" style={{
+              background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.85) 0%, rgba(88, 28, 135, 0.75) 100%)'
+            }} />
+            
+            {/* Floating hearts and particles */}
+            <FloatingParticles />
+            
             <MouseParallax strength={0.02}>
-              {/* Floating gradient orbs */}
-              <div className="absolute top-20 left-20 w-48 h-48 md:w-96 md:h-96 bg-purple-royal/30 rounded-full blur-3xl animate-pulse" />
-              <div className="absolute bottom-20 right-20 w-96 h-96 bg-gold-warm/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+              {/* Enhanced floating gradient orbs */}
+              <div className="absolute top-20 left-20 w-48 h-48 md:w-96 md:h-96 rounded-full blur-3xl animate-pulse-slow" 
+                style={{ background: 'rgba(139, 92, 246, 0.4)' }} />
+              <div className="absolute bottom-20 right-20 w-96 h-96 rounded-full blur-3xl animate-pulse-slow" 
+                style={{ background: 'rgba(255, 215, 0, 0.3)', animationDelay: '1s' }} />
+              <div className="absolute top-1/2 left-1/2 w-64 h-64 rounded-full blur-3xl animate-pulse-slow" 
+                style={{ background: 'rgba(192, 38, 211, 0.3)', animationDelay: '2s' }} />
             </MouseParallax>
           </div>
           
@@ -248,16 +268,18 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
           </div>
         </section>
 
-        {/* Events Section */}
-        <section className="relative bg-neutral-950 py-24 overflow-hidden">
+        {/* Events Section - Redesigned with light background */}
+        <section className="relative bg-gradient-to-b from-purple-50 via-white to-neutral-50 py-24 overflow-hidden">
           <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
-            <div className="absolute inset-0 bg-linear-to-t from-purple-royal/10 via-transparent to-transparent" />
-            <div className="absolute bottom-1/3 left-1/4 w-[600px] h-[600px] bg-purple-royal/10 rounded-full blur-3xl" />
+            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5" />
+            {/* Floating sparkle effects */}
+            <div className="absolute top-20 left-10 w-32 h-32 bg-gold-warm/10 rounded-full blur-2xl animate-float" />
+            <div className="absolute bottom-40 right-20 w-40 h-40 bg-purple-royal/10 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }} />
+            <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-pink-500/10 rounded-full blur-xl animate-float" style={{ animationDelay: '4s' }} />
           </div>
           
           <div className="relative z-10">
-            <EventsSpotlightSection events={upcomingEvents} locale={locale} copy={dictionary.cmsSections.events} theme="dark" />
+            <EventsSpotlightSection events={upcomingEvents} locale={locale} copy={dictionary.cmsSections.events} theme="light" />
           </div>
         </section>
 
@@ -283,65 +305,19 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                 </p>
               </div>
             </SlideUp>
-            <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {testimonials.map((testimonial, index) => (
-                <div key={testimonial.id} className="h-full">
-                  <div className="flex h-full flex-col rounded-3xl bg-white p-8 shadow-lg border border-neutral-100 card-lift hover:shadow-xl transition-all">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="relative shrink-0">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-purple-royal text-white font-display text-xl font-bold shadow-md">
-                          {testimonial.name.charAt(0)}
-                        </div>
-                        <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1 border-2 border-white">
-                          <Shield className="w-3 h-3 text-white" />
-                        </div>
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="font-display text-lg font-bold text-neutral-900 truncate">{testimonial.name}</p>
-                          <Badge variant="outline" className="shrink-0 text-[10px] px-1.5 py-0 h-5 border-green-200 text-green-700 bg-green-50">
-                            Verified
-                          </Badge>
-                        </div>
-                        <p className="text-body-sm text-neutral-500 font-medium truncate">
-                          {[testimonial.location, testimonial.tribe].filter(Boolean).join(' • ')}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="relative flex-1 mb-6">
-                      <p className="relative z-10 text-body-lg text-neutral-700 leading-relaxed italic">
-                        &ldquo;{truncateQuote(testimonial.quote)}&rdquo;
-                      </p>
-                    </div>
-
-                    <div className="mt-auto flex items-center justify-between border-t border-neutral-100 pt-4">
-                      <div className="flex items-center gap-1">
-                        {Array.from({ length: 5 }).map((_, index) => (
-                          <Star
-                            key={`${testimonial.id}-star-${index}`}
-                            className={`h-4 w-4 ${index + 1 <= (testimonial.rating || 0) ? 'text-gold-warm fill-gold-warm' : 'text-neutral-200'}`}
-                          />
-                        ))}
-                      </div>
-                      {index === 0 && (
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button variant="ghost" size="sm" className="text-purple-royal hover:text-purple-royal-light hover:bg-purple-50 -mr-2">
-                              <Play className="w-4 h-4 mr-2" />
-                              Watch Story
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden bg-black border-border-gold/20">
-                            <div className="aspect-video w-full bg-neutral-900 flex items-center justify-center">
-                              <p className="text-white/50">Video Placeholder</p>
-                            </div>
-                          </DialogContent>
-                        </Dialog>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                <TestimonialCard
+                  key={testimonial.id}
+                  id={testimonial.id}
+                  name={testimonial.name}
+                  location={testimonial.location}
+                  tribe={testimonial.tribe}
+                  quote={testimonial.quote}
+                  rating={testimonial.rating || 5}
+                  hasVideo={index === 0}
+                  index={index}
+                />
               ))}
             </div>
           </div>

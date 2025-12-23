@@ -78,12 +78,15 @@ const config: Config = {
         'slide-up': 'slideUp 0.3s var(--ease-smooth)',
         'scale-in': 'scaleIn 0.3s var(--ease-bounce)',
         'glow-pulse': 'glowPulse 2s var(--ease-smooth) infinite',
-        'shimmer': 'shimmer 2s linear infinite',        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+        'shimmer': 'shimmer 2s linear infinite',
+        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'gradient-flow': 'gradientFlow 3s ease infinite',
         'spin-slow': 'spin 8s linear infinite',
         'gradient-slow': 'gradientSlow 15s ease infinite',
         'pulse-slow': 'pulseSlow 8s ease-in-out infinite',
-        'float': 'float 15s ease-in-out infinite',      },
+        'float': 'float 15s ease-in-out infinite',
+        'mesh-gradient': 'meshGradient 20s ease infinite',
+      },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0' },
@@ -126,6 +129,16 @@ const config: Config = {
           '25%': { transform: 'translateY(-20px) translateX(10px)' },
           '50%': { transform: 'translateY(-40px) translateX(-10px)' },
           '75%': { transform: 'translateY(-20px) translateX(-5px)' },
+        },
+        meshGradient: {
+          '0%, 100%': { 
+            backgroundPosition: '0% 50%',
+            backgroundSize: '400% 400%',
+          },
+          '50%': { 
+            backgroundPosition: '100% 50%',
+            backgroundSize: '400% 400%',
+          },
         },
       },
       transitionDuration: {
