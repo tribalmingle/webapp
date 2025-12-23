@@ -19,6 +19,9 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { StaggerGrid, SlideUp, FadeIn, ScaleIn } from '@/components/motion'
+import { LiveSignupFeed } from '@/components/marketing/live-signup-feed'
+import { CountdownTimer } from '@/components/marketing/countdown-timer'
+import { FeatureCard } from '@/components/marketing/feature-card'
 
 export const revalidate = 300
 
@@ -225,24 +228,21 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
               </div>
             </SlideUp>
             
-            <StaggerGrid columns={2}>
-              {featureDeck.map((feature) => {
+            {/* Updated grid with staggered animation */}
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+              {featureDeck.map((feature, index) => {
                 const Icon = ICON_MAP[feature.iconName as keyof typeof ICON_MAP] ?? Zap
                 return (
-                  <GlowCard key={`${feature.key}-grid`} className="p-4 sm:p-6 md:p-8 card-lift bg-white border-border-gold/10 shadow-lg">
-                    <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 mb-4">
-                      <div className="shrink-0 w-14 h-14 rounded-xl bg-gold-gradient flex items-center justify-center shadow-glow-gold group-hover:scale-110 transition-transform">
-                        <Icon className="h-7 w-7 text-white" />
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="text-h3 sm:text-h2 text-neutral-900 mb-1 sm:mb-2 break-words">{feature.title}</h3>
-                        <p className="text-sm sm:text-body text-neutral-600 leading-relaxed">{feature.description}</p>
-                      </div>
-                    </div>
-                  </GlowCard>
+                  <FeatureCard
+                    key={feature.key}
+                    icon={Icon}
+                    title={feature.title}
+                    description={feature.description}
+                    index={index}
+                  />
                 )
               })}
-            </StaggerGrid>
+            </div>
           </div>
         </section>
 
