@@ -25,14 +25,24 @@ type EventsSpotlightSectionProps = {
 // City gradient backgrounds
 const CITY_GRADIENTS: Record<string, string> = {
   Lagos: 'linear-gradient(135deg, #8B5CF6 0%, #C026D3 100%)',
+  London: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+  'New York': 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+  Manchester: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
   Accra: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
   Nairobi: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-  London: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
   Houston: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
 }
 
 export function EventsSpotlightSection({ events, locale, copy, theme = 'light' }: EventsSpotlightSectionProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  
+  // Featured cities for the landing page
+  const FEATURED_CITIES = ['London', 'Lagos', 'New York', 'Manchester']
+  
+  // Filter and limit to 4 featured events
+  const featuredEvents = events
+    .filter(event => FEATURED_CITIES.includes(event.city))
+    .slice(0, 4)
   
   const dateFormatter = useMemo(() => new Intl.DateTimeFormat(locale, {
     month: 'short',
@@ -62,16 +72,16 @@ export function EventsSpotlightSection({ events, locale, copy, theme = 'light' }
           <Calendar className="w-3 h-3 mr-1" />
           {copy.eyebrow}
         </Badge>
-        <h2 className={`text-h1 font-display ${textColorPrimary} mb-4`}>
+        <h2 className="text-h1 font-display text-purple-royal-dark mb-4">
           {copy.title}
         </h2>
-        <p className={`text-body-lg ${textColorSecondary} max-w-3xl mx-auto`}>
+        <p className="text-body-lg text-purple-royal-dark max-w-3xl mx-auto">
           {copy.description}
         </p>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-2">
-        {events.map((event, index) => {
+        {featuredEvents.map((event, index) => {
           const gradient = CITY_GRADIENTS[event.city] || CITY_GRADIENTS.Lagos
           const daysUntil = Math.ceil((new Date(event.startDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
           const isHovered = hoveredIndex === index
@@ -116,7 +126,7 @@ export function EventsSpotlightSection({ events, locale, copy, theme = 'light' }
               <div className="p-6 flex-1 flex flex-col">
                 {/* Date and type badges */}
                 <div className="flex flex-wrap items-center gap-2 mb-4">
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs font-bold bg-neutral-100 text-neutral-900 border-neutral-300">
                     <Calendar className="w-3 h-3 mr-1" />
                     {dateFormatter.format(new Date(event.startDate))}
                   </Badge>
@@ -186,6 +196,17 @@ export function EventsSpotlightSection({ events, locale, copy, theme = 'light' }
             </article>
           )
         })}
+      </div>
+      
+      {/* View More Events Button */}
+      <div className="mt-12 text-center">
+        <a
+          href="/events"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-purple-royal text-white font-bold rounded-full hover:bg-purple-royal-light transition-all shadow-lg hover:shadow-xl hover:scale-105"
+        >
+          View More Events
+          <ExternalLink className="w-4 h-4" />
+        </a>
       </div>
     </div>
   )

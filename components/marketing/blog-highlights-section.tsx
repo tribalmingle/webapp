@@ -43,10 +43,10 @@ export function BlogHighlightsSection({ posts, locale, copy }: BlogHighlightsSec
           <Sparkles className="w-3 h-3 mr-1" />
           {copy.eyebrow}
         </Badge>
-        <h2 className="text-h1 font-display text-neutral-900 mb-4">
+        <h2 className="text-h1 font-display text-purple-royal-dark mb-4">
           {copy.title}
         </h2>
-        <p className="text-body-lg text-neutral-600 max-w-3xl mx-auto">
+        <p className="text-body-lg text-neutral-700 max-w-3xl mx-auto">
           {copy.description}
         </p>
       </div>
@@ -72,10 +72,10 @@ export function BlogHighlightsSection({ posts, locale, copy }: BlogHighlightsSec
               <p className="text-label text-purple-royal font-bold mb-3 uppercase tracking-wider text-xs">
                 {post.category || 'Editorial'}
               </p>
-              <h3 className="text-h3 text-neutral-900 mb-3 font-display">
+              <h3 className="text-h3 text-purple-royal-dark mb-3 font-display">
                 {post.title}
               </h3>
-              <p className="text-body-sm text-neutral-600 line-clamp-3">
+              <p className="text-body-sm text-neutral-700 line-clamp-3">
                 {post.excerpt}
               </p>
             </div>

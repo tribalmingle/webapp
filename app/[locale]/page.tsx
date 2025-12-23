@@ -23,7 +23,6 @@ import { ScrollFadeIn } from '@/components/motion/scroll-fade-in'
 import { LiveSignupFeed } from '@/components/marketing/live-signup-feed'
 import { CountdownTimer } from '@/components/marketing/countdown-timer'
 import { FeatureCard } from '@/components/marketing/feature-card'
-import { FloatingParticles } from '@/components/marketing/floating-particles'
 import { TestimonialCard } from '@/components/marketing/testimonial-card'
 
 export const revalidate = 300
@@ -120,32 +119,14 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
       </header>
 
       <main className="flex-1">
-        {/* Premium Hero Section with Animated Mesh Gradient */}
+        {/* Premium Hero Section */}
         <section className="relative min-h-[calc(100dvh-4rem)] md:min-h-screen flex items-center justify-center overflow-hidden px-4 pt-24 md:pt-28 pb-12">
-          {/* Animated mesh gradient background */}
-          <div 
-            className="absolute inset-0 animate-mesh-gradient"
-            style={{
-              background: 'linear-gradient(135deg, #8B5CF6 0%, #C026D3 25%, #FFD700 50%, #8B5CF6 75%, #C026D3 100%)',
-              backgroundSize: '400% 400%',
-            }}
-          >
-            {/* Dark overlay for text readability */}
-            <div className="absolute inset-0" style={{
-              background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.85) 0%, rgba(88, 28, 135, 0.75) 100%)'
-            }} />
-            
-            {/* Floating hearts and particles */}
-            <FloatingParticles />
-            
+          {/* Dark purple gradient background */}
+          <div className="absolute inset-0 bg-hero-gradient">
             <MouseParallax strength={0.02}>
-              {/* Enhanced floating gradient orbs */}
-              <div className="absolute top-20 left-20 w-48 h-48 md:w-96 md:h-96 rounded-full blur-3xl animate-pulse-slow" 
-                style={{ background: 'rgba(139, 92, 246, 0.4)' }} />
-              <div className="absolute bottom-20 right-20 w-96 h-96 rounded-full blur-3xl animate-pulse-slow" 
-                style={{ background: 'rgba(255, 215, 0, 0.3)', animationDelay: '1s' }} />
-              <div className="absolute top-1/2 left-1/2 w-64 h-64 rounded-full blur-3xl animate-pulse-slow" 
-                style={{ background: 'rgba(192, 38, 211, 0.3)', animationDelay: '2s' }} />
+              {/* Floating gradient orbs */}
+              <div className="absolute top-20 left-20 w-48 h-48 md:w-96 md:h-96 bg-purple-royal/30 rounded-full blur-3xl animate-pulse" />
+              <div className="absolute bottom-20 right-20 w-96 h-96 bg-gold-warm/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
             </MouseParallax>
           </div>
           
@@ -233,10 +214,10 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                   <Crown className="w-3 h-3 mr-1" />
                   Premium Features
                 </Badge>
-                <h2 className="text-h1 font-display text-neutral-900 mb-6">
+                <h2 className="text-h1 font-display text-purple-royal-dark mb-6">
                   Everything You Need to Find Your Match
                 </h2>
-                <p className="text-body-lg text-neutral-600 max-w-3xl mx-auto">
+                <p className="text-body-lg text-neutral-700 max-w-3xl mx-auto">
                   World-class tools powered by AI to connect you with compatible partners
                 </p>
               </div>
@@ -298,10 +279,10 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                   <Crown className="w-3 h-3 mr-1" />
                   Community Voices
                 </Badge>
-                <h2 className="text-h1 font-display text-neutral-900">
+                <h2 className="text-h1 font-display text-gold-warm">
                   Stories from Our Tribal Community
                 </h2>
-                <p className="text-body text-neutral-600 mt-4 max-w-2xl mx-auto">
+                <p className="text-body text-white mt-4 max-w-2xl mx-auto">
                   Verified members across Africa and the diaspora share why intentional dating matters.
                 </p>
               </div>
@@ -360,7 +341,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
         <div className="absolute inset-0 bg-linear-to-b from-transparent to-purple-royal/5" />
         
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 md:grid-cols-4">
+          <div className="grid gap-8 md:grid-cols-4 mb-0 pb-0">
             <div>
               <h4 className="font-semibold text-white">{dictionary.footer.company}</h4>
               <ul className="mt-3 space-y-2 text-sm">
@@ -368,6 +349,10 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                 <li><Link href="/blog" className="hover:text-purple-royal-light transition-colors">Blog</Link></li>
                 <li><Link href="/careers" className="hover:text-purple-royal-light transition-colors">Careers</Link></li>
               </ul>
+              {/* Logo - positioned right below Careers */}
+              <div className="mt-4">
+                <img src="/triballogo.png" alt="Tribal Mingle" className="h-32 w-auto" />
+              </div>
             </div>
             <div>
               <h4 className="font-semibold text-white">{dictionary.footer.product}</h4>
@@ -403,6 +388,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
               </ul>
             </div>
           </div>
+          
           <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs text-neutral-600">
             &copy; {new Date().getFullYear()} Tribal Mingle. {dictionary.footer.copyright}
           </div>
