@@ -19,6 +19,7 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { StaggerGrid, SlideUp, FadeIn, ScaleIn } from '@/components/motion'
+import { ScrollFadeIn } from '@/components/motion/scroll-fade-in'
 import { LiveSignupFeed } from '@/components/marketing/live-signup-feed'
 import { CountdownTimer } from '@/components/marketing/countdown-timer'
 import { FeatureCard } from '@/components/marketing/feature-card'
@@ -180,7 +181,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                 <div className="flex flex-col gap-4 w-full sm:flex-row sm:w-auto">
                   <Link href="/sign-up" className="w-full sm:w-auto">
                     <MagneticWrapper>
-                      <Button className="bg-purple-gradient w-full sm:w-auto" size="xl">
+                      <Button className="bg-purple-gradient w-full sm:w-auto min-h-[44px] min-w-[44px]" size="xl">
                         Start Your Journey
                         <ArrowRight className="ml-2 w-5 h-5" />
                       </Button>
@@ -188,7 +189,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                   </Link>
                   
                   <Link href="#video" className="w-full sm:w-auto">
-                    <Button variant="outline" size="xl" className="w-full sm:w-auto">
+                    <Button variant="outline" size="xl" className="w-full sm:w-auto min-h-[44px] min-w-[44px]">
                       Watch Video
                     </Button>
                   </Link>
@@ -226,7 +227,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
           </div>
           
           <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <SlideUp>
+            <ScrollFadeIn direction="up">
               <div className="text-center mb-16">
                 <Badge variant="gold" className="mb-6 bg-gold-warm text-white border-transparent shadow-md">
                   <Crown className="w-3 h-3 mr-1" />
@@ -239,7 +240,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                   World-class tools powered by AI to connect you with compatible partners
                 </p>
               </div>
-            </SlideUp>
+            </ScrollFadeIn>
             
             {/* Updated grid with staggered animation */}
             <div className="grid md:grid-cols-2 gap-6 md:gap-8">
@@ -291,7 +292,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-royal/5 rounded-full blur-3xl" />
           
           <div className="relative z-10 mx-auto max-w-5xl">
-            <SlideUp>
+            <ScrollFadeIn direction="up">
               <div className="text-center mb-12">
                 <Badge variant="purple" className="mb-4 bg-purple-royal text-white border-transparent shadow-md">
                   <Crown className="w-3 h-3 mr-1" />
@@ -304,11 +305,11 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                   Verified members across Africa and the diaspora share why intentional dating matters.
                 </p>
               </div>
-            </SlideUp>
+            </ScrollFadeIn>
             <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {testimonials.map((testimonial, index) => (
-                <TestimonialCard
-                  key={testimonial.id}
+                <ScrollFadeIn key={testimonial.id} delay={index * 0.1} direction="up">
+                  <TestimonialCard
                   id={testimonial.id}
                   name={testimonial.name}
                   location={testimonial.location}
@@ -318,6 +319,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                   hasVideo={index === 0}
                   index={index}
                 />
+                </ScrollFadeIn>
               ))}
             </div>
           </div>
@@ -333,7 +335,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
           <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
           
           <div className="relative z-10 mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-            <ScaleIn>
+            <ScrollFadeIn direction="up">
               <Badge variant="gold" className="mb-8 bg-white text-purple-royal border-transparent shadow-lg">
                 <Sparkles className="w-4 h-4 mr-2" />
                 Join Today
@@ -343,12 +345,12 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                 {dictionary.ctaSection.description}
               </p>
               <Link href="/sign-up">
-                <Button className="bg-white text-purple-royal hover:bg-neutral-100 shadow-xl text-lg px-10 py-6 h-16">
+                <Button className="bg-white text-purple-royal hover:bg-neutral-100 shadow-xl text-lg px-10 py-6 h-16 min-h-[44px] min-w-[44px]">
                   {dictionary.ctaSection.cta}
                   <ArrowRight className="ml-3 w-6 h-6" />
                 </Button>
               </Link>
-            </ScaleIn>
+            </ScrollFadeIn>
           </div>
         </section>
       </main>
