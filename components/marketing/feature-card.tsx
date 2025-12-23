@@ -1,17 +1,26 @@
 'use client'
 
 import { useState } from 'react'
-import { LucideIcon } from 'lucide-react'
+import { Heart, Shield, Star, Users, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+const ICON_MAP = {
+  zap: Zap,
+  shield: Shield,
+  heart: Heart,
+  users: Users,
+  star: Star,
+}
+
 interface FeatureCardProps {
-  icon: LucideIcon
+  iconName: keyof typeof ICON_MAP
   title: string
   description: string
   index: number
 }
 
-export function FeatureCard({ icon: Icon, title, description, index }: FeatureCardProps) {
+export function FeatureCard({ iconName, title, description, index }: FeatureCardProps) {
+  const Icon = ICON_MAP[iconName] ?? Zap
   const [isHovered, setIsHovered] = useState(false)
 
   return (

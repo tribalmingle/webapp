@@ -25,13 +25,6 @@ import { FeatureCard } from '@/components/marketing/feature-card'
 
 export const revalidate = 300
 
-const ICON_MAP = {
-  zap: Zap,
-  shield: Shield,
-  users: Users,
-  heart: Heart,
-}
-
 type PageProps = {
   params: Promise<{
     locale: string
@@ -230,18 +223,15 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
             
             {/* Updated grid with staggered animation */}
             <div className="grid md:grid-cols-2 gap-6 md:gap-8">
-              {featureDeck.map((feature, index) => {
-                const Icon = ICON_MAP[feature.iconName as keyof typeof ICON_MAP] ?? Zap
-                return (
-                  <FeatureCard
-                    key={feature.key}
-                    icon={Icon}
-                    title={feature.title}
-                    description={feature.description}
-                    index={index}
-                  />
-                )
-              })}
+              {featureDeck.map((feature, index) => (
+                <FeatureCard
+                  key={feature.key}
+                  iconName={feature.iconName as 'zap' | 'shield' | 'heart' | 'users' | 'star'}
+                  title={feature.title}
+                  description={feature.description}
+                  index={index}
+                />
+              ))}
             </div>
           </div>
         </section>

@@ -30,11 +30,21 @@ export function getLaunchDarklyClient(): Promise<LDClient> {
       version: process.env.npm_package_version,
     },
     logger: {
-      // Suppress verbose info logs in development
+      // Suppress verbose logs in development
       debug: () => {},
       info: () => {},
-      warn: (message: string) => console.warn('[LaunchDarkly]', message),
-      error: (message: string) => console.error('[LaunchDarkly]', message),
+      warn: (message: string) => {
+        // Suppress "unknown flag" warnings - these are expected when flags haven't been created yet
+        if (!message.includes('Unknown feature flag')) {
+          console.warn('[LaunchDarkly]', message)
+        }
+      },
+      error: (message: string) => {
+        // Suppress "unknown flag" errors - gracefully fall back to defaults
+        if (!message.includes('Unknown feature flag')) {
+          console.error('[LaunchDarkly]', message)
+        }
+      },
     },
   })
     .waitForInitialization()
@@ -46,9 +56,14 @@ export function getLaunchDarklyClient(): Promise<LDClient> {
 export async function getHeroExperimentVariant(user: LDUser, defaultValue = 'default'): Promise<string> {
   const client = await getLaunchDarklyClient()
   const flagKey = 'marketing-hero-experiment'
-  const value = await client.variation(flagKey, user, defaultValue)
-  if (typeof value === 'string') {
-    return value
+  try {
+    const value = await client.variation(flagKey, user, defaultValue)
+    if (typeof value === 'string') {
+      return value
+    }
+  } catch (error) {
+    // Silently fall back to default if flag doesn't exist
+    console.log(`[LaunchDarkly] Using default value for unknown flag "${flagKey}"`)
   }
   return defaultValue
 }
