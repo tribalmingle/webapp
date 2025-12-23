@@ -151,17 +151,19 @@ export function EventsSpotlightSection({ events, locale, copy, theme = 'light' }
                 {/* Attendee avatars (mock data) */}
                 <div className="flex items-center gap-4 mb-4 pb-4 border-t border-neutral-100 pt-4">
                   <div className="flex -space-x-2">
-                    {Array.from({ length: 3 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-xs font-bold text-white shadow-md"
-                        style={{
-                          background: `linear-gradient(135deg, ${i === 0 ? '#8B5CF6' : i === 1 ? '#FFD700' : '#C026D3'} 0%, ${i === 0 ? '#C026D3' : i === 1 ? '#FFA500' : '#8B5CF6'} 100%)`
-                        }}
-                      >
-                        {String.fromCharCode(65 + i)}
-                      </div>
-                    ))}
+                    {Array.from({ length: 3 }).map((_, i) => {
+                      const genderList = ['men', 'women']
+                      const gender = i % 2 === 0 ? 'women' : 'men'
+                      const imageId = ((index * 10) + i) % 99
+                      return (
+                        <img
+                          key={i}
+                          src={`https://randomuser.me/api/portraits/${gender}/${imageId}.jpg`}
+                          alt={`Attendee ${i + 1}`}
+                          className="w-8 h-8 rounded-full border-2 border-white shadow-md object-cover"
+                        />
+                      )
+                    })}
                     <div className="w-8 h-8 rounded-full border-2 border-white bg-neutral-200 flex items-center justify-center text-xs font-semibold text-neutral-600 shadow-md">
                       +{12 + index * 5}
                     </div>
