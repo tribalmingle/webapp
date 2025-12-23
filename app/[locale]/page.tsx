@@ -24,6 +24,7 @@ import { LiveSignupFeed } from '@/components/marketing/live-signup-feed'
 import { CountdownTimer } from '@/components/marketing/countdown-timer'
 import { FeatureCard } from '@/components/marketing/feature-card'
 import { TestimonialCard } from '@/components/marketing/testimonial-card'
+import { DATING_TIPS } from '@/lib/dating-tips/tips-data'
 
 export const revalidate = 300
 
@@ -86,7 +87,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
           <div className="absolute top-0 right-20 w-64 h-64 bg-gold-warm/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         </div>
         
-        <div className="relative mx-auto flex h-16 md:h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="relative mx-auto flex h-14 md:h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <MobileNav 
             primaryCta={heroVariant.primaryCta} 
             dictionary={{
@@ -101,26 +102,36 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
           </div>
           <nav className="hidden items-center gap-8 text-sm font-semibold text-text-secondary md:flex">
             <a href="#features" className="transition-colors hover:text-purple-royal">
-              {dictionary.footer.features}
+              How It Works
             </a>
             <a href="#stories" className="transition-colors hover:text-purple-royal">
-              Stories
+              Success Stories
             </a>
-            <a href="#contact" className="transition-colors hover:text-purple-royal">
-              {dictionary.footer.contact}
+            <a href="#events" className="transition-colors hover:text-purple-royal">
+              Events
+            </a>
+            <a href="#dating-tips" className="transition-colors hover:text-purple-royal">
+              Dating Advice & Tips
             </a>
           </nav>
-          <Link href="/sign-up" className="hidden md:block">
-            <Button className="bg-purple-gradient" size="default">
-              {heroVariant.primaryCta}
-            </Button>
-          </Link>
+          <div className="hidden md:flex items-center gap-3">
+            <Link href="/login">
+              <Button variant="outline" size="default" className="border-gold-warm text-gold-warm hover:bg-gold-warm hover:text-white">
+                Login
+              </Button>
+            </Link>
+            <Link href="/sign-up">
+              <Button className="bg-purple-gradient" size="default">
+                {heroVariant.primaryCta}
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 
       <main className="flex-1">
         {/* Premium Hero Section */}
-        <section className="relative min-h-[calc(100dvh-4rem)] md:min-h-screen flex items-center justify-center overflow-hidden px-4 pt-24 md:pt-28 pb-12">
+        <section className="relative min-h-[calc(100dvh-4rem)] md:min-h-screen flex items-center justify-center overflow-hidden px-4 pt-16 md:pt-20 pb-12">
           {/* Dark purple gradient background */}
           <div className="absolute inset-0 bg-hero-gradient">
             <MouseParallax strength={0.02}>
@@ -247,6 +258,84 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
           
           <div className="relative z-10">
             <BlogHighlightsSection posts={blogPosts} locale={locale} copy={dictionary.cmsSections.blog} />
+          </div>
+        </section>
+
+        {/* Dating Tips Section */}
+        <section id="dating-tips" className="relative bg-gradient-to-b from-white via-purple-50 to-white py-24 overflow-hidden">
+          <div className="absolute inset-0">
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-royal/10 rounded-full blur-3xl" />
+          </div>
+          
+          <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <ScrollFadeIn direction="up">
+              <div className="text-center mb-12">
+                <Badge variant="gold" className="mb-6 bg-gold-warm text-white border-transparent shadow-md">
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  Expert Advice
+                </Badge>
+                <h2 className="text-h1 font-display text-purple-royal-dark mb-4">
+                  Dating Advice & Tips
+                </h2>
+                <p className="text-body-lg text-neutral-700 max-w-3xl mx-auto">
+                  Practical guidance for building meaningful relationships
+                </p>
+              </div>
+            </ScrollFadeIn>
+
+            <div className="grid md:grid-cols-2 gap-8 mb-12">
+              {DATING_TIPS.slice(0, 2).sort((a, b) => 
+                new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+              ).map((tip, index) => (
+                <ScrollFadeIn key={tip.id} delay={index * 0.1} direction="up">
+                  <Card className="flex flex-col h-full overflow-hidden hover:shadow-xl transition-all">
+                    <div className="relative h-64 w-full overflow-hidden">
+                      <img
+                        src={tip.featuredImage}
+                        alt={tip.title}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                    <div className="p-6 flex-1 flex flex-col">
+                      <Badge variant="outline" className="self-start mb-3 text-xs">
+                        {tip.category.replace('-', ' ')}
+                      </Badge>
+                      <h3 className="text-h3 font-display text-purple-royal-dark mb-3">
+                        {tip.title}
+                      </h3>
+                      <p className="text-body-sm text-neutral-700 mb-4 flex-1">
+                        {tip.excerpt}
+                      </p>
+                      <div className="flex items-center justify-between text-xs text-neutral-600 mb-4 pb-4 border-t border-neutral-100 pt-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-royal to-gold-warm flex items-center justify-center text-white font-bold text-xs">
+                            CC
+                          </div>
+                          <span className="font-bold text-purple-royal">Moving on Clinic by CC</span>
+                        </div>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {tip.readingTime} min
+                        </span>
+                      </div>
+                      <Link href={`/${locale}/dating-tips/${tip.id}`}>
+                        <Button variant="outline" className="w-full">
+                          Read Article <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </Link>
+                    </div>
+                  </Card>
+                </ScrollFadeIn>
+              ))}
+            </div>
+
+            <div className="text-center">
+              <Link href={`/${locale}/dating-tips`}>
+                <Button size="lg" className="bg-purple-gradient">
+                  View All Dating Tips <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
 

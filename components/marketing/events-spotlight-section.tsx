@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Calendar, MapPin, ExternalLink, Users, Clock } from 'lucide-react'
 
 import type { MarketingEvent } from '@/lib/contentful'
@@ -152,15 +153,17 @@ export function EventsSpotlightSection({ events, locale, copy, theme = 'light' }
                 <div className="flex items-center gap-4 mb-4 pb-4 border-t border-neutral-100 pt-4">
                   <div className="flex -space-x-2">
                     {Array.from({ length: 3 }).map((_, i) => {
-                      const genderList = ['men', 'women']
                       const gender = i % 2 === 0 ? 'women' : 'men'
                       const imageId = ((index * 10) + i) % 99
                       return (
-                        <img
+                        <Image
                           key={i}
                           src={`https://randomuser.me/api/portraits/${gender}/${imageId}.jpg`}
                           alt={`Attendee ${i + 1}`}
-                          className="w-8 h-8 rounded-full border-2 border-white shadow-md object-cover"
+                          width={32}
+                          height={32}
+                          className="rounded-full border-2 border-white shadow-md object-cover"
+                          unoptimized
                         />
                       )
                     })}
