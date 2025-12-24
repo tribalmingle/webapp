@@ -39,6 +39,32 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/static') ||
     pathname.startsWith('/sign-up') ||
     pathname.startsWith('/login') ||
+    pathname.startsWith('/dashboard-spa') ||
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/boosts') ||
+    pathname.startsWith('/chat') ||
+    pathname.startsWith('/community') ||
+    pathname.startsWith('/concierge') ||
+    pathname.startsWith('/design-system') ||
+    pathname.startsWith('/discover') ||
+    pathname.startsWith('/events') ||
+    pathname.startsWith('/gifts') ||
+    pathname.startsWith('/help') ||
+    pathname.startsWith('/insights') ||
+    pathname.startsWith('/likes') ||
+    pathname.startsWith('/long-distance') ||
+    pathname.startsWith('/match') ||
+    pathname.startsWith('/matches') ||
+    pathname.startsWith('/premium') ||
+    pathname.startsWith('/profile') ||
+    pathname.startsWith('/quests') ||
+    pathname.startsWith('/referrals') ||
+    pathname.startsWith('/safety') ||
+    pathname.startsWith('/settings') ||
+    pathname.startsWith('/spotlight') ||
+    pathname.startsWith('/subscription') ||
+    pathname.startsWith('/wallet') ||
+    pathname.startsWith('/l/') ||
     PUBLIC_FILE.test(pathname)
   ) {
     return applySecurityHeaders(NextResponse.next())
