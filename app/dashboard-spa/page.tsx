@@ -1498,6 +1498,46 @@ function UnifiedDashboard() {
     }
   }
 
+  const handleDiscoverLike = async (userId: string, userName: string) => {
+    try {
+      const response = await fetch('/api/likes/like', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ userId })
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        setGlobalMessage({
+          type: 'success',
+          text: data.isMatch ? `It's a match with ${userName}! 🎉` : `Liked ${userName}!`
+        })
+        // Remove the liked user from discover list
+        setDiscoverUsers(prev => prev.filter(u => u.userId !== userId))
+        if (data.isMatch) {
+          fetchTodayMatches()
+        }
+      } else {
+        setGlobalMessage({
+          type: 'error',
+          text: data.message || 'Failed to like'
+        })
+      }
+    } catch (error) {
+      console.error('Error liking user:', error)
+      setGlobalMessage({
+        type: 'error',
+        text: 'Failed to like user'
+      })
+    }
+  }
+
+  const handleDiscoverPass = async (userId: string) => {
+    // Just remove from discover list (no API call needed for pass)
+    setDiscoverUsers(prev => prev.filter(u => u.userId !== userId))
+  }
+
   const formatDuration = (seconds: number) => {
     if (seconds < 60) return `${seconds}s`
     const minutes = Math.floor(seconds / 60)
@@ -1930,8 +1970,8 @@ function UnifiedDashboard() {
                               interests: match.interests || []
                             }}
                             matchScore={Math.floor(Math.random() * 20) + 80}
-                            onLike={() => console.log('Liked', match.name)}
-                            onPass={() => console.log('Passed', match.name)}
+                            onLike={() => handleDiscoverLike(match.userId, match.name)}
+                            onPass={() => handleDiscoverPass(match.userId)}
                           />
                         </div>
                       </FadeIn>
