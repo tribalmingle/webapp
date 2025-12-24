@@ -1806,12 +1806,15 @@ function UnifiedDashboard() {
   })()
 
   // Handle shell navigation
-  const derivedNavKey: SpaNavKey =
-    activeView === 'chat-conversation'
-      ? 'chat'
-      : activeView === 'profile-view'
-      ? 'profile'
-      : (activeView as SpaNavKey)
+  const derivedNavKey: SpaNavKey = (() => {
+    if (activeView === 'chat-conversation') return 'chat'
+    if (activeView === 'profile-view') return 'profile'
+    if (activeView === 'discover' || activeView === 'safety') return 'home'
+    // spotlight and referrals are valid SpaNavKeys, return them as-is
+    if (activeView === 'spotlight' || activeView === 'referrals') return activeView
+    // For other valid views in SPA_NAV_ITEMS
+    return activeView as SpaNavKey
+  })()
 
   const handleShellNavigate = (view: SpaNavKey) => {
     if (view === 'chat') {
@@ -4251,6 +4254,22 @@ function UnifiedDashboard() {
                 </Button>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* SPOTLIGHT VIEW */}
+        {activeView === 'spotlight' && (
+          <div>
+            <h1 className="text-3xl font-bold mb-8">Spotlight Boost</h1>
+            {renderBoostSection()}
+          </div>
+        )}
+
+        {/* REFERRALS VIEW */}
+        {activeView === 'referrals' && (
+          <div>
+            <h1 className="text-3xl font-bold mb-8">Referral Program</h1>
+            {renderReferralSection()}
           </div>
         )}
 
