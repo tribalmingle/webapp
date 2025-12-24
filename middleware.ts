@@ -37,6 +37,8 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
     pathname.startsWith('/static') ||
+    pathname.startsWith('/sign-up') ||
+    pathname.startsWith('/login') ||
     PUBLIC_FILE.test(pathname)
   ) {
     return applySecurityHeaders(NextResponse.next())
