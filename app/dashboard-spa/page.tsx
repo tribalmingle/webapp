@@ -1948,42 +1948,44 @@ function UnifiedDashboard() {
               </div>
             </SlideUp>
 
-            {/* Boost Visibility CTA Card */}
-            <SlideUp delay={0.5}>
-              <div 
-                className="relative subsection-spacing cursor-pointer group overflow-hidden rounded-3xl"
-                onClick={() => setActiveView(user?.subscriptionPlan === 'free' ? 'subscription' : 'spotlight')}
-              >
-                {/* Animated gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
-                
-                {/* Glow effect on hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 blur-2xl transition-all duration-500" />
-                
-                {/* Content */}
-                <div className="relative p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                        <Zap className="w-6 h-6 md:w-7 md:h-7 text-white" />
-                      </div>
-                      <h3 className="text-xl md:text-2xl font-bold text-white">BOOST VISIBILITY</h3>
-                    </div>
-                    <p className="text-sm md:text-base text-white/90 max-w-xl">
-                      Turn on concierge boost to stay on top of your tribe.
-                    </p>
-                  </div>
+            {/* Boost Visibility CTA Card - Only for Free Users */}
+            {user?.subscriptionPlan === 'free' && (
+              <SlideUp delay={0.5}>
+                <div 
+                  className="relative subsection-spacing cursor-pointer group overflow-hidden rounded-3xl"
+                  onClick={() => setActiveView('subscription')}
+                >
+                  {/* Animated gradient background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
                   
-                  <Button 
-                    size="lg"
-                    className="bg-white text-purple-600 hover:bg-white/90 font-bold px-8 py-6 text-base md:text-lg group-hover:scale-105 transition-transform duration-300 shadow-xl"
-                  >
-                    UPGRADE NOW
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
+                  {/* Glow effect on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 blur-2xl transition-all duration-500" />
+                  
+                  {/* Content */}
+                  <div className="relative p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                          <Zap className="w-6 h-6 md:w-7 md:h-7 text-white" />
+                        </div>
+                        <h3 className="text-xl md:text-2xl font-bold text-white">BOOST VISIBILITY</h3>
+                      </div>
+                      <p className="text-sm md:text-base text-white/90 max-w-xl">
+                        Turn on concierge boost to stay on top of your tribe.
+                      </p>
+                    </div>
+                    
+                    <Button 
+                      size="lg"
+                      className="bg-white text-purple-600 hover:bg-white/90 font-bold px-8 py-6 text-base md:text-lg group-hover:scale-105 transition-transform duration-300 shadow-xl"
+                    >
+                      UPGRADE NOW
+                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </SlideUp>
+              </SlideUp>
+            )}
 
             {/* Premium Match Carousel (Mobile First) */}
             {discoverUsers.length > 0 && (
