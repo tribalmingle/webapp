@@ -11,6 +11,7 @@ import { SiteHeader } from '@/components/marketing/site-header'
 import { SiteFooter } from '@/components/marketing/site-footer'
 import { PostSidebar } from '@/components/dating-tips/PostSidebar'
 import { ShareButton } from '@/components/dating-tips/ShareButton'
+import { ReadingProgress } from '@/components/dating-tips/ReadingProgress'
 
 type PageProps = {
   params: Promise<{
@@ -100,6 +101,7 @@ export default async function DatingTipPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-neutral-50">
+      <ReadingProgress />
       <SiteHeader locale={locale} />
 
       <main className="pt-24 pb-16">
