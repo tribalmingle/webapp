@@ -174,7 +174,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                 <div className="flex flex-col gap-4 w-full sm:flex-row sm:w-auto">
                   <Link href="/sign-up" className="w-full sm:w-auto">
                     <MagneticWrapper>
-                      <Button className="bg-purple-gradient w-full sm:w-auto min-h-[44px] min-w-[44px]" size="xl">
+                      <Button className="bg-purple-gradient w-full sm:w-auto min-h-11 min-w-11" size="xl">
                         Start Your Journey
                         <ArrowRight className="ml-2 w-5 h-5" />
                       </Button>
@@ -182,7 +182,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                   </Link>
                   
                   <Link href="#video" className="w-full sm:w-auto">
-                    <Button variant="outline" size="xl" className="w-full sm:w-auto min-h-[44px] min-w-[44px]">
+                    <Button variant="outline" size="xl" className="w-full sm:w-auto min-h-11 min-w-11">
                       Watch Video
                     </Button>
                   </Link>
@@ -266,7 +266,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
         <section id="dating-tips" className="relative bg-neutral-950 py-24 overflow-hidden">
           {/* Premium background effects */}
           <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-gradient-to-b from-neutral-950 via-purple-950/30 to-neutral-950" />
+            <div className="absolute inset-0 bg-linear-to-b from-neutral-950 via-purple-950/30 to-neutral-950" />
             <div className="absolute top-20 left-10 w-96 h-96 bg-purple-royal/20 rounded-full blur-3xl animate-pulse" />
             <div className="absolute bottom-20 right-10 w-96 h-96 bg-gold-warm/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-royal/5 rounded-full blur-3xl" />
@@ -295,7 +295,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                 <ScrollFadeIn key={tip.id} delay={index * 0.1} direction="up">
                   <Card className="group relative flex flex-col h-full overflow-hidden bg-neutral-900 border-neutral-800 hover:border-gold-warm/50 transition-all duration-300 hover:shadow-2xl hover:shadow-gold-warm/20">
                     {/* Hover gradient effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-royal/0 via-purple-royal/0 to-gold-warm/0 group-hover:from-purple-royal/10 group-hover:to-gold-warm/10 transition-all duration-500" />
+                    <div className="absolute inset-0 bg-linear-to-br from-purple-royal/0 via-purple-royal/0 to-gold-warm/0 group-hover:from-purple-royal/10 group-hover:to-gold-warm/10 transition-all duration-500" />
                     
                     <div className="relative h-64 w-full overflow-hidden">
                       <img
@@ -303,7 +303,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                         alt={tip.title}
                         className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-linear-to-t from-neutral-900 via-transparent to-transparent" />
                       
                       {/* Category badge overlay */}
                       <Badge className="absolute top-4 left-4 bg-purple-royal text-white border-0 shadow-lg">
@@ -361,7 +361,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
         </section>
 
         {/* Events Section - Redesigned with light background */}
-        <section className="relative bg-gradient-to-b from-purple-50 via-white to-neutral-50 py-24 overflow-hidden">
+        <section className="relative bg-linear-to-b from-purple-50 via-white to-neutral-50 py-24 overflow-hidden">
           <div className="absolute inset-0">
             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5" />
             {/* Floating sparkle effects */}
@@ -436,7 +436,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                 {dictionary.ctaSection.description}
               </p>
               <Link href="/sign-up">
-                <Button className="bg-white text-purple-royal hover:bg-neutral-100 shadow-xl text-lg px-10 py-6 h-16 min-h-[44px] min-w-[44px]">
+                <Button className="bg-white text-purple-royal hover:bg-neutral-100 shadow-xl text-lg px-10 py-6 h-16 min-h-11 min-w-11">
                   {dictionary.ctaSection.cta}
                   <ArrowRight className="ml-3 w-6 h-6" />
                 </Button>

@@ -299,7 +299,7 @@ export default async function DatingTipPage({ params }: PageProps) {
               </div>
 
               {/* CTA Card */}
-              <Card className="p-8 bg-gradient-to-br from-purple-50 to-gold-50 border-2 border-purple-royal/20 mb-12">
+              <Card className="p-8 bg-linear-to-br from-purple-50 to-gold-50 border-2 border-purple-royal/20 mb-12">
                 <div className="text-center">
                   <h3 className="text-h2 font-display text-purple-royal-dark mb-4">
                     Ready to Find Your Perfect Match?
@@ -317,7 +317,7 @@ export default async function DatingTipPage({ params }: PageProps) {
 
               {/* Related Tips */}
               {relatedTips.length > 0 && (
-                <section className="bg-gradient-to-br from-purple-50 to-neutral-50 py-12 -mx-8 px-8 rounded-2xl">
+                <section className="bg-linear-to-br from-purple-50 to-neutral-50 py-12 -mx-8 px-8 rounded-2xl">
                   <h2 className="text-3xl font-display font-bold text-neutral-900 mb-8">
                     Similar Articles
                   </h2>

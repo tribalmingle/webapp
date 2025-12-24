@@ -33,7 +33,7 @@ export function LatestPosts({ currentPostId }: LatestPostsProps) {
             className="group flex gap-3 hover:bg-neutral-50 rounded-lg p-2 -mx-2 transition-colors"
           >
             {/* Thumbnail */}
-            <div className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-neutral-100">
+            <div className="relative w-20 h-20 shrink-0 rounded-lg overflow-hidden bg-neutral-100">
               <Image
                 src={post.featuredImage}
                 alt={post.title}

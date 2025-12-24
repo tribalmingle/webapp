@@ -90,7 +90,7 @@ function DatingTipsContent() {
       
       <main className="pt-24 pb-16">
         {/* Hero Section */}
-        <section className="bg-gradient-to-b from-purple-50 to-white py-16">
+        <section className="bg-linear-to-b from-purple-50 to-white py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <Badge variant="purple" className="mb-4">
@@ -265,7 +265,7 @@ export default function DatingTipsPage() {
       <div className="min-h-screen bg-background-primary">
         <SiteHeader locale="en" />
         <main className="pt-24 pb-16">
-          <section className="bg-gradient-to-b from-purple-50 to-white py-16">
+          <section className="bg-linear-to-b from-purple-50 to-white py-16">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="text-center">
                 <p className="text-body-lg text-neutral-700">Loading dating tips...</p>

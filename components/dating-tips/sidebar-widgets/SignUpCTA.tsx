@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { Heart, Sparkles } from 'lucide-react'
 
 export function SignUpCTA() {
@@ -30,12 +29,12 @@ export function SignUpCTA() {
         </div>
 
         {/* CTA Button */}
-        <Link
+        <a
           href="/sign-up"
           className="block w-full text-center px-6 py-3.5 bg-white text-purple-700 font-semibold rounded-xl hover:bg-gold-warm hover:text-neutral-900 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
         >
           Join Now - It's Free
-        </Link>
+        </a>
 
         {/* Trust Indicator */}
         <div className="flex items-center justify-center gap-2 pt-2">
