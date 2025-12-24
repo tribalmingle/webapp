@@ -324,6 +324,35 @@ export default function MemberAppShellClient({ children, title, description, act
             </Link>
           )}
           
+          {/* Guaranteed Dating Link */}
+          {onNavigate ? (
+            <button
+              onClick={() => onNavigate('/dashboard-spa?view=guaranteed-dating')}
+              className={cn(
+                "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors w-full",
+                pathname?.startsWith("/guaranteed-dating") || searchParams?.get('view') === 'guaranteed-dating'
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+              )}
+            >
+              <Heart className="h-5 w-5" />
+              <span className="flex-1 text-left">Guaranteed Dating</span>
+            </button>
+          ) : (
+            <Link
+              href="/dashboard-spa?view=guaranteed-dating"
+              className={cn(
+                "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                pathname?.startsWith("/guaranteed-dating") || searchParams?.get('view') === 'guaranteed-dating'
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+              )}
+            >
+              <Heart className="h-5 w-5" />
+              <span className="flex-1">Guaranteed Dating</span>
+            </Link>
+          )}
+          
           {/* Subscription Link */}
           {onNavigate ? (
             <button
@@ -526,6 +555,21 @@ export default function MemberAppShellClient({ children, title, description, act
               >
                 <Gift className="h-5 w-5" />
                 <span className="flex-1">Referrals</span>
+              </Link>
+              
+              {/* Guaranteed Dating Link */}
+              <Link
+                href="/dashboard-spa?view=guaranteed-dating"
+                onClick={() => setShowMobileMenu(false)}
+                className={cn(
+                  "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors",
+                  pathname?.startsWith("/guaranteed-dating") || searchParams?.get('view') === 'guaranteed-dating'
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                )}
+              >
+                <Heart className="h-5 w-5" />
+                <span className="flex-1">Guaranteed Dating</span>
               </Link>
               
               {/* Subscription Link */}

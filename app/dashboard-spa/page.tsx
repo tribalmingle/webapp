@@ -96,8 +96,8 @@ interface ChatUser {
   profilePhoto: string
 }
 
-type ActiveView = 'home' | 'discover' | 'safety' | 'profile' | 'likes' | 'chat' | 'chat-conversation' | 'subscription' | 'settings' | 'profile-view' | 'referrals' | 'spotlight'
-type SpaNavKey = 'home' | 'likes' | 'chat' | 'profile' | 'subscription' | 'settings' | 'referrals' | 'spotlight'
+type ActiveView = 'home' | 'discover' | 'safety' | 'profile' | 'likes' | 'chat' | 'chat-conversation' | 'subscription' | 'settings' | 'profile-view' | 'referrals' | 'spotlight' | 'guaranteed-dating'
+type SpaNavKey = 'home' | 'likes' | 'chat' | 'profile' | 'subscription' | 'settings' | 'referrals' | 'spotlight' | 'guaranteed-dating'
 
 const SPA_NAV_ITEMS: Array<{ id: SpaNavKey; label: string }> = [
   { id: 'home', label: 'Home' },
@@ -377,6 +377,27 @@ function UnifiedDashboard() {
   })
   const [referralInviteError, setReferralInviteError] = useState<string | null>(null)
   
+  // Guaranteed Dating state
+  const [guaranteedDatingRequest, setGuaranteedDatingRequest] = useState<any>(null)
+  const [guaranteedDatingHistory, setGuaranteedDatingHistory] = useState<any[]>([])
+  const [guaranteedDatingLoading, setGuaranteedDatingLoading] = useState(false)
+  const [showGuaranteedDatingForm, setShowGuaranteedDatingForm] = useState(false)
+  const [guaranteedDatingForm, setGuaranteedDatingForm] = useState({
+    loveLanguages: [] as string[],
+    idealDateActivities: [] as string[],
+    dealBreakers: [] as string[],
+    communicationStyle: '',
+    conflictResolutionStyle: '',
+    familyPlans: '',
+    religiousPracticeLevel: '',
+    politicalViews: '',
+    datingGoals: '',
+    idealFirstDate: '',
+    mustHaveQualities: [] as string[],
+    additionalNotes: '',
+  })
+  const [guaranteedDatingFormError, setGuaranteedDatingFormError] = useState<string | null>(null)
+  
   // Rotating messages for premium users
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
   const inspirationalMessages = [
@@ -632,6 +653,11 @@ function UnifiedDashboard() {
     loadReferralProgress()
   }, [activeView, loadReferralProgress])
 
+  useEffect(() => {
+    if (activeView !== 'guaranteed-dating') return
+    loadGuaranteedDatingStatus()
+  }, [activeView])
+
   const loadBoostSummary = async () => {
     if (!user) return
     setBoostLoading(true)
@@ -711,6 +737,148 @@ function UnifiedDashboard() {
       setBoostError(error instanceof Error ? error.message : 'Unable to place boost bid')
     } finally {
       setBoostSubmitting(false)
+    }
+  }
+
+  const loadGuaranteedDatingStatus = async () => {
+    if (!user) return
+    setGuaranteedDatingLoading(true)
+    try {
+      const response = await fetch('/api/guaranteed-dating/status', {
+        headers: { 
+          'Authorization': `Bearer ${user.token}`,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+      })
+      const data = await response.json()
+      if (data.success) {
+        setGuaranteedDatingRequest(data.activeRequest)
+        setGuaranteedDatingHistory(data.history || [])
+      }
+    } catch (error) {
+      console.error('Error loading guaranteed dating status:', error)
+    } finally {
+      setGuaranteedDatingLoading(false)
+    }
+  }
+
+  const submitGuaranteedDatingRequest = async () => {
+    if (!user) return
+    
+    // Validation
+    if (guaranteedDatingForm.loveLanguages.length < 1 || guaranteedDatingForm.loveLanguages.length > 2) {
+      setGuaranteedDatingFormError('Please select 1 or 2 love languages')
+      return
+    }
+    
+    if (guaranteedDatingForm.idealDateActivities.length === 0) {
+      setGuaranteedDatingFormError('Please select at least one ideal date activity')
+      return
+    }
+    
+    if (!guaranteedDatingForm.datingGoals) {
+      setGuaranteedDatingFormError('Please specify your dating goals')
+      return
+    }
+
+    setGuaranteedDatingLoading(true)
+    setGuaranteedDatingFormError(null)
+
+    try {
+      // TODO: Integrate with actual payment processor (Stripe, Paystack, etc.)
+      // For now, simulating payment
+      const paymentIntentId = `sim_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      
+      const response = await fetch('/api/guaranteed-dating/request', {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${user.token}`,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          ...guaranteedDatingForm,
+          paymentIntentId,
+          paymentAmount: 50,
+        }),
+      })
+
+      const data = await response.json()
+      
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to create request')
+      }
+
+      setGlobalMessage({ 
+        type: 'success', 
+        text: 'Guaranteed dating request submitted! We will find your perfect match within 30 days.' 
+      })
+      
+      setShowGuaranteedDatingForm(false)
+      await loadGuaranteedDatingStatus()
+      
+      // Reset form
+      setGuaranteedDatingForm({
+        loveLanguages: [],
+        idealDateActivities: [],
+        dealBreakers: [],
+        communicationStyle: '',
+        conflictResolutionStyle: '',
+        familyPlans: '',
+        religiousPracticeLevel: '',
+        politicalViews: '',
+        datingGoals: '',
+        idealFirstDate: '',
+        mustHaveQualities: [],
+        additionalNotes: '',
+      })
+      
+    } catch (error) {
+      console.error('Error submitting guaranteed dating request:', error)
+      setGuaranteedDatingFormError(error instanceof Error ? error.message : 'Failed to submit request')
+    } finally {
+      setGuaranteedDatingLoading(false)
+    }
+  }
+
+  const requestGuaranteedDatingRefund = async (requestId: string) => {
+    if (!user) return
+    
+    if (!confirm('Are you sure you want to request a refund? You will receive your $50 within 3-7 working days.')) {
+      return
+    }
+
+    try {
+      const response = await fetch('/api/guaranteed-dating/refund', {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${user.token}`,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ requestId }),
+      })
+
+      const data = await response.json()
+      
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to request refund')
+      }
+
+      setGlobalMessage({ 
+        type: 'success', 
+        text: 'Refund requested successfully. You will receive your money within 3-7 working days.' 
+      })
+      
+      await loadGuaranteedDatingStatus()
+      
+    } catch (error) {
+      console.error('Error requesting refund:', error)
+      setGlobalMessage({ 
+        type: 'error', 
+        text: error instanceof Error ? error.message : 'Failed to request refund'
+      })
     }
   }
 
@@ -1810,8 +1978,8 @@ function UnifiedDashboard() {
     if (activeView === 'chat-conversation') return 'chat'
     if (activeView === 'profile-view') return 'profile'
     if (activeView === 'discover' || activeView === 'safety') return 'home'
-    // spotlight and referrals are valid SpaNavKeys, return them as-is
-    if (activeView === 'spotlight' || activeView === 'referrals') return activeView
+    // spotlight, referrals, and guaranteed-dating are valid SpaNavKeys, return them as-is
+    if (activeView === 'spotlight' || activeView === 'referrals' || activeView === 'guaranteed-dating') return activeView
     // For other valid views in SPA_NAV_ITEMS
     return activeView as SpaNavKey
   })()
@@ -4309,6 +4477,476 @@ function UnifiedDashboard() {
           <div>
             <h1 className="text-3xl font-bold mb-8">Referral Program</h1>
             {renderReferralSection()}
+          </div>
+        )}
+
+        {/* GUARANTEED DATING VIEW */}
+        {activeView === 'guaranteed-dating' && (
+          <div className="max-w-5xl mx-auto">
+            <div className="mb-8">
+              <h1 className="text-3xl md:text-4xl font-bold mb-3">Guaranteed Dating</h1>
+              <p className="text-lg text-muted-foreground">
+                We guarantee you a date with someone from your tribe who matches your interests within 30 days - or your money back!
+              </p>
+            </div>
+
+            {/* Pricing Card */}
+            <div className="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 rounded-2xl p-8 mb-8 text-white">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-2xl font-bold mb-2">One-Time Fee</h3>
+                  <p className="text-white/90">Independent of subscription status</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-5xl font-bold">$50</div>
+                  <p className="text-white/80 text-sm mt-1">Per request</p>
+                </div>
+              </div>
+            </div>
+
+            {/* How It Works */}
+            <div className="bg-card border border-border rounded-xl p-6 mb-8">
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <Info className="w-5 h-5 text-primary" />
+                How It Works
+              </h3>
+              <div className="space-y-3">
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">1</div>
+                  <div>
+                    <p className="font-medium">Fill out detailed preferences</p>
+                    <p className="text-sm text-muted-foreground">Tell us what you're looking for in a partner</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">2</div>
+                  <div>
+                    <p className="font-medium">Pay one-time fee of $50</p>
+                    <p className="text-sm text-muted-foreground">Secure payment via Stripe or Paystack</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">3</div>
+                  <div>
+                    <p className="font-medium">We find your perfect match within 30 days</p>
+                    <p className="text-sm text-muted-foreground">Same tribe, same city, compatible interests</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">4</div>
+                  <div>
+                    <p className="font-medium">We arrange the date for you</p>
+                    <p className="text-sm text-muted-foreground">Restaurant/bar reservation, specific time & date</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">5</div>
+                  <div>
+                    <p className="font-medium">100% Money-back guarantee</p>
+                    <p className="text-sm text-muted-foreground">No match within 30 days? Get full refund in 3-7 working days</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Active Request Status */}
+            {guaranteedDatingRequest && (
+              <div className="bg-card border border-border rounded-xl p-6 mb-8">
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-primary" />
+                  Your Active Request
+                </h3>
+                
+                {guaranteedDatingRequest.status === 'pending' && (
+                  <>
+                    <div className="mb-4">
+                      <p className="text-lg font-medium mb-2">Our team is working to find your perfect match!</p>
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Calendar className="w-4 h-4" />
+                        <span>Time remaining: {Math.ceil((new Date(guaranteedDatingRequest.expiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days</span>
+                      </div>
+                    </div>
+                    
+                    {new Date() > new Date(guaranteedDatingRequest.expiryDate) && (
+                      <div className="flex gap-3">
+                        <Button
+                          onClick={() => requestGuaranteedDatingRefund(guaranteedDatingRequest._id)}
+                          variant="outline"
+                        >
+                          Request Refund
+                        </Button>
+                        <Button
+                          onClick={() => setShowGuaranteedDatingForm(true)}
+                          className="bg-primary"
+                        >
+                          Try Again (Another 30 Days)
+                        </Button>
+                      </div>
+                    )}
+                  </>
+                )}
+                
+                {guaranteedDatingRequest.status === 'matched' && (
+                  <div>
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                      <p className="text-green-800 font-medium flex items-center gap-2">
+                        <Heart className="w-5 h-5" />
+                        Great news! We found your match!
+                      </p>
+                    </div>
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Your Date</p>
+                        <p className="text-lg font-medium">{guaranteedDatingRequest.matchedUserName}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Venue</p>
+                        <p className="font-medium">{guaranteedDatingRequest.venue}</p>
+                        <p className="text-sm text-muted-foreground">{guaranteedDatingRequest.venueAddress}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Date & Time</p>
+                        <p className="font-medium">{new Date(guaranteedDatingRequest.dateTime).toLocaleString('en-US', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: 'numeric',
+                          minute: '2-digit',
+                        })}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {guaranteedDatingRequest.status === 'refund_requested' && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <p className="text-yellow-800">
+                      Refund requested. You will receive your $50 within 3-7 working days.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* New Request Button / Form */}
+            {!guaranteedDatingRequest && !showGuaranteedDatingForm && (
+              <Button 
+                onClick={() => {
+                  loadGuaranteedDatingStatus()
+                  setShowGuaranteedDatingForm(true)
+                }}
+                size="lg"
+                className="w-full py-6 text-lg"
+              >
+                <Heart className="w-5 h-5 mr-2" />
+                Start Guaranteed Dating Request
+              </Button>
+            )}
+
+            {/* Guaranteed Dating Form */}
+            {showGuaranteedDatingForm && !guaranteedDatingRequest && (
+              <div className="bg-card border border-border rounded-xl p-6 space-y-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-2xl font-bold">Tell Us About Your Ideal Match</h3>
+                  <Button variant="ghost" onClick={() => setShowGuaranteedDatingForm(false)}>
+                    <X className="w-5 h-5" />
+                  </Button>
+                </div>
+
+                {guaranteedDatingFormError && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-800 text-sm">
+                    {guaranteedDatingFormError}
+                  </div>
+                )}
+
+                {/* Love Languages */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Love Languages <span className="text-red-500">*</span>
+                    <span className="text-xs text-muted-foreground ml-2">(Select 1-2)</span>
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {['Words of Affirmation', 'Quality Time', 'Physical Touch', 'Acts of Service', 'Receiving Gifts'].map((lang) => (
+                      <label key={lang} className="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-accent/5">
+                        <input
+                          type="checkbox"
+                          checked={guaranteedDatingForm.loveLanguages.includes(lang)}
+                          onChange={(e) => {
+                            const checked = e.target.checked
+                            setGuaranteedDatingForm(prev => ({
+                              ...prev,
+                              loveLanguages: checked
+                                ? prev.loveLanguages.length < 2 ? [...prev.loveLanguages, lang] : prev.loveLanguages
+                                : prev.loveLanguages.filter(l => l !== lang)
+                            }))
+                          }}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm">{lang}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Dating Goals */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Dating Goals <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={guaranteedDatingForm.datingGoals}
+                    onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, datingGoals: e.target.value }))}
+                    className="w-full p-3 border rounded-lg bg-background"
+                  >
+                    <option value="">Select your dating goals</option>
+                    <option value="casual">Casual Dating</option>
+                    <option value="serious">Serious Relationship</option>
+                    <option value="marriage">Looking for Marriage</option>
+                  </select>
+                </div>
+
+                {/* Ideal Date Activities */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Ideal Date Activities <span className="text-red-500">*</span>
+                  </label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {['Dinner', 'Coffee', 'Movies', 'Walk in park', 'Museum', 'Concert', 'Sports event', 'Cooking together', 'Wine tasting', 'Dancing', 'Art gallery', 'Beach'].map((activity) => (
+                      <label key={activity} className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-accent/5">
+                        <input
+                          type="checkbox"
+                          checked={guaranteedDatingForm.idealDateActivities.includes(activity)}
+                          onChange={(e) => {
+                            const checked = e.target.checked
+                            setGuaranteedDatingForm(prev => ({
+                              ...prev,
+                              idealDateActivities: checked
+                                ? [...prev.idealDateActivities, activity]
+                                : prev.idealDateActivities.filter(a => a !== activity)
+                            }))
+                          }}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm">{activity}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Communication Style */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Communication Style</label>
+                  <select
+                    value={guaranteedDatingForm.communicationStyle}
+                    onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, communicationStyle: e.target.value }))}
+                    className="w-full p-3 border rounded-lg bg-background"
+                  >
+                    <option value="">Select your communication style</option>
+                    <option value="direct">Direct & Straightforward</option>
+                    <option value="thoughtful">Thoughtful & Reflective</option>
+                    <option value="expressive">Expressive & Emotional</option>
+                    <option value="reserved">Reserved & Private</option>
+                  </select>
+                </div>
+
+                {/* Conflict Resolution Style */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Conflict Resolution Style</label>
+                  <select
+                    value={guaranteedDatingForm.conflictResolutionStyle}
+                    onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, conflictResolutionStyle: e.target.value }))}
+                    className="w-full p-3 border rounded-lg bg-background"
+                  >
+                    <option value="">How do you handle conflicts?</option>
+                    <option value="discuss-immediately">Discuss Immediately</option>
+                    <option value="take-time">Take Time to Think</option>
+                    <option value="compromise">Always Seek Compromise</option>
+                    <option value="avoid">Prefer to Avoid Confrontation</option>
+                  </select>
+                </div>
+
+                {/* Family Plans */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Family Plans</label>
+                  <select
+                    value={guaranteedDatingForm.familyPlans}
+                    onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, familyPlans: e.target.value }))}
+                    className="w-full p-3 border rounded-lg bg-background"
+                  >
+                    <option value="">Select your family plans</option>
+                    <option value="want-children">Want Children</option>
+                    <option value="no-children">Don't Want Children</option>
+                    <option value="have-children">Already Have Children</option>
+                    <option value="undecided">Undecided/Open</option>
+                  </select>
+                </div>
+
+                {/* Religious Practice Level */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Religious Practice Level</label>
+                  <select
+                    value={guaranteedDatingForm.religiousPracticeLevel}
+                    onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, religiousPracticeLevel: e.target.value }))}
+                    className="w-full p-3 border rounded-lg bg-background"
+                  >
+                    <option value="">How would you describe your religious practice?</option>
+                    <option value="very-devout">Very Devout</option>
+                    <option value="moderate">Moderate Practitioner</option>
+                    <option value="casual">Casual/Cultural</option>
+                    <option value="not-religious">Not Religious</option>
+                  </select>
+                </div>
+
+                {/* Political Views (Optional) */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Political Views (Optional)</label>
+                  <select
+                    value={guaranteedDatingForm.politicalViews}
+                    onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, politicalViews: e.target.value }))}
+                    className="w-full p-3 border rounded-lg bg-background"
+                  >
+                    <option value="">Prefer not to say</option>
+                    <option value="very-liberal">Very Liberal</option>
+                    <option value="liberal">Liberal</option>
+                    <option value="moderate">Moderate</option>
+                    <option value="conservative">Conservative</option>
+                    <option value="very-conservative">Very Conservative</option>
+                  </select>
+                </div>
+
+                {/* Deal Breakers */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Deal Breakers</label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {['Smoking', 'Excessive drinking', 'No ambition', 'Poor hygiene', 'Dishonesty', 'Lack of family values', 'Different religion', 'No sense of humor'].map((breaker) => (
+                      <label key={breaker} className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-accent/5">
+                        <input
+                          type="checkbox"
+                          checked={guaranteedDatingForm.dealBreakers.includes(breaker)}
+                          onChange={(e) => {
+                            const checked = e.target.checked
+                            setGuaranteedDatingForm(prev => ({
+                              ...prev,
+                              dealBreakers: checked
+                                ? [...prev.dealBreakers, breaker]
+                                : prev.dealBreakers.filter(b => b !== breaker)
+                            }))
+                          }}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm">{breaker}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Ideal First Date Description */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Describe Your Ideal First Date</label>
+                  <textarea
+                    value={guaranteedDatingForm.idealFirstDate}
+                    onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, idealFirstDate: e.target.value }))}
+                    className="w-full p-3 border rounded-lg bg-background"
+                    rows={3}
+                    placeholder="Tell us what your perfect first date would look like..."
+                  />
+                </div>
+
+                {/* Must-Have Qualities */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Must-Have Qualities in a Partner</label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {['Kind', 'Honest', 'Funny', 'Intelligent', 'Ambitious', 'Family-oriented', 'Romantic', 'Adventurous', 'Loyal', 'Spiritual', 'Educated', 'Athletic'].map((quality) => (
+                      <label key={quality} className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-accent/5">
+                        <input
+                          type="checkbox"
+                          checked={guaranteedDatingForm.mustHaveQualities.includes(quality)}
+                          onChange={(e) => {
+                            const checked = e.target.checked
+                            setGuaranteedDatingForm(prev => ({
+                              ...prev,
+                              mustHaveQualities: checked
+                                ? [...prev.mustHaveQualities, quality]
+                                : prev.mustHaveQualities.filter(q => q !== quality)
+                            }))
+                          }}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm">{quality}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Additional Notes */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Additional Notes (Optional)</label>
+                  <textarea
+                    value={guaranteedDatingForm.additionalNotes}
+                    onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, additionalNotes: e.target.value }))}
+                    className="w-full p-3 border rounded-lg bg-background"
+                    rows={4}
+                    placeholder="Any other preferences or information you'd like to share..."
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <div className="flex gap-3 pt-4">
+                  <Button
+                    onClick={() => setShowGuaranteedDatingForm(false)}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={submitGuaranteedDatingRequest}
+                    disabled={guaranteedDatingLoading}
+                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600"
+                  >
+                    {guaranteedDatingLoading ? 'Processing...' : 'Pay $50 & Submit Request'}
+                  </Button>
+                </div>
+
+                <p className="text-xs text-center text-muted-foreground">
+                  By submitting, you agree to pay $50 for guaranteed dating services. 100% money-back guarantee if we don't find a match within 30 days.
+                </p>
+              </div>
+            )}
+
+            {/* Request History */}
+            {guaranteedDatingHistory.length > 0 && (
+              <div className="mt-8">
+                <h3 className="text-xl font-bold mb-4">Request History</h3>
+                <div className="space-y-3">
+                  {guaranteedDatingHistory.map((req: any) => (
+                    <div key={req._id} className="bg-card border border-border rounded-lg p-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium">
+                            {req.status === 'matched' ? '✓ Matched' : 
+                             req.status === 'completed' ? '✓ Completed' : 
+                             req.status === 'expired' ? 'Expired' : 
+                             req.status === 'refunded' ? 'Refunded' : 
+                             'Pending'}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {new Date(req.requestDate).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-medium">$50</p>
+                          {req.matchedUserName && (
+                            <p className="text-xs text-muted-foreground">Matched with {req.matchedUserName}</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

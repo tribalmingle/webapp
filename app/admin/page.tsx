@@ -280,6 +280,7 @@ type ActiveTab =
   | 'marketing'
   | 'email'
   | 'testimonials'
+  | 'guaranteed-dating'
 
 const COHORT_DIMENSION_OPTIONS = [
   { value: 'global', label: 'Global' },
@@ -1180,6 +1181,7 @@ export default function AdminDashboard() {
               { id: 'reports', label: 'Reports & Flags', icon: Flag },
               { id: 'trust', label: 'Trust & Safety', icon: Shield },
               { id: 'testimonials', label: 'Testimonials', icon: Quote },
+              { id: 'guaranteed-dating', label: 'Guaranteed Dating', icon: Heart },
               { id: 'analytics', label: 'Insights', icon: TrendingUp },
               { id: 'realtime', label: 'Real-Time Analytics', icon: Activity },
               { id: 'boosts', label: 'Boost Auctions', icon: ArrowUpRight },
@@ -2715,6 +2717,17 @@ export default function AdminDashboard() {
                 </div>
               </>
             )}
+          </div>
+        )}
+
+        {/* GUARANTEED DATING VIEW */}
+        {activeTab === 'guaranteed-dating' && (
+          <div>
+            <iframe
+              src="/admin/guaranteed-dating"
+              className="w-full h-[calc(100vh-100px)] border-0 rounded-lg"
+              title="Guaranteed Dating Management"
+            />
           </div>
         )}
 
