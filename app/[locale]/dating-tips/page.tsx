@@ -39,7 +39,7 @@ function DatingTipsContent() {
       tips = tips.filter(tip => 
         tip.title.toLowerCase().includes(query) ||
         tip.excerpt.toLowerCase().includes(query) ||
-        tip.body.toLowerCase().includes(query)
+        tip.content.toLowerCase().includes(query)
       )
     }
 
