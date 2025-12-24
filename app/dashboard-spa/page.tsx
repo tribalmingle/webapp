@@ -301,6 +301,7 @@ function UnifiedDashboard() {
   
   // Discover People state
   const [discoverUsers, setDiscoverUsers] = useState<any[]>([])
+  const [swipingCards, setSwipingCards] = useState<{ [key: string]: 'like' | 'pass' | null }>({})
   const [searchQuery, setSearchQuery] = useState('')
   const [advancedFilters, setAdvancedFilters] = useState({
     maritalStatus: 'i-dont-mind',
@@ -771,7 +772,7 @@ function UnifiedDashboard() {
       const queryString = params.toString()
       const url = queryString ? `/api/users/discover?${queryString}` : `/api/users/discover`
 
-      const response = await fetch(url)
+      const response = await fetch(url, { credentials: 'include' })
       const data = await response.json()
       if (data.success) {
         setDiscoverUsers(data.users)
@@ -1500,6 +1501,12 @@ function UnifiedDashboard() {
 
   const handleDiscoverLike = async (userId: string, userName: string, userIdForFilter: string) => {
     try {
+      // Trigger swipe animation
+      setSwipingCards(prev => ({ ...prev, [userIdForFilter]: 'like' }))
+      
+      // Wait for animation
+      await new Promise(resolve => setTimeout(resolve, 300))
+      
       const response = await fetch('/api/likes/like', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1515,6 +1522,11 @@ function UnifiedDashboard() {
         })
         // Remove the liked user from discover list using _id
         setDiscoverUsers(prev => prev.filter(u => u._id !== userIdForFilter))
+        setSwipingCards(prev => {
+          const updated = { ...prev }
+          delete updated[userIdForFilter]
+          return updated
+        })
         if (data.isMatch) {
           fetchTodayMatches()
         }
@@ -1534,8 +1546,19 @@ function UnifiedDashboard() {
   }
 
   const handleDiscoverPass = async (userIdForFilter: string) => {
+    // Trigger swipe animation
+    setSwipingCards(prev => ({ ...prev, [userIdForFilter]: 'pass' }))
+    
+    // Wait for animation
+    await new Promise(resolve => setTimeout(resolve, 300))
+    
     // Just remove from discover list (no API call needed for pass)
     setDiscoverUsers(prev => prev.filter(u => u._id !== userIdForFilter))
+    setSwipingCards(prev => {
+      const updated = { ...prev }
+      delete updated[userIdForFilter]
+      return updated
+    })
   }
 
   const formatDuration = (seconds: number) => {
@@ -1957,7 +1980,13 @@ function UnifiedDashboard() {
                   <div className="flex gap-4 md:gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
                     {discoverUsers.slice(0, 5).map((match, index) => (
                       <FadeIn key={match._id} delay={0.3 + index * 0.1}>
-                        <div className="shrink-0 w-[min(85vw,320px)] md:w-80 snap-start">
+                        <div 
+                          className={`shrink-0 w-[min(85vw,320px)] md:w-80 snap-start transition-all duration-300 ${
+                            swipingCards[match._id] === 'like' ? 'translate-x-[150%] opacity-0' : 
+                            swipingCards[match._id] === 'pass' ? '-translate-x-[150%] opacity-0' : 
+                            ''
+                          }`}
+                        >
                           <PremiumProfileCard
                             profile={{
                               name: match.name,
