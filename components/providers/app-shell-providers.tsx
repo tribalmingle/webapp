@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/contexts/auth-context"
+import { Toaster } from "@/components/ui/sonner"
 
 import { BranchProvider } from "./branch-provider"
 import { DesignSystemProvider } from "./design-system-provider"
@@ -15,7 +16,10 @@ export function AppShellProviders({ children }: { children: ReactNode }) {
         <QueryProvider>
           <BranchProvider>
             <AuthProvider>
-              <FeatureFlagProvider>{children}</FeatureFlagProvider>
+              <FeatureFlagProvider>
+                {children}
+                <Toaster />
+              </FeatureFlagProvider>
             </AuthProvider>
           </BranchProvider>
         </QueryProvider>

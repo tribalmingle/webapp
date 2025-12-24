@@ -4,6 +4,8 @@ import { ArrowRight, Calendar, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { DATING_TIPS } from '@/lib/dating-tips/tips-data'
+import { SiteHeader } from '@/components/marketing/site-header'
+import { SiteFooter } from '@/components/marketing/site-footer'
 
 export const metadata = {
   title: 'Dating Advice & Tips | Tribal Mingle',
@@ -25,7 +27,7 @@ export default function DatingTipsPage() {
 
   return (
     <div className="min-h-screen bg-background-primary">
-      {/* Header - You'll need to add your shared header component here */}
+      <SiteHeader locale="en" />
       
       <main className="pt-24 pb-16">
         {/* Hero Section */}
@@ -82,11 +84,15 @@ export default function DatingTipsPage() {
                     {/* Author & Meta */}
                     <div className="flex items-center justify-between text-xs text-neutral-600 mb-4 pb-4 border-t border-neutral-100 pt-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-purple-royal flex items-center justify-center text-white font-bold">
-                          CC
-                        </div>
+                        <Image
+                          src="/cc-author.jpg"
+                          alt="CC Author"
+                          width={32}
+                          height={32}
+                          className="w-8 h-8 rounded-full object-cover ring-2 ring-purple-royal/30"
+                        />
                         <div>
-                          <p className="font-bold text-purple-royal">Moving on Clinic by CC</p>
+                          <p className="font-bold text-purple-royal">Love Clinic by CC</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
@@ -102,7 +108,7 @@ export default function DatingTipsPage() {
                     </div>
 
                     <Link href={`/dating-tips/${tip.id}`}>
-                      <Button variant="outline" className="w-full">
+                      <Button variant="default" className="w-full bg-purple-gradient text-white font-semibold">
                         Read More <ArrowRight className="w-4 h-4 ml-2" />
                       </Button>
                     </Link>
@@ -114,7 +120,7 @@ export default function DatingTipsPage() {
         </section>
       </main>
 
-      {/* Footer - Add your shared footer component here */}
+      <SiteFooter locale="en" />
     </div>
   )
 }

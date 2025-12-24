@@ -4,8 +4,9 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 import { Separator } from '@/components/ui/separator'
+import { VisuallyHidden } from '@/components/ui/visually-hidden'
 
 interface MobileNavProps {
   primaryCta: string
@@ -29,6 +30,9 @@ export function MobileNav({ primaryCta, dictionary }: MobileNavProps) {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-[85vw] max-w-sm">
+        <VisuallyHidden>
+          <SheetTitle>Navigation Menu</SheetTitle>
+        </VisuallyHidden>
         <nav className="flex flex-col gap-6 mt-8">
           <a 
             href="#features" 

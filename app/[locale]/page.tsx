@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Heart, Shield, Star, Users, Zap, ArrowRight, Crown, Sparkles, MapPin, TrendingUp, Play } from 'lucide-react'
+import { Heart, Shield, Star, Users, Zap, ArrowRight, Crown, Sparkles, MapPin, TrendingUp, Play, Clock } from 'lucide-react'
 import { MobileNav } from '@/components/marketing/mobile-nav'
+import Image from 'next/image'
 
 import { fetchLandingContent, fetchMarketingTestimonials, fetchMarketingBlogPosts, fetchMarketingEvents } from '@/lib/contentful'
 import { getMarketingDictionary } from '@/lib/i18n/dictionaries'
@@ -261,24 +262,28 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
           </div>
         </section>
 
-        {/* Dating Tips Section */}
-        <section id="dating-tips" className="relative bg-gradient-to-b from-white via-purple-50 to-white py-24 overflow-hidden">
+        {/* Dating Tips Section - Premium Design */}
+        <section id="dating-tips" className="relative bg-neutral-950 py-24 overflow-hidden">
+          {/* Premium background effects */}
           <div className="absolute inset-0">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-royal/10 rounded-full blur-3xl" />
+            <div className="absolute inset-0 bg-gradient-to-b from-neutral-950 via-purple-950/30 to-neutral-950" />
+            <div className="absolute top-20 left-10 w-96 h-96 bg-purple-royal/20 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-20 right-10 w-96 h-96 bg-gold-warm/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-royal/5 rounded-full blur-3xl" />
           </div>
           
           <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <ScrollFadeIn direction="up">
-              <div className="text-center mb-12">
-                <Badge variant="gold" className="mb-6 bg-gold-warm text-white border-transparent shadow-md">
+              <div className="text-center mb-16">
+                <Badge variant="gold" className="mb-6 bg-gold-warm text-white border-transparent shadow-lg">
                   <Sparkles className="w-3 h-3 mr-1" />
                   Expert Advice
                 </Badge>
-                <h2 className="text-h1 font-display text-purple-royal-dark mb-4">
+                <h2 className="text-display-lg font-display text-white mb-6">
                   Dating Advice & Tips
                 </h2>
-                <p className="text-body-lg text-neutral-700 max-w-3xl mx-auto">
-                  Practical guidance for building meaningful relationships
+                <p className="text-body-lg text-neutral-300 max-w-3xl mx-auto">
+                  Practical guidance for building meaningful relationships in the African diaspora
                 </p>
               </div>
             </ScrollFadeIn>
@@ -288,38 +293,52 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                 new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
               ).map((tip, index) => (
                 <ScrollFadeIn key={tip.id} delay={index * 0.1} direction="up">
-                  <Card className="flex flex-col h-full overflow-hidden hover:shadow-xl transition-all">
+                  <Card className="group relative flex flex-col h-full overflow-hidden bg-neutral-900 border-neutral-800 hover:border-gold-warm/50 transition-all duration-300 hover:shadow-2xl hover:shadow-gold-warm/20">
+                    {/* Hover gradient effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-royal/0 via-purple-royal/0 to-gold-warm/0 group-hover:from-purple-royal/10 group-hover:to-gold-warm/10 transition-all duration-500" />
+                    
                     <div className="relative h-64 w-full overflow-hidden">
                       <img
                         src={tip.featuredImage}
                         alt={tip.title}
-                        className="object-cover w-full h-full"
+                        className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
                       />
-                    </div>
-                    <div className="p-6 flex-1 flex flex-col">
-                      <Badge variant="outline" className="self-start mb-3 text-xs">
+                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-transparent to-transparent" />
+                      
+                      {/* Category badge overlay */}
+                      <Badge className="absolute top-4 left-4 bg-purple-royal text-white border-0 shadow-lg">
                         {tip.category.replace('-', ' ')}
                       </Badge>
-                      <h3 className="text-h3 font-display text-purple-royal-dark mb-3">
+                    </div>
+                    
+                    <div className="relative p-6 flex-1 flex flex-col">
+                      <h3 className="text-h3 font-display text-white mb-3 group-hover:text-gold-warm transition-colors">
                         {tip.title}
                       </h3>
-                      <p className="text-body-sm text-neutral-700 mb-4 flex-1">
+                      <p className="text-body-sm text-neutral-400 mb-6 flex-1">
                         {tip.excerpt}
                       </p>
-                      <div className="flex items-center justify-between text-xs text-neutral-600 mb-4 pb-4 border-t border-neutral-100 pt-4">
+                      
+                      {/* Author and meta */}
+                      <div className="flex items-center justify-between text-xs text-neutral-500 mb-4 pb-4 border-t border-neutral-800">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-royal to-gold-warm flex items-center justify-center text-white font-bold text-xs">
-                            CC
-                          </div>
-                          <span className="font-bold text-purple-royal">Moving on Clinic by CC</span>
+                          <Image
+                            src="/cc-author.jpg"
+                            alt="CC Author"
+                            width={32}
+                            height={32}
+                            className="w-8 h-8 rounded-full object-cover shadow-lg ring-2 ring-gold-warm/30"
+                          />
+                          <span className="font-semibold text-neutral-300">Love Clinic by CC</span>
                         </div>
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center gap-1 text-neutral-400">
                           <Clock className="w-3 h-3" />
                           {tip.readingTime} min
                         </span>
                       </div>
+                      
                       <Link href={`/${locale}/dating-tips/${tip.id}`}>
-                        <Button variant="outline" className="w-full">
+                        <Button className="w-full bg-purple-gradient text-white font-semibold group-hover:shadow-lg group-hover:shadow-purple-royal/50 transition-all">
                           Read Article <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
                       </Link>
@@ -329,13 +348,15 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
               ))}
             </div>
 
-            <div className="text-center">
-              <Link href={`/${locale}/dating-tips`}>
-                <Button size="lg" className="bg-purple-gradient">
-                  View All Dating Tips <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </div>
+            <ScrollFadeIn delay={0.3}>
+              <div className="text-center">
+                <Link href={`/${locale}/dating-tips`}>
+                  <Button size="lg" className="bg-gold-warm text-white font-semibold hover:bg-gold-warm/90 shadow-lg hover:shadow-xl transition-all">
+                    View All Dating Tips <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+            </ScrollFadeIn>
           </div>
         </section>
 

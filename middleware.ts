@@ -47,10 +47,7 @@ export function middleware(request: NextRequest) {
     return applySecurityHeaders(NextResponse.next())
   }
 
-  if (!MARKETING_ENTRY_POINTS.has(pathname)) {
-    return applySecurityHeaders(NextResponse.next())
-  }
-
+  // Redirect all paths without locale to include the locale
   const locale = pickLocale(request)
   const url = request.nextUrl.clone()
   url.pathname = `/${locale}${pathname === '/' ? '' : pathname}`
