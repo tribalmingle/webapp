@@ -99,8 +99,41 @@ export default async function DatingTipPage({ params }: PageProps) {
     })
   }
 
+  // JSON-LD Structured Data
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: tip.title,
+    description: tip.excerpt,
+    image: tip.featuredImage,
+    datePublished: tip.publishedAt,
+    dateModified: tip.publishedAt,
+    author: {
+      '@type': 'Person',
+      name: 'Love Clinic by CC',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Tribal Mingle',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${baseUrl}/logo.png`,
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': fullUrl,
+    },
+  }
+
   return (
     <div className="min-h-screen bg-neutral-50">
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      
       <ReadingProgress />
       <SiteHeader locale={locale} />
 

@@ -5,6 +5,7 @@ import { SignUpCTA } from './sidebar-widgets/SignUpCTA'
 import { TestimonialsCarousel } from './sidebar-widgets/TestimonialsCarousel'
 import { FeaturedEvents } from './sidebar-widgets/FeaturedEvents'
 import { LatestPosts } from './sidebar-widgets/LatestPosts'
+import { NewsletterWidget } from './NewsletterWidget'
 
 interface PostSidebarProps {
   currentPostId?: string
@@ -16,6 +17,9 @@ export function PostSidebar({ currentPostId, allPosts }: PostSidebarProps) {
     <aside className="space-y-8">
       {/* Sign-Up CTA Widget (Step 4) */}
       <SignUpCTA />
+
+      {/* Newsletter Widget (Step 14) */}
+      <NewsletterWidget />
 
       {/* Testimonials Carousel Widget (Step 5) */}
       <TestimonialsCarousel />
