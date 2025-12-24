@@ -1498,7 +1498,7 @@ function UnifiedDashboard() {
     }
   }
 
-  const handleDiscoverLike = async (userId: string, userName: string) => {
+  const handleDiscoverLike = async (userId: string, userName: string, userIdForFilter: string) => {
     try {
       const response = await fetch('/api/likes/like', {
         method: 'POST',
@@ -1513,8 +1513,8 @@ function UnifiedDashboard() {
           type: 'success',
           text: data.isMatch ? `It's a match with ${userName}! 🎉` : `Liked ${userName}!`
         })
-        // Remove the liked user from discover list
-        setDiscoverUsers(prev => prev.filter(u => u.userId !== userId))
+        // Remove the liked user from discover list using _id
+        setDiscoverUsers(prev => prev.filter(u => u._id !== userIdForFilter))
         if (data.isMatch) {
           fetchTodayMatches()
         }
@@ -1533,9 +1533,9 @@ function UnifiedDashboard() {
     }
   }
 
-  const handleDiscoverPass = async (userId: string) => {
+  const handleDiscoverPass = async (userIdForFilter: string) => {
     // Just remove from discover list (no API call needed for pass)
-    setDiscoverUsers(prev => prev.filter(u => u.userId !== userId))
+    setDiscoverUsers(prev => prev.filter(u => u._id !== userIdForFilter))
   }
 
   const formatDuration = (seconds: number) => {
@@ -1970,8 +1970,8 @@ function UnifiedDashboard() {
                               interests: match.interests || []
                             }}
                             matchScore={Math.floor(Math.random() * 20) + 80}
-                            onLike={() => handleDiscoverLike(match.userId, match.name)}
-                            onPass={() => handleDiscoverPass(match.userId)}
+                            onLike={() => handleDiscoverLike(match.email, match.name, match._id)}
+                            onPass={() => handleDiscoverPass(match._id)}
                           />
                         </div>
                       </FadeIn>
