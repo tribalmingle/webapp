@@ -4482,68 +4482,68 @@ function UnifiedDashboard() {
 
         {/* GUARANTEED DATING VIEW */}
         {activeView === 'guaranteed-dating' && (
-          <div className="max-w-5xl mx-auto">
-            <div className="mb-8">
-              <h1 className="text-3xl md:text-4xl font-bold mb-3">Guaranteed Dating</h1>
-              <p className="text-lg text-muted-foreground">
+          <div className="max-w-5xl mx-auto px-4 md:px-0">
+            <div className="mb-6 md:mb-8">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 md:mb-3">Guaranteed Dating</h1>
+              <p className="text-base sm:text-lg text-muted-foreground">
                 We guarantee you a date with someone from your tribe who matches your interests within 30 days - or your money back!
               </p>
             </div>
 
             {/* Pricing Card */}
-            <div className="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 rounded-2xl p-8 mb-8 text-white">
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-2xl font-bold mb-2">One-Time Fee</h3>
-                  <p className="text-white/90">Independent of subscription status</p>
+            <div className="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 text-white">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex-1">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-1 md:mb-2">One-Time Fee</h3>
+                  <p className="text-sm sm:text-base text-white/90">Independent of subscription status</p>
                 </div>
-                <div className="text-right">
-                  <div className="text-5xl font-bold">$50</div>
-                  <p className="text-white/80 text-sm mt-1">Per request</p>
+                <div className="text-left sm:text-right">
+                  <div className="text-4xl sm:text-5xl font-bold">$50</div>
+                  <p className="text-white/80 text-xs sm:text-sm mt-1">Per request</p>
                 </div>
               </div>
             </div>
 
             {/* How It Works */}
-            <div className="bg-card border border-border rounded-xl p-6 mb-8">
-              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <div className="bg-card border border-border rounded-xl p-4 md:p-6 mb-6 md:mb-8">
+              <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4 flex items-center gap-2">
                 <Info className="w-5 h-5 text-primary" />
                 How It Works
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-3 md:space-y-4">
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">1</div>
-                  <div>
-                    <p className="font-medium">Fill out detailed preferences</p>
-                    <p className="text-sm text-muted-foreground">Tell us what you're looking for in a partner</p>
+                  <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-base">1</div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm md:text-base">Fill out detailed preferences</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Tell us what you're looking for in a partner</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">2</div>
-                  <div>
-                    <p className="font-medium">Pay one-time fee of $50</p>
-                    <p className="text-sm text-muted-foreground">Secure payment via Stripe or Paystack</p>
+                  <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-base">2</div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm md:text-base">Pay one-time fee of $50</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Secure payment via Stripe or Paystack</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">3</div>
-                  <div>
-                    <p className="font-medium">We find your perfect match within 30 days</p>
-                    <p className="text-sm text-muted-foreground">Same tribe, same city, compatible interests</p>
+                  <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-base">3</div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm md:text-base">We find your perfect match within 30 days</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Same tribe, same city, compatible interests</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">4</div>
-                  <div>
-                    <p className="font-medium">We arrange the date for you</p>
-                    <p className="text-sm text-muted-foreground">Restaurant/bar reservation, specific time & date</p>
+                  <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-base">4</div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm md:text-base">We arrange the date for you</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Restaurant/bar reservation, specific time & date</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">5</div>
-                  <div>
-                    <p className="font-medium">100% Money-back guarantee</p>
-                    <p className="text-sm text-muted-foreground">No match within 30 days? Get full refund in 3-7 working days</p>
+                  <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-base">5</div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm md:text-base">100% Money-back guarantee</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">No match within 30 days? Get full refund in 3-7 working days</p>
                   </div>
                 </div>
               </div>
@@ -4551,8 +4551,8 @@ function UnifiedDashboard() {
 
             {/* Active Request Status */}
             {guaranteedDatingRequest && (
-              <div className="bg-card border border-border rounded-xl p-6 mb-8">
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <div className="bg-card border border-border rounded-xl p-4 md:p-6 mb-6 md:mb-8">
+                <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4 flex items-center gap-2">
                   <Clock className="w-5 h-5 text-primary" />
                   Your Active Request
                 </h3>
@@ -4560,24 +4560,25 @@ function UnifiedDashboard() {
                 {guaranteedDatingRequest.status === 'pending' && (
                   <>
                     <div className="mb-4">
-                      <p className="text-lg font-medium mb-2">Our team is working to find your perfect match!</p>
-                      <div className="flex items-center gap-2 text-muted-foreground">
+                      <p className="text-base md:text-lg font-medium mb-2">Our team is working to find your perfect match!</p>
+                      <div className="flex items-center gap-2 text-sm md:text-base text-muted-foreground">
                         <Calendar className="w-4 h-4" />
                         <span>Time remaining: {Math.ceil((new Date(guaranteedDatingRequest.expiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days</span>
                       </div>
                     </div>
                     
                     {new Date() > new Date(guaranteedDatingRequest.expiryDate) && (
-                      <div className="flex gap-3">
+                      <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
                         <Button
                           onClick={() => requestGuaranteedDatingRefund(guaranteedDatingRequest._id)}
                           variant="outline"
+                          className="min-h-[44px] w-full sm:w-auto touch-target"
                         >
                           Request Refund
                         </Button>
                         <Button
                           onClick={() => setShowGuaranteedDatingForm(true)}
-                          className="bg-primary"
+                          className="bg-primary min-h-[44px] w-full sm:w-auto touch-target"
                         >
                           Try Again (Another 30 Days)
                         </Button>
@@ -4588,25 +4589,25 @@ function UnifiedDashboard() {
                 
                 {guaranteedDatingRequest.status === 'matched' && (
                   <div>
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-                      <p className="text-green-800 font-medium flex items-center gap-2">
-                        <Heart className="w-5 h-5" />
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3 md:p-4 mb-4">
+                      <p className="text-sm md:text-base text-green-800 font-medium flex items-center gap-2">
+                        <Heart className="w-4 h-4 md:w-5 md:h-5" />
                         Great news! We found your match!
                       </p>
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-3 md:space-y-4">
                       <div>
-                        <p className="text-sm text-muted-foreground">Your Date</p>
-                        <p className="text-lg font-medium">{guaranteedDatingRequest.matchedUserName}</p>
+                        <p className="text-xs md:text-sm text-muted-foreground mb-1">Your Date</p>
+                        <p className="text-base md:text-lg font-medium">{guaranteedDatingRequest.matchedUserName}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Venue</p>
-                        <p className="font-medium">{guaranteedDatingRequest.venue}</p>
-                        <p className="text-sm text-muted-foreground">{guaranteedDatingRequest.venueAddress}</p>
+                        <p className="text-xs md:text-sm text-muted-foreground mb-1">Venue</p>
+                        <p className="text-sm md:text-base font-medium">{guaranteedDatingRequest.venue}</p>
+                        <p className="text-xs md:text-sm text-muted-foreground mt-1">{guaranteedDatingRequest.venueAddress}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">Date & Time</p>
-                        <p className="font-medium">{new Date(guaranteedDatingRequest.dateTime).toLocaleString('en-US', {
+                        <p className="text-xs md:text-sm text-muted-foreground mb-1">Date & Time</p>
+                        <p className="text-sm md:text-base font-medium">{new Date(guaranteedDatingRequest.dateTime).toLocaleString('en-US', {
                           weekday: 'long',
                           year: 'numeric',
                           month: 'long',
@@ -4637,7 +4638,7 @@ function UnifiedDashboard() {
                   setShowGuaranteedDatingForm(true)
                 }}
                 size="lg"
-                className="w-full py-6 text-lg"
+                className="w-full py-5 md:py-6 text-base md:text-lg min-h-[56px] touch-target"
               >
                 <Heart className="w-5 h-5 mr-2" />
                 Start Guaranteed Dating Request
@@ -4646,10 +4647,10 @@ function UnifiedDashboard() {
 
             {/* Guaranteed Dating Form */}
             {showGuaranteedDatingForm && !guaranteedDatingRequest && (
-              <div className="bg-card border border-border rounded-xl p-6 space-y-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-2xl font-bold">Tell Us About Your Ideal Match</h3>
-                  <Button variant="ghost" onClick={() => setShowGuaranteedDatingForm(false)}>
+              <div className="bg-card border border-border rounded-xl p-4 md:p-6 space-y-5 md:space-y-6">
+                <div className="flex items-start md:items-center justify-between gap-3 mb-2 md:mb-4">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold pr-2">Tell Us About Your Ideal Match</h3>
+                  <Button variant="ghost" size="sm" onClick={() => setShowGuaranteedDatingForm(false)} className="touch-target flex-shrink-0">
                     <X className="w-5 h-5" />
                   </Button>
                 </div>
@@ -4662,13 +4663,13 @@ function UnifiedDashboard() {
 
                 {/* Love Languages */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm md:text-base font-medium mb-2">
                     Love Languages <span className="text-red-500">*</span>
                     <span className="text-xs text-muted-foreground ml-2">(Select 1-2)</span>
                   </label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {['Words of Affirmation', 'Quality Time', 'Physical Touch', 'Acts of Service', 'Receiving Gifts'].map((lang) => (
-                      <label key={lang} className="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-accent/5">
+                      <label key={lang} className="flex items-center gap-2 md:gap-3 p-3 md:p-3.5 border rounded-lg cursor-pointer hover:bg-accent/5 active:bg-accent/10 transition-colors min-h-[44px]">
                         <input
                           type="checkbox"
                           checked={guaranteedDatingForm.loveLanguages.includes(lang)}
@@ -4681,9 +4682,9 @@ function UnifiedDashboard() {
                                 : prev.loveLanguages.filter(l => l !== lang)
                             }))
                           }}
-                          className="w-4 h-4"
+                          className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0"
                         />
-                        <span className="text-sm">{lang}</span>
+                        <span className="text-sm md:text-base flex-1">{lang}</span>
                       </label>
                     ))}
                   </div>
@@ -4691,13 +4692,13 @@ function UnifiedDashboard() {
 
                 {/* Dating Goals */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm md:text-base font-medium mb-2">
                     Dating Goals <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={guaranteedDatingForm.datingGoals}
                     onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, datingGoals: e.target.value }))}
-                    className="w-full p-3 border rounded-lg bg-background"
+                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-[44px]"
                   >
                     <option value="">Select your dating goals</option>
                     <option value="casual">Casual Dating</option>
@@ -4708,12 +4709,12 @@ function UnifiedDashboard() {
 
                 {/* Ideal Date Activities */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm md:text-base font-medium mb-2">
                     Ideal Date Activities <span className="text-red-500">*</span>
                   </label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {['Dinner', 'Coffee', 'Movies', 'Walk in park', 'Museum', 'Concert', 'Sports event', 'Cooking together', 'Wine tasting', 'Dancing', 'Art gallery', 'Beach'].map((activity) => (
-                      <label key={activity} className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-accent/5">
+                      <label key={activity} className="flex items-center gap-2 p-2.5 md:p-3 border rounded-lg cursor-pointer hover:bg-accent/5 active:bg-accent/10 transition-colors min-h-[44px]">
                         <input
                           type="checkbox"
                           checked={guaranteedDatingForm.idealDateActivities.includes(activity)}
@@ -4726,9 +4727,9 @@ function UnifiedDashboard() {
                                 : prev.idealDateActivities.filter(a => a !== activity)
                             }))
                           }}
-                          className="w-4 h-4"
+                          className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0"
                         />
-                        <span className="text-sm">{activity}</span>
+                        <span className="text-xs sm:text-sm md:text-base flex-1">{activity}</span>
                       </label>
                     ))}
                   </div>
@@ -4736,11 +4737,11 @@ function UnifiedDashboard() {
 
                 {/* Communication Style */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Communication Style</label>
+                  <label className="block text-sm md:text-base font-medium mb-2">Communication Style</label>
                   <select
                     value={guaranteedDatingForm.communicationStyle}
                     onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, communicationStyle: e.target.value }))}
-                    className="w-full p-3 border rounded-lg bg-background"
+                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-[44px]"
                   >
                     <option value="">Select your communication style</option>
                     <option value="direct">Direct & Straightforward</option>
@@ -4752,11 +4753,11 @@ function UnifiedDashboard() {
 
                 {/* Conflict Resolution Style */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Conflict Resolution Style</label>
+                  <label className="block text-sm md:text-base font-medium mb-2">Conflict Resolution Style</label>
                   <select
                     value={guaranteedDatingForm.conflictResolutionStyle}
                     onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, conflictResolutionStyle: e.target.value }))}
-                    className="w-full p-3 border rounded-lg bg-background"
+                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-[44px]"
                   >
                     <option value="">How do you handle conflicts?</option>
                     <option value="discuss-immediately">Discuss Immediately</option>
@@ -4768,11 +4769,11 @@ function UnifiedDashboard() {
 
                 {/* Family Plans */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Family Plans</label>
+                  <label className="block text-sm md:text-base font-medium mb-2">Family Plans</label>
                   <select
                     value={guaranteedDatingForm.familyPlans}
                     onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, familyPlans: e.target.value }))}
-                    className="w-full p-3 border rounded-lg bg-background"
+                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-[44px]"
                   >
                     <option value="">Select your family plans</option>
                     <option value="want-children">Want Children</option>
@@ -4784,11 +4785,11 @@ function UnifiedDashboard() {
 
                 {/* Religious Practice Level */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Religious Practice Level</label>
+                  <label className="block text-sm md:text-base font-medium mb-2">Religious Practice Level</label>
                   <select
                     value={guaranteedDatingForm.religiousPracticeLevel}
                     onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, religiousPracticeLevel: e.target.value }))}
-                    className="w-full p-3 border rounded-lg bg-background"
+                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-[44px]"
                   >
                     <option value="">How would you describe your religious practice?</option>
                     <option value="very-devout">Very Devout</option>
@@ -4800,11 +4801,11 @@ function UnifiedDashboard() {
 
                 {/* Political Views (Optional) */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Political Views (Optional)</label>
+                  <label className="block text-sm md:text-base font-medium mb-2">Political Views (Optional)</label>
                   <select
                     value={guaranteedDatingForm.politicalViews}
                     onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, politicalViews: e.target.value }))}
-                    className="w-full p-3 border rounded-lg bg-background"
+                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-[44px]"
                   >
                     <option value="">Prefer not to say</option>
                     <option value="very-liberal">Very Liberal</option>
@@ -4817,10 +4818,10 @@ function UnifiedDashboard() {
 
                 {/* Deal Breakers */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Deal Breakers</label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <label className="block text-sm md:text-base font-medium mb-2">Deal Breakers</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {['Smoking', 'Excessive drinking', 'No ambition', 'Poor hygiene', 'Dishonesty', 'Lack of family values', 'Different religion', 'No sense of humor'].map((breaker) => (
-                      <label key={breaker} className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-accent/5">
+                      <label key={breaker} className="flex items-center gap-2 md:gap-3 p-2.5 md:p-3 border rounded-lg cursor-pointer hover:bg-accent/5 active:bg-accent/10 transition-colors min-h-[44px]">
                         <input
                           type="checkbox"
                           checked={guaranteedDatingForm.dealBreakers.includes(breaker)}
@@ -4833,9 +4834,9 @@ function UnifiedDashboard() {
                                 : prev.dealBreakers.filter(b => b !== breaker)
                             }))
                           }}
-                          className="w-4 h-4"
+                          className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0"
                         />
-                        <span className="text-sm">{breaker}</span>
+                        <span className="text-xs sm:text-sm md:text-base flex-1">{breaker}</span>
                       </label>
                     ))}
                   </div>
@@ -4843,11 +4844,11 @@ function UnifiedDashboard() {
 
                 {/* Ideal First Date Description */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Describe Your Ideal First Date</label>
+                  <label className="block text-sm md:text-base font-medium mb-2">Describe Your Ideal First Date</label>
                   <textarea
                     value={guaranteedDatingForm.idealFirstDate}
                     onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, idealFirstDate: e.target.value }))}
-                    className="w-full p-3 border rounded-lg bg-background"
+                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base resize-none"
                     rows={3}
                     placeholder="Tell us what your perfect first date would look like..."
                   />
@@ -4855,10 +4856,10 @@ function UnifiedDashboard() {
 
                 {/* Must-Have Qualities */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Must-Have Qualities in a Partner</label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  <label className="block text-sm md:text-base font-medium mb-2">Must-Have Qualities in a Partner</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {['Kind', 'Honest', 'Funny', 'Intelligent', 'Ambitious', 'Family-oriented', 'Romantic', 'Adventurous', 'Loyal', 'Spiritual', 'Educated', 'Athletic'].map((quality) => (
-                      <label key={quality} className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-accent/5">
+                      <label key={quality} className="flex items-center gap-2 p-2.5 md:p-3 border rounded-lg cursor-pointer hover:bg-accent/5 active:bg-accent/10 transition-colors min-h-[44px]">
                         <input
                           type="checkbox"
                           checked={guaranteedDatingForm.mustHaveQualities.includes(quality)}
@@ -4871,9 +4872,9 @@ function UnifiedDashboard() {
                                 : prev.mustHaveQualities.filter(q => q !== quality)
                             }))
                           }}
-                          className="w-4 h-4"
+                          className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0"
                         />
-                        <span className="text-sm">{quality}</span>
+                        <span className="text-xs sm:text-sm md:text-base flex-1">{quality}</span>
                       </label>
                     ))}
                   </div>
@@ -4881,35 +4882,35 @@ function UnifiedDashboard() {
 
                 {/* Additional Notes */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">Additional Notes (Optional)</label>
+                  <label className="block text-sm md:text-base font-medium mb-2">Additional Notes (Optional)</label>
                   <textarea
                     value={guaranteedDatingForm.additionalNotes}
                     onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, additionalNotes: e.target.value }))}
-                    className="w-full p-3 border rounded-lg bg-background"
+                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base resize-none"
                     rows={4}
                     placeholder="Any other preferences or information you'd like to share..."
                   />
                 </div>
 
                 {/* Submit Button */}
-                <div className="flex gap-3 pt-4">
+                <div className="flex flex-col sm:flex-row gap-2 md:gap-3 pt-4">
                   <Button
                     onClick={() => setShowGuaranteedDatingForm(false)}
                     variant="outline"
-                    className="flex-1"
+                    className="flex-1 min-h-[48px] touch-target order-2 sm:order-1"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={submitGuaranteedDatingRequest}
                     disabled={guaranteedDatingLoading}
-                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600"
+                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 min-h-[48px] touch-target order-1 sm:order-2"
                   >
                     {guaranteedDatingLoading ? 'Processing...' : 'Pay $50 & Submit Request'}
                   </Button>
                 </div>
 
-                <p className="text-xs text-center text-muted-foreground">
+                <p className="text-xs md:text-sm text-center text-muted-foreground leading-relaxed">
                   By submitting, you agree to pay $50 for guaranteed dating services. 100% money-back guarantee if we don't find a match within 30 days.
                 </p>
               </div>
@@ -4917,28 +4918,28 @@ function UnifiedDashboard() {
 
             {/* Request History */}
             {guaranteedDatingHistory.length > 0 && (
-              <div className="mt-8">
-                <h3 className="text-xl font-bold mb-4">Request History</h3>
-                <div className="space-y-3">
+              <div className="mt-6 md:mt-8">
+                <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4">Request History</h3>
+                <div className="space-y-2 md:space-y-3">
                   {guaranteedDatingHistory.map((req: any) => (
-                    <div key={req._id} className="bg-card border border-border rounded-lg p-4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium">
+                    <div key={req._id} className="bg-card border border-border rounded-lg p-3 md:p-4">
+                      <div className="flex justify-between items-start gap-3">
+                        <div className="flex-1">
+                          <p className="text-sm md:text-base font-medium">
                             {req.status === 'matched' ? '✓ Matched' : 
                              req.status === 'completed' ? '✓ Completed' : 
                              req.status === 'expired' ? 'Expired' : 
                              req.status === 'refunded' ? 'Refunded' : 
                              'Pending'}
                           </p>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-xs md:text-sm text-muted-foreground mt-1">
                             {new Date(req.requestDate).toLocaleDateString()}
                           </p>
                         </div>
-                        <div className="text-right">
-                          <p className="text-sm font-medium">$50</p>
+                        <div className="text-right flex-shrink-0">
+                          <p className="text-sm md:text-base font-medium">$50</p>
                           {req.matchedUserName && (
-                            <p className="text-xs text-muted-foreground">Matched with {req.matchedUserName}</p>
+                            <p className="text-xs text-muted-foreground mt-1">Matched with {req.matchedUserName}</p>
                           )}
                         </div>
                       </div>
