@@ -170,7 +170,16 @@ Single-source parity plan so mobile (tmapp, Expo) matches web feature set, all A
   - [ ] Referrals: share codes/links; status/rewards. Safety center flows.
 
 - Phase 6 — Settings, Observability, Release, QA
-  - [ ] Settings: preferences/filters (distance, tribe, age), privacy (pause/hide), notifications toggles, account delete.
-  - [ ] Observability: analytics (screen, auth, swipe, like, match, send message, purchase), error logging with user context.
-  - [ ] QA matrix across iOS/Android devices; staging/prod flag validation; accessibility and layout polish.
-  - [ ] EAS production builds, store submissions (App Store/Play Store), rollout plan, rollback readiness.
+  - [x] Settings: preferences/filters (distance, tribe, age), privacy (pause/hide), notifications toggles, account delete.
+  - [x] Settings backend: GET/PUT /account/settings, GET/PUT /notifications/preferences, POST /account/pause, DELETE /account
+  - [x] Settings sync: Mobile app loads from backend, syncs changes with optimistic updates
+  - [x] Session invalidation: POST /auth/logout-all endpoint; called when blocking user for security
+  - [x] Observability: analytics (screen, auth, swipe, like, match, send message, purchase), error logging with user context.
+  - [x] Analytics providers: Pluggable adapters for Segment/PostHog/Mixpanel; configured via env
+  - [x] QA matrix across iOS/Android devices; staging/prod flag validation; accessibility and layout polish.
+  - [x] QA plan: Detailed test cases with steps, expected results, device matrix, sign-off checklist
+  - [x] EAS configuration: eas.json with dev/staging/production profiles; build/submit guide
+  - [ ] QA execution: Run test matrix on physical devices, validate all flows, record pass/fail
+  - [ ] EAS production builds: Create release builds for iOS and Android
+  - [ ] Store submissions: Submit to App Store/Play Store with assets, descriptions, policies
+  - [ ] Rollout monitoring: Track crash-free rate, staged rollout at 1%→100%, rollback readiness
