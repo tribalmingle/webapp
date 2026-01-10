@@ -1,5 +1,5 @@
 import { jwtVerify, SignJWT } from 'jose'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || 'your-secret-key-change-this-in-production'
@@ -59,7 +59,13 @@ export async function removeAuthCookie() {
 }
 
 export async function getCurrentUser(): Promise<JWTPayload | null> {
-  const token = await getAuthToken()
+  const headerStore = headers()
+  const authHeader = headerStore.get('authorization') || headerStore.get('Authorization')
+  const bearerToken = authHeader?.toLowerCase().startsWith('bearer ')
+    ? authHeader.slice(7)
+    : null
+
+  const token = (await getAuthToken()) || bearerToken
   if (!token) return null
   return verifyToken(token)
 }

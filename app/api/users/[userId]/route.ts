@@ -45,7 +45,16 @@ export async function GET(
         username: userWithoutPassword.username,
         age: userWithoutPassword.age,
         city: userWithoutPassword.city,
-        profilePhoto: userWithoutPassword.profilePhotos?.[0] || userWithoutPassword.profilePhoto
+        profilePhoto: userWithoutPassword.profilePhotos?.[0] || userWithoutPassword.profilePhoto,
+        profilePhotos: userWithoutPassword.profilePhotos || (userWithoutPassword.profilePhoto ? [userWithoutPassword.profilePhoto] : []),
+        tribe: userWithoutPassword.tribe,
+        country: userWithoutPassword.country,
+        bio: userWithoutPassword.bio,
+        interests: userWithoutPassword.interests,
+        verified: userWithoutPassword.verified,
+        occupation: userWithoutPassword.occupation,
+        education: userWithoutPassword.education,
+        relationshipGoals: userWithoutPassword.relationshipGoals,
       }
     })
   } catch (error) {

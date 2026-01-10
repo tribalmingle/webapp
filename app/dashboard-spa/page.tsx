@@ -241,11 +241,14 @@ interface SubscriptionPlan {
   id: SubscriptionPlanId
   name: string
   price: string
+  originalPrice?: string
   period: string
+  perDay?: string
   icon: LucideIcon
   gradient: string
   features: string[]
   popular?: boolean
+  saveAmount?: string
 }
 
 const WALLET_PROVIDER_META: Record<WalletProvider, { label: string; icon: LucideIcon }> = {
@@ -1925,9 +1928,12 @@ function UnifiedDashboard() {
     },
     {
       id: 'monthly',
-      name: 'Monthly',
+      name: '1 Month',
       price: '£15',
-      period: 'per month',
+      originalPrice: '£30',
+      period: 'save 50%',
+      perDay: '0.50',
+      saveAmount: 'Save 50%',
       icon: Zap,
       gradient: 'from-blue-500 to-blue-600',
       features: ['Unlimited likes', 'See who liked you', 'Advanced filters', 'Priority support', 'Read receipts', 'Boost your profile']
@@ -1936,7 +1942,10 @@ function UnifiedDashboard() {
       id: '3-months',
       name: '3 Months',
       price: '£35',
-      period: 'save £10',
+      originalPrice: '£70',
+      period: 'save 50%',
+      perDay: '0.39',
+      saveAmount: 'Save 50%',
       icon: Crown,
       gradient: 'from-purple-500 to-purple-600',
       popular: true,
@@ -1946,7 +1955,10 @@ function UnifiedDashboard() {
       id: '6-months',
       name: '6 Months',
       price: '£60',
-      period: 'save £30',
+      originalPrice: '£120',
+      period: 'save 50%',
+      perDay: '0.33',
+      saveAmount: 'Save 50%',
       icon: Sparkles,
       gradient: 'from-orange-500 to-red-600',
       features: ['Everything in 3-Months', 'VIP customer support', 'Featured profile placement', 'Monthly coaching session', 'Exclusive VIP badge', 'Priority customer service']
@@ -4229,8 +4241,28 @@ function UnifiedDashboard() {
                     <div className={`bg-linear-to-br ${plan.gradient} text-white p-6 text-center`}>
                       <Icon className="w-12 h-12 mx-auto mb-4" />
                       <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                      <div className="text-4xl font-bold mb-1">{plan.price}</div>
-                      <div className="text-sm opacity-90">{plan.period}</div>
+                      {plan.saveAmount && (
+                        <div className="inline-block bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold mb-3">
+                          {plan.saveAmount}
+                        </div>
+                      )}
+                      <div className="flex items-center justify-center gap-2 mb-1">
+                        {plan.originalPrice && (
+                          <span className="text-xl line-through opacity-60">{plan.originalPrice}</span>
+                        )}
+                        <span className="text-4xl font-bold">{plan.price}</span>
+                      </div>
+                      {plan.perDay && (
+                        <div className="mt-3">
+                          <div className="text-5xl font-black mb-1">
+                            £{plan.perDay}
+                          </div>
+                          <div className="text-sm font-semibold uppercase tracking-wide opacity-90">per day</div>
+                        </div>
+                      )}
+                      {!plan.perDay && (
+                        <div className="text-sm opacity-90">{plan.period}</div>
+                      )}
                     </div>
                     <div className="p-6">
                       <ul className="space-y-3 mb-6">

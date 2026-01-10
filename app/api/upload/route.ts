@@ -4,6 +4,8 @@ import { uploadToHostGator } from '@/lib/vendors/hostgator-client'
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
+    const keys = Array.from(formData.keys())
+    console.log('[upload] incoming keys', keys)
     const file = formData.get('file') as File
     const folder = (formData.get('folder') as string) || 'general' // 'profile', 'selfie', 'general', etc.
 

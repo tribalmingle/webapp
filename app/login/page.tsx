@@ -110,7 +110,7 @@ export default function LoginPage() {
         </form>
 
         <div className="text-center mb-4">
-          <Link href="#" className="text-gold-warm text-sm font-semibold hover:text-gold-warm-light transition-colors">
+          <Link href="/reset-password" className="text-gold-warm text-sm font-semibold hover:text-gold-warm-light transition-colors">
             Forgot Password?
           </Link>
         </div>

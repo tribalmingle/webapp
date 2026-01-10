@@ -10,6 +10,27 @@ const MARKETING_ENTRY_POINTS = new Set(['/', '/home'])
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // CORS for API routes (needed for Expo web / browser clients)
+  if (pathname.startsWith('/api')) {
+    const origin = request.headers.get('origin') || '*'
+    const corsHeaders = {
+      'Access-Control-Allow-Origin': origin,
+      'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-requested-with',
+      'Access-Control-Max-Age': '86400',
+    }
+
+    if (request.method === 'OPTIONS') {
+      return new NextResponse(null, { status: 204, headers: corsHeaders })
+    }
+
+    const apiResponse = NextResponse.next()
+    Object.entries(corsHeaders).forEach(([key, value]) => {
+      apiResponse.headers.set(key, value)
+    })
+    return applySecurityHeaders(apiResponse)
+  }
+
   const httpsRedirect = enforceHTTPS(request)
   if (httpsRedirect) {
     return httpsRedirect

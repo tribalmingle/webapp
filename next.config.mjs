@@ -3,6 +3,12 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  async rewrites() {
+    return [
+      // Allow clients calling /upload to hit the API route /api/upload
+      { source: '/upload', destination: '/api/upload' },
+    ]
+  },
   images: {
     unoptimized: false,
     formats: ['image/avif', 'image/webp'],

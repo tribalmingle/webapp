@@ -55,11 +55,14 @@ export async function GET(req: NextRequest) {
           read: { $ne: true }
         })
 
+        const lastMessageAt = lastMessage?.createdAt ? new Date(lastMessage.createdAt).toISOString() : undefined
+
         return {
           userId: otherUser.email,
           name: otherUser.name,
           avatar: otherUser.profilePhotos?.[0] || otherUser.profilePhoto || '',
           lastMessage: lastMessage?.message || 'No messages yet',
+          lastMessageAt,
           time: lastMessage ? formatTimeAgo(lastMessage.createdAt) : '',
           unread: unreadCount,
           online: false // You can implement online status tracking separately

@@ -42,12 +42,50 @@ export async function POST(request: Request) {
     const pi = await stripe.paymentIntents.create({
       amount: parsed.data.amountCents,
       currency: parsed.data.currency.toLowerCase(),
-      metadata: { purpose: parsed.data.purpose, userId: user.userId, ...(parsed.data.metadata || {}) },
-      automatic_payment_methods: { enabled: true },
+      metadata: { 
+        purpose: parsed.data.purpose, 
+        userId: user.userId, 
+        ...(parsed.data.metadata || {}) 
+      },
+      // Automatic payment methods enables:
+      // - Credit/Debit cards (Visa, Mastercard, Amex)
+      // - Apple Pay (when domain verified)
+      // - Google Pay (when configured)
+      // - Regional methods (iDEAL, SEPA, Alipay, etc.)
+      automatic_payment_methods: { 
+        enabled: true,
+        // Allow redirect-based payment methods for regional support
+        allow_redirects: 'always' 
+      },
+      // Statement descriptor for customer's bank/card statement
+      statement_descriptor: 'TribalMingle',
+      // Capture payment immediately (vs. authorize and capture later)
+      capture_method: 'automatic',
     })
-    return NextResponse.json({ success: true, intent: { id: pi.id, clientSecret: pi.client_secret, gateway: 'stripe', amountCents: pi.amount, currency: pi.currency.toUpperCase(), purpose: parsed.data.purpose, createdAt: new Date(), userId: user.userId }, mode: 'live' })
+    return NextResponse.json({ 
+      success: true, 
+      intent: { 
+        id: pi.id, 
+        clientSecret: pi.client_secret, 
+        gateway: 'stripe', 
+        amountCents: pi.amount, 
+        currency: pi.currency.toUpperCase(), 
+        purpose: parsed.data.purpose, 
+        createdAt: new Date(), 
+        userId: user.userId 
+      }, 
+      mode: 'live',
+      // Include available payment method types for frontend
+      paymentMethodTypes: pi.payment_method_types || []
+    })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Stripe error'
-    return NextResponse.json({ success: false, error: message }, { status: 502 })
+    const code = err instanceof Stripe.errors.StripeError ? err.code : undefined
+    return NextResponse.json({ 
+      success: false, 
+      error: message,
+      code,
+      type: err instanceof Error ? err.constructor.name : 'UnknownError'
+    }, { status: 502 })
   }
 }
