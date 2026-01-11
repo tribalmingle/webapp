@@ -29,6 +29,9 @@ out/
 build/
 dist/
 
+# Uploaded files
+public/uploads/
+
 # Testing
 coverage/
 .nyc_output/

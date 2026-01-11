@@ -287,7 +287,22 @@ export default function SignUpPage() {
         throw new Error('Upload URL missing')
       }
 
-      if (!data.uploadUrl.includes('example.com')) {
+      // Handle direct server upload (Hostgator) vs S3 presigned URL
+      if (data.uploadUrl.includes('/api/upload/direct')) {
+        const uploadFormData = new FormData()
+        uploadFormData.append('file', file)
+        uploadFormData.append('key', data.key)
+
+        const uploadResponse = await fetch(data.uploadUrl, {
+          method: 'POST',
+          body: uploadFormData,
+        })
+
+        if (!uploadResponse.ok) {
+          throw new Error('Upload failed')
+        }
+      } else if (!data.uploadUrl.includes('example.com')) {
+        // S3 presigned URL upload
         const uploadResponse = await fetch(data.uploadUrl, {
           method: 'PUT',
           headers: {

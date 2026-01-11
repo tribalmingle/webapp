@@ -31,30 +31,35 @@ export async function createSignedUpload(contentType: string, prefix = 'onboardi
   const key = `${prefix}/${randomUUID()}`
   const s3 = getClient()
 
-  if (!bucket || !s3) {
-    const mockUrl = `https://example.com/${key}`
+  // If AWS S3 is configured, use it
+  if (bucket && s3) {
+    const command = new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      ContentType: contentType,
+      ACL: 'private',
+    })
+
+    const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 900 })
+
     return {
-      uploadUrl: mockUrl,
-      fileUrl: mockUrl,
+      uploadUrl,
+      fileUrl: `https://${bucket}.s3.${region}.amazonaws.com/${key}`,
       key,
-      expiresIn: 0,
+      expiresIn: 900,
     }
   }
 
-  const command = new PutObjectCommand({
-    Bucket: bucket,
-    Key: key,
-    ContentType: contentType,
-    ACL: 'private',
-  })
-
-  const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 900 })
-
+  // For Hostgator/non-S3 hosting: use direct server upload
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://tribalmingle.com'
+  const uploadUrl = `${baseUrl}/api/upload/direct`
+  const fileUrl = `${baseUrl}/uploads/${key}`
+  
   return {
     uploadUrl,
-    fileUrl: `https://${bucket}.s3.${region}.amazonaws.com/${key}`,
+    fileUrl,
     key,
-    expiresIn: 900,
+    expiresIn: 3600,
   }
 }
 
