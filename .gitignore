@@ -17,10 +17,7 @@ scripts/create-test-user.ts
 scripts/test-hostgator.ts
 
 # Security - Documentation with Credentials
-VERCEL_ENV_SETUP.md
-VERCEL_DEPLOYMENT_FIX.md
-TEST_RESULTS_SUMMARY.md
-PRODUCTION_LAUNCH_CHECKLIST.md
+*.md
 
 # Dependencies
 node_modules/
