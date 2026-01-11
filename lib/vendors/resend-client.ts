@@ -40,54 +40,86 @@ export interface SendRegistrationReminderEmailOptions {
 }
 
 /**
- * Send email via Resend
+ * Send email via Resend with retry logic
  */
-export async function sendEmailViaResend(options: SendEmailOptions) {
+export async function sendEmailViaResend(options: SendEmailOptions, retries = 2) {
   if (!RESEND_API_KEY) {
     console.warn('[resend] API key not configured, skipping email send')
     return { success: false, message: 'Resend not configured' }
   }
 
-  try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: RESEND_FROM_EMAIL,
-        to: options.to,
-        subject: options.subject,
-        html: options.html,
-        text: options.text,
-        reply_to: options.replyTo,
-      }),
-    })
+  let lastError: Error | null = null
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      if (isDev) console.error('[resend] API error:', response.status, errorText)
-      throw new Error(`Resend API error: ${response.statusText}`)
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      if (attempt > 0 && isDev) {
+        console.log(`[resend] Retry attempt ${attempt}/${retries}`)
+      }
+
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: RESEND_FROM_EMAIL,
+          to: options.to,
+          subject: options.subject,
+          html: options.html,
+          text: options.text,
+          reply_to: options.replyTo,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        if (isDev) console.error('[resend] API error:', response.status, errorText)
+        
+        // Don't retry on client errors (4xx)
+        if (response.status >= 400 && response.status < 500) {
+          throw new Error(`Resend API error: ${response.statusText}`)
+        }
+        
+        // Retry on server errors (5xx) or network issues
+        lastError = new Error(`Resend API error: ${response.statusText}`)
+        
+        // Wait before retry (exponential backoff)
+        if (attempt < retries) {
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000))
+          continue
+        }
+      } else {
+        const data = await response.json()
+
+        if (isDev) console.log('[resend] Email sent', {
+          to: options.to,
+          emailId: data.id,
+          attempt: attempt + 1,
+        })
+
+        return {
+          success: true,
+          provider: 'resend',
+          emailId: data.id,
+          to: options.to,
+        }
+      }
+    } catch (error) {
+      lastError = error as Error
+      if (isDev) console.error(`[resend] Send email error (attempt ${attempt + 1}):`, error)
+      
+      // Wait before retry (exponential backoff)
+      if (attempt < retries) {
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000))
+        continue
+      }
     }
-
-    const data = await response.json()
-
-    if (isDev) console.log('[resend] Email sent', {
-      to: options.to,
-      emailId: data.id,
-    })
-
-    return {
-      success: true,
-      provider: 'resend',
-      emailId: data.id,
-      to: options.to,
-    }
-  } catch (error) {
-    if (isDev) console.error('[resend] Send email error:', error)
-    throw error
   }
+
+  // All retries failed
+  if (isDev) console.error('[resend] All retry attempts failed')
+  throw lastError || new Error('Failed to send email after retries')
 }
 
 /**

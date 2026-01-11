@@ -521,6 +521,39 @@ export class CommunityService {
       throw new CommunityServiceError('forbidden', 'Only guardians can access this club', 403)
     }
   }
+
+  /**
+   * Join a club
+   */
+  static async joinClub(slug: string, userId: string) {
+    return withSpan('community.joinClub', async () => {
+      const db = await getMongoDb()
+      const clubsCollection = db.collection<CommunityClubDocument>('community_clubs')
+      const club = await clubsCollection.findOne({ slug, status: 'active' })
+      
+      if (!club) {
+        throw new CommunityServiceError('club_not_found', 'Club not found', 404)
+      }
+
+      // Check if user already a member
+      const memberExists = club.memberIds?.some(id => id.toHexString() === userId)
+      if (memberExists) {
+        return { success: true, message: 'Already a member' }
+      }
+
+      // Add user to club members
+      await clubsCollection.updateOne(
+        { _id: club._id },
+        { 
+          $addToSet: { memberIds: new ObjectId(userId) },
+          $inc: { memberCount: 1 },
+          $set: { updatedAt: new Date() }
+        }
+      )
+
+      return { success: true, message: 'Joined club successfully' }
+    }, { userId, slug })
+  }
 }
 
 function documentIdToThreadPath(date: Date) {

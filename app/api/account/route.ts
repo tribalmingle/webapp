@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { ObjectId } from 'mongodb'
 
 import { getAuthUser } from '@/lib/auth/session'
 import { getMongoDb } from '@/lib/mongodb'
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest) {
   }
 
   const db = await getMongoDb()
-  const account = await db.collection(CollectionNames.USERS).findOne({ _id: authUser.userId })
+  const account = await db.collection(CollectionNames.USERS).findOne({ _id: new ObjectId(authUser.userId) })
 
   // Settings are stored in a dedicated collection to avoid mutating the main user record
   const settings = await db
@@ -68,7 +69,7 @@ export async function DELETE(request: NextRequest) {
   })
 
   await db.collection(CollectionNames.USERS).updateOne(
-    { _id: authUser.userId },
+    { _id: new ObjectId(authUser.userId) },
     {
       $set: {
         deletion_scheduled_at: now,

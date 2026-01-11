@@ -86,3 +86,11 @@ export async function healthCheck(): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * Legacy alias for getDatabase
+ * @deprecated Use getDatabase instead
+ */
+export async function connectDB(): Promise<Db> {
+  return getDatabase();
+}

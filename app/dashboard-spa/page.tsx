@@ -46,7 +46,9 @@ import {
   Share2,
   HelpCircle,
   ShieldCheck,
-  Filter
+  Filter,
+  Info,
+  Calendar
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import {
@@ -749,7 +751,6 @@ function UnifiedDashboard() {
     try {
       const response = await fetch('/api/guaranteed-dating/status', {
         headers: { 
-          'Authorization': `Bearer ${user.token}`,
           'Content-Type': 'application/json'
         },
         credentials: 'include',
@@ -796,7 +797,6 @@ function UnifiedDashboard() {
       const response = await fetch('/api/guaranteed-dating/request', {
         method: 'POST',
         headers: { 
-          'Authorization': `Bearer ${user.token}`,
           'Content-Type': 'application/json'
         },
         credentials: 'include',
@@ -856,7 +856,6 @@ function UnifiedDashboard() {
       const response = await fetch('/api/guaranteed-dating/refund', {
         method: 'POST',
         headers: { 
-          'Authorization': `Bearer ${user.token}`,
           'Content-Type': 'application/json'
         },
         credentials: 'include',
@@ -2096,12 +2095,12 @@ function UnifiedDashboard() {
                       <FadeIn key={stat.label} delay={0.1 * (index + 1)}>
                         <div className="group relative">
                           {/* Glow on interaction */}
-                          <div className={`absolute -inset-1 bg-gradient-to-br ${stat.color} rounded-2xl opacity-0 group-hover:opacity-100 group-active:opacity-100 blur-xl transition-all duration-500`} />
+                          <div className={`absolute -inset-1 bg-linear-to-br ${stat.color} rounded-2xl opacity-0 group-hover:opacity-100 group-active:opacity-100 blur-xl transition-all duration-500`} />
                           
                           {/* Card */}
                           <div className="relative card-premium rounded-xl md:rounded-2xl p-3 md:p-5 lg:p-6 group-hover:border-gold-warm/30 group-active:border-gold-warm/30 transition-all duration-300">
                             {/* Icon */}
-                            <div className={`w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-gradient-to-br ${stat.color} rounded-lg md:rounded-xl flex items-center justify-center mb-2 md:mb-3 lg:mb-4 group-hover:scale-110 group-active:scale-110 transition-transform duration-300`}>
+                            <div className={`w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-linear-to-br ${stat.color} rounded-lg md:rounded-xl flex items-center justify-center mb-2 md:mb-3 lg:mb-4 group-hover:scale-110 group-active:scale-110 transition-transform duration-300`}>
                               <IconComponent className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-gold-warm" />
                             </div>
                             
@@ -2136,10 +2135,10 @@ function UnifiedDashboard() {
                   onClick={() => setActiveView('subscription')}
                 >
                   {/* Animated gradient background */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-linear-to-br from-purple-600 via-pink-500 to-orange-400 opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
                   
                   {/* Glow effect on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 blur-2xl transition-all duration-500" />
+                  <div className="absolute inset-0 bg-linear-to-br from-purple-400/20 to-pink-400/20 opacity-0 group-hover:opacity-100 blur-2xl transition-all duration-500" />
                   
                   {/* Content */}
                   <div className="relative p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -2274,7 +2273,7 @@ function UnifiedDashboard() {
                     <FadeIn key={liker._id} delay={0.6 + index * 0.1}>
                       <div className="group relative">
                         {/* Glow on interaction */}
-                        <div className="absolute -inset-1 bg-gradient-to-br from-purple-royal/20 to-gold-warm/20 rounded-2xl opacity-0 group-hover:opacity-100 group-active:opacity-100 blur-xl transition-all duration-500" />
+                        <div className="absolute -inset-1 bg-linear-to-br from-purple-royal/20 to-gold-warm/20 rounded-2xl opacity-0 group-hover:opacity-100 group-active:opacity-100 blur-xl transition-all duration-500" />
                         
                         <div 
                           className="relative glass-effect rounded-2xl p-4 md:p-6 cursor-pointer card-interactive border border-gold-warm/10 group-hover:border-gold-warm/30 group-active:border-gold-warm/30 transition-all"
@@ -2289,7 +2288,7 @@ function UnifiedDashboard() {
                                   className="w-full h-full object-cover group-hover:scale-110 group-active:scale-110 transition-transform duration-500"
                                 />
                               </div>
-                              <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-gradient-to-br from-purple-royal to-gold-warm flex items-center justify-center border-2 border-background-primary shadow-glow-gold">
+                              <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-linear-to-br from-purple-royal to-gold-warm flex items-center justify-center border-2 border-background-primary shadow-glow-gold">
                                 <Heart className="w-3.5 h-3.5 text-white" fill="currentColor" />
                               </div>
                             </div>
@@ -2345,7 +2344,7 @@ function UnifiedDashboard() {
                     <FadeIn key={t._id} delay={0.8 + index * 0.1}>
                       <div className="group relative">
                         {/* Glow effect */}
-                        <div className="absolute -inset-1 bg-gradient-to-br from-gold-warm/10 to-purple-royal/10 rounded-2xl opacity-0 group-hover:opacity-100 group-active:opacity-100 blur-xl transition-all duration-500" />
+                        <div className="absolute -inset-1 bg-linear-to-br from-gold-warm/10 to-purple-royal/10 rounded-2xl opacity-0 group-hover:opacity-100 group-active:opacity-100 blur-xl transition-all duration-500" />
                         
                         <div className="relative card-premium rounded-xl md:rounded-2xl p-4 md:p-6">
                           {/* Header with photo and name */}
@@ -2355,7 +2354,7 @@ function UnifiedDashboard() {
                                 <img src={t.profilePhoto} alt={t.name} className="w-full h-full object-cover" />
                               </div>
                             ) : (
-                              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-purple-royal to-gold-warm flex items-center justify-center ring-2 ring-gold-warm/20">
+                              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-linear-to-br from-purple-royal to-gold-warm flex items-center justify-center ring-2 ring-gold-warm/20">
                                 <span className="text-white font-bold text-lg">
                                   {t.name?.charAt(0).toUpperCase()}
                                 </span>
@@ -2418,7 +2417,7 @@ function UnifiedDashboard() {
             {(!user.subscriptionPlan || user.subscriptionPlan === 'free') && (
               <FadeIn delay={0.9}>
                 <div className="section-spacing px-4 md:px-0">
-                  <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-royal via-purple-royal-dark to-gold-warm p-1">
+                  <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-purple-royal via-purple-royal-dark to-gold-warm p-1">
                     <div className="bg-background-primary rounded-3xl p-6 md:p-10 text-center">
                       <div className="inline-flex items-center gap-2 bg-gold-warm/10 border border-gold-warm/30 rounded-full px-4 py-2 mb-6">
                         <Sparkles className="w-4 h-4 text-gold-warm" />
@@ -2469,7 +2468,7 @@ function UnifiedDashboard() {
               {todayMatches.length === 0 ? (
                 <FadeIn delay={1.1}>
                   <div className="text-center py-12 md:py-16 card-premium rounded-3xl">
-                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-purple-royal/20 to-gold-warm/20 flex items-center justify-center mx-auto mb-6">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-linear-to-br from-purple-royal/20 to-gold-warm/20 flex items-center justify-center mx-auto mb-6">
                       <Heart className="w-10 h-10 md:w-12 md:h-12 text-gold-warm opacity-50" />
                     </div>
                     <h3 className="text-xl md:text-2xl font-display text-text-primary mb-2">No matches yet</h3>
@@ -2644,9 +2643,9 @@ function UnifiedDashboard() {
                       placeholder="Search by name, city, or tribe..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="px-3 md:px-4 py-2 md:py-2.5 border border-border rounded-lg bg-background text-foreground w-full sm:w-64 text-sm md:text-base min-h-[44px] md:min-h-[40px]"
+                      className="px-3 md:px-4 py-2 md:py-2.5 border border-border rounded-lg bg-background text-foreground w-full sm:w-64 text-sm md:text-base min-h-11 md:min-h-10"
                     />
-                    <Button onClick={fetchDiscoverUsers} className="min-h-[44px] md:min-h-[40px] active:scale-95 transition-transform text-sm md:text-base">
+                    <Button onClick={fetchDiscoverUsers} className="min-h-11 md:min-h-10 active:scale-95 transition-transform text-sm md:text-base">
                       <Search className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
                       Search
                     </Button>
@@ -2692,7 +2691,7 @@ function UnifiedDashboard() {
                         )}
                         <div className="flex gap-2 mt-3 md:mt-4">
                           <Button 
-                            className={`flex-1 min-h-[44px] md:min-h-[40px] active:scale-95 transition-transform text-xs md:text-sm ${isUserLiked(person.email) ? 'bg-gray-400 cursor-default' : 'bg-purple-600 hover:bg-purple-700'}`}
+                            className={`flex-1 min-h-11 md:min-h-10 active:scale-95 transition-transform text-xs md:text-sm ${isUserLiked(person.email) ? 'bg-gray-400 cursor-default' : 'bg-purple-600 hover:bg-purple-700'}`}
                             onClick={async () => {
                               if (isUserLiked(person.email)) return
                               
@@ -2735,7 +2734,7 @@ function UnifiedDashboard() {
                           </Button>
                           <Button 
                             variant="outline" 
-                            className="flex-1 min-h-[44px] md:min-h-[40px] active:scale-95 transition-transform text-xs md:text-sm"
+                            className="flex-1 min-h-11 md:min-h-10 active:scale-95 transition-transform text-xs md:text-sm"
                             onClick={() => {
                               trackProfileView(person.email)
                               setSelectedProfile(person)
@@ -2747,7 +2746,7 @@ function UnifiedDashboard() {
                           </Button>
                           <Button 
                             variant="outline" 
-                            className="flex-1 min-h-[44px] md:min-h-[40px] active:scale-95 transition-transform text-xs md:text-sm"
+                            className="flex-1 min-h-11 md:min-h-10 active:scale-95 transition-transform text-xs md:text-sm"
                             onClick={() => {
                               setActiveView('chat-conversation')
                               setSelectedChatUser(person.email)
@@ -2767,7 +2766,7 @@ function UnifiedDashboard() {
 
             {/* Advanced Search Modal */}
             {showAdvancedSearch && (
-              <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60">
+              <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/60">
                 <div className="absolute inset-0" onClick={() => setShowAdvancedSearch(false)} />
                 <div className="relative bg-card border border-primary/30 rounded-none md:rounded-2xl shadow-[0_25px_70px_rgba(15,23,42,0.65)] w-full h-full md:h-auto md:max-h-[90vh] md:max-w-lg mx-0 md:mx-4 overflow-y-auto p-4 md:p-6">
                     <div className="flex items-center justify-between mb-4">
@@ -3003,7 +3002,7 @@ function UnifiedDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {discoverUsers.map((person) => (
                   <div key={person._id} className="group relative">
-                    <div className="absolute -inset-1 bg-gradient-to-br from-purple-royal/20 to-gold-warm/20 rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500" />
+                    <div className="absolute -inset-1 bg-linear-to-br from-purple-royal/20 to-gold-warm/20 rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500" />
                     
                     <div className="relative card-premium rounded-3xl overflow-hidden">
                       <div 
@@ -3021,14 +3020,14 @@ function UnifiedDashboard() {
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                           />
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-purple-royal to-gold-warm flex items-center justify-center">
+                          <div className="w-full h-full bg-linear-to-br from-purple-royal to-gold-warm flex items-center justify-center">
                             <span className="text-white text-7xl font-bold opacity-50">
                               {person.name.charAt(0).toUpperCase()}
                             </span>
                           </div>
                         )}
                         
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
                         
                         {person.isVerified && (
                           <div className="absolute top-4 right-4">
@@ -3181,9 +3180,9 @@ function UnifiedDashboard() {
                   const IconComponent = tip.icon
                   return (
                     <div key={index} className="group relative">
-                      <div className={`absolute -inset-1 bg-gradient-to-br ${tip.color} rounded-2xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500`} />
+                      <div className={`absolute -inset-1 bg-linear-to-br ${tip.color} rounded-2xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500`} />
                       <div className="relative card-premium rounded-2xl p-6">
-                        <div className={`w-12 h-12 bg-gradient-to-br ${tip.color} rounded-xl flex items-center justify-center mb-4`}>
+                        <div className={`w-12 h-12 bg-linear-to-br ${tip.color} rounded-xl flex items-center justify-center mb-4`}>
                           <IconComponent className="w-6 h-6 text-primary" />
                         </div>
                         <h3 className="text-lg font-semibold mb-2">{tip.title}</h3>
@@ -4523,7 +4522,7 @@ function UnifiedDashboard() {
             </div>
 
             {/* Pricing Card */}
-            <div className="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 text-white">
+            <div className="bg-linear-to-br from-purple-600 via-pink-500 to-orange-400 rounded-xl md:rounded-2xl p-6 md:p-8 mb-6 md:mb-8 text-white">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex-1">
                   <h3 className="text-xl sm:text-2xl font-bold mb-1 md:mb-2">One-Time Fee</h3>
@@ -4544,35 +4543,35 @@ function UnifiedDashboard() {
               </h3>
               <div className="space-y-3 md:space-y-4">
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-base">1</div>
+                  <div className="shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-base">1</div>
                   <div className="flex-1">
                     <p className="font-medium text-sm md:text-base">Fill out detailed preferences</p>
                     <p className="text-xs md:text-sm text-muted-foreground">Tell us what you're looking for in a partner</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-base">2</div>
+                  <div className="shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-base">2</div>
                   <div className="flex-1">
                     <p className="font-medium text-sm md:text-base">Pay one-time fee of $50</p>
                     <p className="text-xs md:text-sm text-muted-foreground">Secure payment via Stripe or Paystack</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-base">3</div>
+                  <div className="shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-base">3</div>
                   <div className="flex-1">
                     <p className="font-medium text-sm md:text-base">We find your perfect match within 30 days</p>
                     <p className="text-xs md:text-sm text-muted-foreground">Same tribe, same city, compatible interests</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-base">4</div>
+                  <div className="shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-base">4</div>
                   <div className="flex-1">
                     <p className="font-medium text-sm md:text-base">We arrange the date for you</p>
                     <p className="text-xs md:text-sm text-muted-foreground">Restaurant/bar reservation, specific time & date</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-base">5</div>
+                  <div className="shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm md:text-base">5</div>
                   <div className="flex-1">
                     <p className="font-medium text-sm md:text-base">100% Money-back guarantee</p>
                     <p className="text-xs md:text-sm text-muted-foreground">No match within 30 days? Get full refund in 3-7 working days</p>
@@ -4604,13 +4603,13 @@ function UnifiedDashboard() {
                         <Button
                           onClick={() => requestGuaranteedDatingRefund(guaranteedDatingRequest._id)}
                           variant="outline"
-                          className="min-h-[44px] w-full sm:w-auto touch-target"
+                          className="min-h-11 w-full sm:w-auto touch-target"
                         >
                           Request Refund
                         </Button>
                         <Button
                           onClick={() => setShowGuaranteedDatingForm(true)}
-                          className="bg-primary min-h-[44px] w-full sm:w-auto touch-target"
+                          className="bg-primary min-h-11 w-full sm:w-auto touch-target"
                         >
                           Try Again (Another 30 Days)
                         </Button>
@@ -4670,7 +4669,7 @@ function UnifiedDashboard() {
                   setShowGuaranteedDatingForm(true)
                 }}
                 size="lg"
-                className="w-full py-5 md:py-6 text-base md:text-lg min-h-[56px] touch-target"
+                className="w-full py-5 md:py-6 text-base md:text-lg min-h-14 touch-target"
               >
                 <Heart className="w-5 h-5 mr-2" />
                 Start Guaranteed Dating Request
@@ -4682,7 +4681,7 @@ function UnifiedDashboard() {
               <div className="bg-card border border-border rounded-xl p-4 md:p-6 space-y-5 md:space-y-6">
                 <div className="flex items-start md:items-center justify-between gap-3 mb-2 md:mb-4">
                   <h3 className="text-lg sm:text-xl md:text-2xl font-bold pr-2">Tell Us About Your Ideal Match</h3>
-                  <Button variant="ghost" size="sm" onClick={() => setShowGuaranteedDatingForm(false)} className="touch-target flex-shrink-0">
+                  <Button variant="ghost" size="sm" onClick={() => setShowGuaranteedDatingForm(false)} className="touch-target shrink-0">
                     <X className="w-5 h-5" />
                   </Button>
                 </div>
@@ -4701,7 +4700,7 @@ function UnifiedDashboard() {
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {['Words of Affirmation', 'Quality Time', 'Physical Touch', 'Acts of Service', 'Receiving Gifts'].map((lang) => (
-                      <label key={lang} className="flex items-center gap-2 md:gap-3 p-3 md:p-3.5 border rounded-lg cursor-pointer hover:bg-accent/5 active:bg-accent/10 transition-colors min-h-[44px]">
+                      <label key={lang} className="flex items-center gap-2 md:gap-3 p-3 md:p-3.5 border rounded-lg cursor-pointer hover:bg-accent/5 active:bg-accent/10 transition-colors min-h-11">
                         <input
                           type="checkbox"
                           checked={guaranteedDatingForm.loveLanguages.includes(lang)}
@@ -4714,7 +4713,7 @@ function UnifiedDashboard() {
                                 : prev.loveLanguages.filter(l => l !== lang)
                             }))
                           }}
-                          className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0"
+                          className="w-4 h-4 md:w-5 md:h-5 shrink-0"
                         />
                         <span className="text-sm md:text-base flex-1">{lang}</span>
                       </label>
@@ -4730,7 +4729,7 @@ function UnifiedDashboard() {
                   <select
                     value={guaranteedDatingForm.datingGoals}
                     onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, datingGoals: e.target.value }))}
-                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-[44px]"
+                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-11"
                   >
                     <option value="">Select your dating goals</option>
                     <option value="casual">Casual Dating</option>
@@ -4746,7 +4745,7 @@ function UnifiedDashboard() {
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {['Dinner', 'Coffee', 'Movies', 'Walk in park', 'Museum', 'Concert', 'Sports event', 'Cooking together', 'Wine tasting', 'Dancing', 'Art gallery', 'Beach'].map((activity) => (
-                      <label key={activity} className="flex items-center gap-2 p-2.5 md:p-3 border rounded-lg cursor-pointer hover:bg-accent/5 active:bg-accent/10 transition-colors min-h-[44px]">
+                      <label key={activity} className="flex items-center gap-2 p-2.5 md:p-3 border rounded-lg cursor-pointer hover:bg-accent/5 active:bg-accent/10 transition-colors min-h-11">
                         <input
                           type="checkbox"
                           checked={guaranteedDatingForm.idealDateActivities.includes(activity)}
@@ -4759,7 +4758,7 @@ function UnifiedDashboard() {
                                 : prev.idealDateActivities.filter(a => a !== activity)
                             }))
                           }}
-                          className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0"
+                          className="w-4 h-4 md:w-5 md:h-5 shrink-0"
                         />
                         <span className="text-xs sm:text-sm md:text-base flex-1">{activity}</span>
                       </label>
@@ -4773,7 +4772,7 @@ function UnifiedDashboard() {
                   <select
                     value={guaranteedDatingForm.communicationStyle}
                     onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, communicationStyle: e.target.value }))}
-                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-[44px]"
+                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-11"
                   >
                     <option value="">Select your communication style</option>
                     <option value="direct">Direct & Straightforward</option>
@@ -4789,7 +4788,7 @@ function UnifiedDashboard() {
                   <select
                     value={guaranteedDatingForm.conflictResolutionStyle}
                     onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, conflictResolutionStyle: e.target.value }))}
-                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-[44px]"
+                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-11"
                   >
                     <option value="">How do you handle conflicts?</option>
                     <option value="discuss-immediately">Discuss Immediately</option>
@@ -4805,7 +4804,7 @@ function UnifiedDashboard() {
                   <select
                     value={guaranteedDatingForm.familyPlans}
                     onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, familyPlans: e.target.value }))}
-                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-[44px]"
+                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-11"
                   >
                     <option value="">Select your family plans</option>
                     <option value="want-children">Want Children</option>
@@ -4821,7 +4820,7 @@ function UnifiedDashboard() {
                   <select
                     value={guaranteedDatingForm.religiousPracticeLevel}
                     onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, religiousPracticeLevel: e.target.value }))}
-                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-[44px]"
+                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-11"
                   >
                     <option value="">How would you describe your religious practice?</option>
                     <option value="very-devout">Very Devout</option>
@@ -4837,7 +4836,7 @@ function UnifiedDashboard() {
                   <select
                     value={guaranteedDatingForm.politicalViews}
                     onChange={(e) => setGuaranteedDatingForm(prev => ({ ...prev, politicalViews: e.target.value }))}
-                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-[44px]"
+                    className="w-full p-3 md:p-3.5 border rounded-lg bg-background text-sm md:text-base min-h-11"
                   >
                     <option value="">Prefer not to say</option>
                     <option value="very-liberal">Very Liberal</option>
@@ -4853,7 +4852,7 @@ function UnifiedDashboard() {
                   <label className="block text-sm md:text-base font-medium mb-2">Deal Breakers</label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {['Smoking', 'Excessive drinking', 'No ambition', 'Poor hygiene', 'Dishonesty', 'Lack of family values', 'Different religion', 'No sense of humor'].map((breaker) => (
-                      <label key={breaker} className="flex items-center gap-2 md:gap-3 p-2.5 md:p-3 border rounded-lg cursor-pointer hover:bg-accent/5 active:bg-accent/10 transition-colors min-h-[44px]">
+                      <label key={breaker} className="flex items-center gap-2 md:gap-3 p-2.5 md:p-3 border rounded-lg cursor-pointer hover:bg-accent/5 active:bg-accent/10 transition-colors min-h-11">
                         <input
                           type="checkbox"
                           checked={guaranteedDatingForm.dealBreakers.includes(breaker)}
@@ -4866,7 +4865,7 @@ function UnifiedDashboard() {
                                 : prev.dealBreakers.filter(b => b !== breaker)
                             }))
                           }}
-                          className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0"
+                          className="w-4 h-4 md:w-5 md:h-5 shrink-0"
                         />
                         <span className="text-xs sm:text-sm md:text-base flex-1">{breaker}</span>
                       </label>
@@ -4891,7 +4890,7 @@ function UnifiedDashboard() {
                   <label className="block text-sm md:text-base font-medium mb-2">Must-Have Qualities in a Partner</label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {['Kind', 'Honest', 'Funny', 'Intelligent', 'Ambitious', 'Family-oriented', 'Romantic', 'Adventurous', 'Loyal', 'Spiritual', 'Educated', 'Athletic'].map((quality) => (
-                      <label key={quality} className="flex items-center gap-2 p-2.5 md:p-3 border rounded-lg cursor-pointer hover:bg-accent/5 active:bg-accent/10 transition-colors min-h-[44px]">
+                      <label key={quality} className="flex items-center gap-2 p-2.5 md:p-3 border rounded-lg cursor-pointer hover:bg-accent/5 active:bg-accent/10 transition-colors min-h-11">
                         <input
                           type="checkbox"
                           checked={guaranteedDatingForm.mustHaveQualities.includes(quality)}
@@ -4904,7 +4903,7 @@ function UnifiedDashboard() {
                                 : prev.mustHaveQualities.filter(q => q !== quality)
                             }))
                           }}
-                          className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0"
+                          className="w-4 h-4 md:w-5 md:h-5 shrink-0"
                         />
                         <span className="text-xs sm:text-sm md:text-base flex-1">{quality}</span>
                       </label>
@@ -4929,14 +4928,14 @@ function UnifiedDashboard() {
                   <Button
                     onClick={() => setShowGuaranteedDatingForm(false)}
                     variant="outline"
-                    className="flex-1 min-h-[48px] touch-target order-2 sm:order-1"
+                    className="flex-1 min-h-12 touch-target order-2 sm:order-1"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={submitGuaranteedDatingRequest}
                     disabled={guaranteedDatingLoading}
-                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 min-h-[48px] touch-target order-1 sm:order-2"
+                    className="flex-1 bg-linear-to-r from-purple-600 to-pink-600 min-h-12 touch-target order-1 sm:order-2"
                   >
                     {guaranteedDatingLoading ? 'Processing...' : 'Pay $50 & Submit Request'}
                   </Button>
@@ -4968,7 +4967,7 @@ function UnifiedDashboard() {
                             {new Date(req.requestDate).toLocaleDateString()}
                           </p>
                         </div>
-                        <div className="text-right flex-shrink-0">
+                        <div className="text-right shrink-0">
                           <p className="text-sm md:text-base font-medium">$50</p>
                           {req.matchedUserName && (
                             <p className="text-xs text-muted-foreground mt-1">Matched with {req.matchedUserName}</p>

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { ObjectId } from 'mongodb'
 import { connectDB } from '@/lib/db/mongodb'
 import { getAuthUser } from '@/lib/auth/session'
 
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
     const db = await connectDB()
     const usersCollection = db.collection('users')
 
-    const user = await usersCollection.findOne({ _id: authUser.userId })
+    const user = await usersCollection.findOne({ _id: new ObjectId(authUser.userId) })
     if (!user) {
       return NextResponse.json(
         { error: 'User not found' },
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest) {
 
       // Update user with new code
       await usersCollection.updateOne(
-        { _id: authUser.userId },
+        { _id: new ObjectId(authUser.userId) },
         { $set: { referralCode, referralCodeCreatedAt: new Date() } }
       )
     }

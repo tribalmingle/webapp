@@ -4,7 +4,7 @@ import clientPromise from '@/lib/mongodb'
 import { createToken } from '@/lib/auth'
 import { User, AuthResponse } from '@/lib/types/user'
 import { generateUniqueUsername, validateUsername, isUsernameAvailable } from '@/lib/utils/username'
-import { sendWelcomeEmail } from '@/lib/vendors/resend-client'
+import { sendWelcomeEmail, sendVerificationCodeEmail } from '@/lib/vendors/resend-client'
 
 export async function POST(request: NextRequest) {
   try {
@@ -149,6 +149,27 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await db.collection('users').insertOne(newUser)
+
+    // Generate 6-digit OTP code
+    const otp = Math.floor(100000 + Math.random() * 900000).toString()
+
+    // Store OTP in database with 10-minute expiration
+    await db.collection('otps').insertOne({
+      email: newUser.email.toLowerCase(),
+      code: otp,
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+      createdAt: new Date(),
+    })
+
+    // Send verification code email
+    sendVerificationCodeEmail({
+      to: newUser.email,
+      name: newUser.name,
+      code: otp,
+    }).catch((error) => {
+      console.error('Failed to send verification code email:', error)
+      // Don't fail signup if email fails
+    })
 
     // Send welcome email via Resend (async, don't wait for it)
     sendWelcomeEmail({
