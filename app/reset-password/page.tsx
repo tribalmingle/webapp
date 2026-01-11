@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { AlertCircle, CheckCircle2, Eye, EyeOff, MailCheck } from "lucide-react"
 
 const MIN_PASSWORD_LENGTH = 6
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -268,5 +268,17 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-dvh bg-background-primary flex items-center justify-center">
+        <div className="text-text-primary">Loading...</div>
+      </div>
+    }>
+      <ResetPasswordForm />
+    </Suspense>
   )
 }
