@@ -90,10 +90,10 @@ export default function SignUpPage() {
   const [passkeyError, setPasskeyError] = useState('')
   const [passkeyAvailable, setPasskeyAvailable] = useState(false)
   const [passkeyBypass, setPasskeyBypass] = useState(false)
-  const [phoneStatus, setPhoneStatus] = useState<'idle' | 'sending' | 'code_sent' | 'verifying' | 'verified'>('idle')
-  const [phoneCode, setPhoneCode] = useState('')
-  const [phoneMessage, setPhoneMessage] = useState('')
-  const [localPhone, setLocalPhone] = useState('') // Phone number without country code
+  const [emailVerified, setEmailVerified] = useState(false)
+  const [emailCode, setEmailCode] = useState('')
+  const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'code_sent' | 'verifying' | 'verified'>('idle')
+  const [emailMessage, setEmailMessage] = useState('')
   const idInputRef = useRef<HTMLInputElement>(null)
   const selfieInputRef = useRef<HTMLInputElement>(null)
   const voiceInputRef = useRef<HTMLInputElement>(null)
@@ -479,85 +479,73 @@ export default function SignUpPage() {
     setPasskeyError('')
   }
 
-  const handleSendPhoneCode = async () => {
-    if (!formData.email || !localPhone) {
-      setError('Please provide both email and phone number to request a code')
+  const handleSendEmailCode = async () => {
+    if (!formData.email) {
+      setError('Email address is required')
       return
     }
-    
-    // Combine country code with local phone number
-    const countryCode = formData.country ? getCountryPhoneCode(formData.country).code : ''
-    const fullPhone = countryCode + localPhone.replace(/^0+/, '') // Remove leading zeros
-    setFormData(prev => ({ ...prev, phone: fullPhone }))
 
     try {
       setError('')
-      setPhoneMessage('')
-      setPhoneStatus('sending')
+      setEmailMessage('')
+      setEmailStatus('sending')
 
-      const response = await fetch('/api/onboarding/verify-phone', {
+      const response = await fetch('/api/auth/resend-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: formData.email, phone: fullPhone, prospectId })
+        body: JSON.stringify({ email: formData.email })
       })
 
       const data = await response.json()
       if (!response.ok) {
-        throw new Error(data.error || 'Unable to send verification code')
+        throw new Error(data.message || 'Unable to send verification code')
       }
 
-      if (data.prospectId) {
-        persistProspectId(data.prospectId)
-      }
-
-      setPhoneStatus('code_sent')
-      setPhoneCode('')
-      setPhoneMessage('Verification code sent! Check your phone SMS and email inbox for the code.')
+      setEmailStatus('code_sent')
+      setEmailCode('')
+      setEmailMessage('Verification code sent! Check your email inbox.')
     } catch (err) {
-      console.error('Phone verification send failed', err)
-      // Set to code_sent anyway - email might have been sent even if SMS failed
-      setPhoneStatus('code_sent')
-      setPhoneMessage('Code may have been sent to your email. Check your inbox and enter the code below if you received it.')
+      console.error('Email verification send failed', err)
+      setEmailStatus('idle')
+      setEmailMessage('Failed to send verification code. Please try again.')
     }
   }
 
-  const handleConfirmPhoneCode = async () => {
-    if (!prospectId) {
-      setError('We need your prospect ID before confirming the code. Please request a code first.')
+  const handleConfirmEmailCode = async () => {
+    if (!formData.email) {
+      setError('Email address is required')
       return
     }
 
-    if (!formData.phone) {
-      setError('Enter your phone number before confirming the code')
-      return
-    }
-
-    if (!phoneCode) {
-      setError('Enter the verification code sent to your phone')
+    if (!emailCode || emailCode.length !== 6) {
+      setError('Please enter the 6-digit verification code')
       return
     }
 
     try {
       setError('')
-      setPhoneStatus('verifying')
+      setEmailStatus('verifying')
 
-      const response = await fetch('/api/onboarding/verify-phone', {
-        method: 'PUT',
+      const response = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prospectId, phone: formData.phone, code: phoneCode })
+        body: JSON.stringify({ email: formData.email, code: emailCode })
       })
 
       const data = await response.json()
-      if (!response.ok || !data.verified) {
-        throw new Error(data.error || 'Verification code was not accepted')
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Verification code was not accepted')
       }
 
-      setPhoneStatus('verified')
-      setPhoneMessage('Phone number verified')
+      setEmailStatus('verified')
+      setEmailVerified(true)
+      setEmailMessage('Email verified successfully!')
     } catch (err) {
-      console.error('Phone verification failed', err)
-      setPhoneStatus('code_sent')
-      setPhoneMessage('Verification failed. Double-check the code and try again.')
+      console.error('Email verification failed', err)
+      setEmailStatus('code_sent')
+      setEmailMessage('Verification failed. Please check the code and try again.')
+    }
+  }
     }
   }
 
@@ -631,15 +619,15 @@ export default function SignUpPage() {
       }
     }
 
-    // Step 5: Security - Passkey and phone verification required
+    // Step 5: Security - Passkey and email verification required
     if (step === 5) {
       if (!passkeyBypass && passkeyState !== 'verified') {
         setError('Please finish passkey setup or choose Skip for now')
         return
       }
 
-      if (phoneStatus !== 'verified') {
-        setError('Verify your phone number to continue')
+      if (emailStatus !== 'verified') {
+        setError('Please verify your email address to continue')
         return
       }
     }
@@ -1128,9 +1116,9 @@ export default function SignUpPage() {
         {step === 5 && (
           <div className="space-y-4">
             <div>
-              <h2 className="text-lg md:text-xl font-bold">Secure your identity</h2>
+              <h2 className="text-lg md:text-xl font-bold">Verify your email</h2>
               <p className="text-sm text-muted-foreground mt-1">
-                We use passkeys and verified phone numbers to stop account takeovers before they start. Finish both to continue.
+                We use passkeys and verified email to secure your account. Both are required to continue.
               </p>
             </div>
 
@@ -1184,84 +1172,54 @@ export default function SignUpPage() {
             <div className="space-y-3 rounded-2xl border border-border-gold/30 bg-background-tertiary/50 p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-base font-semibold">Verify your phone</p>
-                  <p className="text-sm text-muted-foreground">We use SMS for concierge handoffs and safety alerts.</p>
+                  <p className="text-base font-semibold">Verify your email address</p>
+                  <p className="text-sm text-muted-foreground">We'll send a verification code to {formData.email}</p>
                 </div>
-                {phoneStatus === 'verified' && (
+                {emailStatus === 'verified' && (
                   <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">Verified</span>
                 )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Phone number</label>
-                {!formData.country ? (
-                  <div className="rounded-lg border border-amber-500 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                    Please select your country above first to enable phone input
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-2 rounded-lg border border-border bg-muted px-4 py-2.5 text-base font-semibold">
-                      <span className="text-2xl">{getCountryPhoneCode(formData.country).flag}</span>
-                      <span>{getCountryPhoneCode(formData.country).code}</span>
-                    </div>
-                    <input
-                      type="tel"
-                      value={localPhone}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/[^0-9]/g, '')
-                        setLocalPhone(value)
-                      }}
-                      placeholder="8012345678"
-                      className="flex-1 rounded-lg border border-border px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-accent"
-                      disabled={!formData.country}
-                    />
-                  </div>
-                )}
-                <p className="text-xs text-muted-foreground">
-                  {formData.country ? 'Enter your phone number without the country code' : 'Select your country first'}
-                </p>
               </div>
 
               <div className="space-y-2">
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={handleSendPhoneCode}
-                    disabled={phoneStatus === 'sending' || phoneStatus === 'verifying' || phoneStatus === 'verified'}
+                    onClick={handleSendEmailCode}
+                    disabled={emailStatus === 'sending' || emailStatus === 'verifying' || emailStatus === 'verified'}
                     className="flex-1 rounded-lg border border-border px-4 py-2 text-sm font-semibold hover:bg-muted disabled:opacity-50"
                   >
-                    {phoneStatus === 'sending' ? 'Sending...' : 'Send code'}
+                    {emailStatus === 'sending' ? 'Sending...' : 'Send verification code'}
                   </button>
                   <button
                     type="button"
-                    onClick={handleConfirmPhoneCode}
-                    disabled={phoneStatus !== 'code_sent'}
+                    onClick={handleConfirmEmailCode}
+                    disabled={emailStatus !== 'code_sent'}
                     className="flex-1 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground hover:opacity-90 disabled:opacity-50"
                   >
-                    {phoneStatus === 'verifying' ? 'Confirming...' : 'Confirm code'}
+                    {emailStatus === 'verifying' ? 'Confirming...' : 'Confirm code'}
                   </button>
                 </div>
                 <input
                   type="text"
                   maxLength={6}
                   inputMode="numeric"
-                  value={phoneCode}
-                  onChange={(event) => setPhoneCode(event.target.value.replace(/[^0-9]/g, ''))}
+                  value={emailCode}
+                  onChange={(event) => setEmailCode(event.target.value.replace(/[^0-9]/g, ''))}
                   placeholder="Enter 6-digit code"
                   className="w-full rounded-lg border border-border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent"
-                  disabled={phoneStatus === 'sending'}
+                  disabled={emailStatus === 'sending' || emailStatus === 'verified'}
                 />
               </div>
 
               <p className="text-xs text-muted-foreground">
                 Status:{' '}
-                {phoneStatus === 'idle' && 'Not started'}
-                {phoneStatus === 'sending' && 'Sending code...'}
-                {phoneStatus === 'code_sent' && 'Code sent. Check your SMS and email inbox.'}
-                {phoneStatus === 'verifying' && 'Confirming code...'}
-                {phoneStatus === 'verified' && 'Phone number verified'}
+                {emailStatus === 'idle' && 'Not started'}
+                {emailStatus === 'sending' && 'Sending code...'}
+                {emailStatus === 'code_sent' && 'Code sent. Check your email inbox.'}
+                {emailStatus === 'verifying' && 'Confirming code...'}
+                {emailStatus === 'verified' && 'Email verified'}
               </p>
-              {phoneMessage && <p className="text-xs text-muted-foreground">{phoneMessage}</p>}
+              {emailMessage && <p className="text-xs text-muted-foreground">{emailMessage}</p>}
             </div>
 
             <TrialUpsellCard
