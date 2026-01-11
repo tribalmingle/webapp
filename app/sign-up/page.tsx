@@ -546,8 +546,6 @@ export default function SignUpPage() {
       setEmailMessage('Verification failed. Please check the code and try again.')
     }
   }
-    }
-  }
 
   const handleNext = async () => {
     setError('')
