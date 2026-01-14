@@ -21,8 +21,9 @@ export async function GET(req: NextRequest) {
     const db = await connectDB();
     const usersCollection = db.collection('users');
 
-    // Get user profile
-    const user = await usersCollection.findOne({ _id: currentUser._id });
+    // Get user profile using userId from JWT
+    const { ObjectId } = require('mongodb');
+    const user = await usersCollection.findOne({ _id: new ObjectId(currentUser.userId) });
 
     if (!user) {
       return NextResponse.json(

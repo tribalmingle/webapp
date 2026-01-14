@@ -37,20 +37,21 @@ export async function GET(req: NextRequest) {
       filter.gender = preferredGender;
     }
 
-    // Apply age filter if user has preferences
-    if (currentUser.preferences?.minAge || currentUser.preferences?.maxAge) {
+    // Apply age filter if user has preferences (safely typed)
+    const preferences = currentUser.preferences as any;
+    if (preferences?.minAge || preferences?.maxAge) {
       filter.age = {};
-      if (currentUser.preferences.minAge) {
-        filter.age.$gte = currentUser.preferences.minAge;
+      if (preferences.minAge) {
+        filter.age.$gte = preferences.minAge;
       }
-      if (currentUser.preferences.maxAge) {
-        filter.age.$lte = currentUser.preferences.maxAge;
+      if (preferences.maxAge) {
+        filter.age.$lte = preferences.maxAge;
       }
     }
 
     // Apply location filter if user has preferences
-    if (currentUser.preferences?.country) {
-      filter.country = currentUser.preferences.country;
+    if (preferences?.country) {
+      filter.country = preferences.country;
     }
 
     // Get total count for pagination
