@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { connectDB } from '@/lib/db/mongodb';
+import { ObjectId } from 'mongodb';
 
 export const runtime = 'nodejs';
 
@@ -22,7 +23,6 @@ export async function GET(req: NextRequest) {
     const usersCollection = db.collection('users');
 
     // Get user profile using userId from JWT
-    const { ObjectId } = require('mongodb');
     const user = await usersCollection.findOne({ _id: new ObjectId(currentUser.userId) });
 
     if (!user) {
