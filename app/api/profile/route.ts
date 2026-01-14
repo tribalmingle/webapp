@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { connectDB } from '@/lib/db/mongodb';
 
+export const runtime = 'nodejs';
+
 export async function GET(req: NextRequest) {
   try {
     console.log('[profile] Fetching current user...');

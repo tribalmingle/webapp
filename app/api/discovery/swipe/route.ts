@@ -3,6 +3,8 @@ import { getCurrentUser } from '@/lib/auth';
 import { connectDB } from '@/lib/db/mongodb';
 import { ObjectId } from 'mongodb';
 
+export const runtime = 'nodejs';
+
 export async function POST(req: NextRequest) {
   try {
     const currentUser = await getCurrentUser();
