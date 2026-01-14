@@ -62,7 +62,7 @@ export async function getCurrentUser(request?: Request): Promise<JWTPayload | nu
   try {
     console.log('[getCurrentUser] Starting...');
     
-    // Try to get auth header from request object first (Vercel workaround)
+    // Try to get auth header from request object first
     let authHeader: string | null = null;
     if (request) {
       authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
@@ -74,6 +74,20 @@ export async function getCurrentUser(request?: Request): Promise<JWTPayload | nu
       const headerStore = await headers();
       authHeader = headerStore.get('authorization') || headerStore.get('Authorization');
       console.log('[getCurrentUser] Auth from headers():', authHeader ? 'found' : 'null');
+      
+      // VERCEL WORKAROUND: Extract from x-vercel-sc-headers if stripped
+      if (!authHeader) {
+        const vercelHeaders = headerStore.get('x-vercel-sc-headers');
+        if (vercelHeaders) {
+          try {
+            const parsed = JSON.parse(vercelHeaders);
+            authHeader = parsed.Authorization || parsed.authorization;
+            console.log('[getCurrentUser] Auth from x-vercel-sc-headers:', authHeader ? 'found' : 'null');
+          } catch (e) {
+            console.log('[getCurrentUser] Failed to parse x-vercel-sc-headers');
+          }
+        }
+      }
     }
     
     const bearerToken = authHeader?.toLowerCase().startsWith('bearer ')
