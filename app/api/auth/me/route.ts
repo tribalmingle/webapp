@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser, createToken } from '@/lib/auth'
-import clientPromise from '@/lib/mongodb'
+import { connectDB } from '@/lib/db/mongodb'
 import { ObjectId } from 'mongodb'
+
+export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
   try {
-    const user = await getCurrentUser()
+    const user = await getCurrentUser(request)
 
     if (!user) {
       return NextResponse.json(
@@ -14,8 +16,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const client = await clientPromise
-    const db = client.db(process.env.MONGODB_DB || 'tribalmingle')
+    const db = await connectDB()
 
     const userData = await db.collection('users').findOne(
       { _id: new ObjectId(user.userId) },
@@ -29,6 +30,10 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // Convert to plain object and add name field
+    const plainUser = JSON.parse(JSON.stringify(userData));
+    const name = [plainUser.firstName, plainUser.lastName].filter(Boolean).join(' ') || plainUser.email;
+
     // Refresh the session token on each request to extend the 2-hour window
     const newToken = await createToken({
       userId: user.userId,
@@ -37,7 +42,11 @@ export async function GET(request: NextRequest) {
 
     const response = NextResponse.json({
       success: true,
-      user: userData,
+      user: {
+        ...plainUser,
+        name,
+        id: plainUser._id,
+      },
     })
 
     // Extend session cookie - 2 hours from now
