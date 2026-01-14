@@ -58,14 +58,23 @@ export async function removeAuthCookie() {
   cookieStore.delete('auth-token')
 }
 
-export async function getCurrentUser(): Promise<JWTPayload | null> {
+export async function getCurrentUser(request?: Request): Promise<JWTPayload | null> {
   try {
     console.log('[getCurrentUser] Starting...');
-    const headerStore = await headers()
-    console.log('[getCurrentUser] Headers obtained');
     
-    const authHeader = headerStore.get('authorization') || headerStore.get('Authorization')
-    console.log('[getCurrentUser] Auth header:', authHeader ? `Bearer ${authHeader.substring(7, 30)}...` : 'null');
+    // Try to get auth header from request object first (Vercel workaround)
+    let authHeader: string | null = null;
+    if (request) {
+      authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
+      console.log('[getCurrentUser] Auth from request object:', authHeader ? 'found' : 'null');
+    }
+    
+    // Fallback to headers() if no request object
+    if (!authHeader) {
+      const headerStore = await headers();
+      authHeader = headerStore.get('authorization') || headerStore.get('Authorization');
+      console.log('[getCurrentUser] Auth from headers():', authHeader ? 'found' : 'null');
+    }
     
     const bearerToken = authHeader?.toLowerCase().startsWith('bearer ')
       ? authHeader.slice(7)

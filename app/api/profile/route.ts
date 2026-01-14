@@ -7,7 +7,7 @@ export const runtime = 'nodejs';
 export async function GET(req: NextRequest) {
   try {
     console.log('[profile] Fetching current user...');
-    const currentUser = await getCurrentUser();
+    const currentUser = await getCurrentUser(req);
     console.log('[profile] Current user:', currentUser ? 'found' : 'null');
     
     if (!currentUser) {

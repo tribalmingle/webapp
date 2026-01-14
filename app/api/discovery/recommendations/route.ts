@@ -6,7 +6,7 @@ export const runtime = 'nodejs';
 
 export async function GET(req: NextRequest) {
   try {
-    const currentUser = await getCurrentUser();
+    const currentUser = await getCurrentUser(req);
     
     if (!currentUser) {
       return NextResponse.json(
