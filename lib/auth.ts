@@ -62,32 +62,18 @@ export async function getCurrentUser(request?: Request): Promise<JWTPayload | nu
   try {
     console.log('[getCurrentUser] Starting...');
     
-    // Try to get auth header from request object first
+    // Try to get auth from custom header (Vercel strips Authorization header)
     let authHeader: string | null = null;
     if (request) {
-      authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
-      console.log('[getCurrentUser] Auth from request object:', authHeader ? 'found' : 'null');
+      authHeader = request.headers.get('x-auth-token') || request.headers.get('authorization') || request.headers.get('Authorization');
+      console.log('[getCurrentUser] Auth from request:', authHeader ? 'found' : 'null');
     }
     
     // Fallback to headers() if no request object
     if (!authHeader) {
       const headerStore = await headers();
-      authHeader = headerStore.get('authorization') || headerStore.get('Authorization');
+      authHeader = headerStore.get('x-auth-token') || headerStore.get('authorization') || headerStore.get('Authorization');
       console.log('[getCurrentUser] Auth from headers():', authHeader ? 'found' : 'null');
-      
-      // VERCEL WORKAROUND: Extract from x-vercel-sc-headers if stripped
-      if (!authHeader) {
-        const vercelHeaders = headerStore.get('x-vercel-sc-headers');
-        if (vercelHeaders) {
-          try {
-            const parsed = JSON.parse(vercelHeaders);
-            authHeader = parsed.Authorization || parsed.authorization;
-            console.log('[getCurrentUser] Auth from x-vercel-sc-headers:', authHeader ? 'found' : 'null');
-          } catch (e) {
-            console.log('[getCurrentUser] Failed to parse x-vercel-sc-headers');
-          }
-        }
-      }
     }
     
     const bearerToken = authHeader?.toLowerCase().startsWith('bearer ')
