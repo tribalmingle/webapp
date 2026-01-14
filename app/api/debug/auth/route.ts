@@ -5,12 +5,12 @@ export const runtime = 'nodejs'
 
 export async function GET(req: NextRequest) {
   try {
-    // Try getting auth from Request object
-    const authFromRequest = req.headers.get('authorization') || req.headers.get('Authorization');
+    // Try getting auth from Request object with custom header first
+    const authFromRequest = req.headers.get('x-auth-token') || req.headers.get('authorization') || req.headers.get('Authorization');
     
     // Also try from headers()
     const headerStore = await headers();
-    const authFromHeaders = headerStore.get('authorization') || headerStore.get('Authorization');
+    const authFromHeaders = headerStore.get('x-auth-token') || headerStore.get('authorization') || headerStore.get('Authorization');
     
     return NextResponse.json({
       success: true,
