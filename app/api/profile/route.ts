@@ -4,9 +4,12 @@ import { connectDB } from '@/lib/db/mongodb';
 
 export async function GET(req: NextRequest) {
   try {
+    console.log('[profile] Fetching current user...');
     const currentUser = await getCurrentUser();
+    console.log('[profile] Current user:', currentUser ? 'found' : 'null');
     
     if (!currentUser) {
+      console.error('[profile] No current user - returning 401');
       return NextResponse.json(
         { success: false, message: 'Unauthorized' },
         { status: 401 }
