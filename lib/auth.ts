@@ -59,7 +59,7 @@ export async function removeAuthCookie() {
 }
 
 export async function getCurrentUser(): Promise<JWTPayload | null> {
-  const headerStore = headers()
+  const headerStore = await headers()
   const authHeader = headerStore.get('authorization') || headerStore.get('Authorization')
   const bearerToken = authHeader?.toLowerCase().startsWith('bearer ')
     ? authHeader.slice(7)
