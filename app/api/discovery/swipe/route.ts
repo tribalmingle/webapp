@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
-import { connectToDatabase } from '@/lib/db/mongodb';
+import { connectDB } from '@/lib/db/mongodb';
 import { ObjectId } from 'mongodb';
 
 export async function POST(req: NextRequest) {
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { db } = await connectToDatabase();
+    const db = await connectDB();
     const swipesCollection = db.collection('swipes');
     const matchesCollection = db.collection('matches');
 

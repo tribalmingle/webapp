@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
-import { connectToDatabase } from '@/lib/db/mongodb';
+import { connectDB } from '@/lib/db/mongodb';
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const { db } = await connectToDatabase();
+    const db = await connectDB();
     const usersCollection = db.collection('users');
 
     // Get user profile
