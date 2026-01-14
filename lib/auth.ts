@@ -59,13 +59,37 @@ export async function removeAuthCookie() {
 }
 
 export async function getCurrentUser(): Promise<JWTPayload | null> {
-  const headerStore = await headers()
-  const authHeader = headerStore.get('authorization') || headerStore.get('Authorization')
-  const bearerToken = authHeader?.toLowerCase().startsWith('bearer ')
-    ? authHeader.slice(7)
-    : null
+  try {
+    console.log('[getCurrentUser] Starting...');
+    const headerStore = await headers()
+    console.log('[getCurrentUser] Headers obtained');
+    
+    const authHeader = headerStore.get('authorization') || headerStore.get('Authorization')
+    console.log('[getCurrentUser] Auth header:', authHeader ? `Bearer ${authHeader.substring(7, 30)}...` : 'null');
+    
+    const bearerToken = authHeader?.toLowerCase().startsWith('bearer ')
+      ? authHeader.slice(7)
+      : null
+    console.log('[getCurrentUser] Bearer token extracted:', bearerToken ? 'yes' : 'no');
 
-  const token = (await getAuthToken()) || bearerToken
-  if (!token) return null
-  return verifyToken(token)
+    const cookieToken = await getAuthToken()
+    console.log('[getCurrentUser] Cookie token:', cookieToken ? 'yes' : 'no');
+    
+    const token = cookieToken || bearerToken
+    console.log('[getCurrentUser] Final token selected:', token ? 'yes' : 'no');
+    
+    if (!token) {
+      console.error('[getCurrentUser] No token found - returning null');
+      return null
+    }
+    
+    console.log('[getCurrentUser] Verifying token...');
+    const verified = await verifyToken(token)
+    console.log('[getCurrentUser] Verification result:', verified ? 'success' : 'failed');
+    
+    return verified
+  } catch (error) {
+    console.error('[getCurrentUser] Error:', error);
+    return null
+  }
 }
