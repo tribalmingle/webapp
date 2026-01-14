@@ -36,15 +36,17 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    // Convert MongoDB document to plain object to avoid BSON serialization issues
+    const plainUser = JSON.parse(JSON.stringify(user));
+
     // Return simplified response
     return NextResponse.json({
       success: true,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      age: user.age,
-      gender: user.gender,
-      _raw: user,
+      email: plainUser.email || null,
+      firstName: plainUser.firstName || null,
+      lastName: plainUser.lastName || null,
+      age: plainUser.age || null,
+      gender: plainUser.gender || null,
     });
   } catch (error: any) {
     console.error('Profile fetch error:', error);
