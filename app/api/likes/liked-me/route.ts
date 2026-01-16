@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getMongoDb } from '@/lib/mongodb'
 import { getCurrentUser } from '@/lib/auth'
+import { ObjectId } from 'mongodb'
 
 export async function GET(req: NextRequest) {
   try {
-    const userPayload = await getCurrentUser()
+    const userPayload = await getCurrentUser(req)
     
     if (!userPayload) {
       return NextResponse.json(
@@ -17,33 +18,36 @@ export async function GET(req: NextRequest) {
     const likesCollection = db.collection('likes')
     const usersCollection = db.collection('users')
 
-    // Get current user's gender to filter opposite gender only
-    const currentUser = await usersCollection.findOne({ email: userPayload.email })
-    const userGender = currentUser?.gender?.toLowerCase()
-
     // Find all users who liked me
+    const userObjectId = userPayload.userId && ObjectId.isValid(userPayload.userId)
+      ? new ObjectId(userPayload.userId)
+      : null
     const likes = await likesCollection
-      .find({ likedUserId: userPayload.email })
+      .find({
+        $or: [
+          ...(userObjectId ? [{ likedUserId: userObjectId }] : []),
+          { likedUserId: userPayload.email },
+        ],
+      })
       .sort({ createdAt: -1 })
       .toArray()
 
-    // Get user details for each like - filter by opposite gender (case-insensitive)
+    // Get user details for each like
     const likesWithDetails = await Promise.all(
       likes.map(async (like) => {
-        const userQuery: any = { email: like.userId }
-        if (userGender === 'male') {
-          userQuery.gender = { $regex: new RegExp('^female$', 'i') }
-        } else if (userGender === 'female') {
-          userQuery.gender = { $regex: new RegExp('^male$', 'i') }
-        }
-        const user = await usersCollection.findOne(userQuery)
+        const likerUserId = like.userId
+        const user = ObjectId.isValid(likerUserId)
+          ? await usersCollection.findOne({ _id: new ObjectId(likerUserId) })
+          : await usersCollection.findOne({ email: likerUserId })
         if (!user) return null
 
         return {
           _id: like._id.toString(),
-          userId: user.email,
+          userId: user._id?.toString(),
+          email: user.email,
           name: user.name,
           age: user.age,
+          gender: user.gender,
           city: user.city || 'Location not set',
           tribe: user.tribe || 'No tribe',
           profilePhoto: user.profilePhotos?.[0] || user.profilePhoto || '',

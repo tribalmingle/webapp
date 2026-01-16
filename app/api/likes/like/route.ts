@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getMongoDb } from '@/lib/mongodb'
+import { getDb } from '@/lib/db/mongodb'
 import { getCurrentUser } from '@/lib/auth'
+import { ObjectId } from 'mongodb'
 
 export async function POST(req: NextRequest) {
   try {
-    const userPayload = await getCurrentUser()
+    const user = await getCurrentUser(req)
     
-    if (!userPayload) {
+    if (!user?.userId) {
       return NextResponse.json(
         { success: false, message: 'Unauthorized' },
         { status: 401 }
@@ -23,13 +24,13 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const db = await getMongoDb()
+    const db = await getDb()
     const likesCollection = db.collection('likes')
 
     // Check if already liked
     const existingLike = await likesCollection.findOne({
-      userId: userPayload.email,
-      likedUserId: userId
+      userId: new ObjectId(user.userId),
+      likedUserId: new ObjectId(userId)
     })
 
     if (existingLike) {
@@ -41,8 +42,8 @@ export async function POST(req: NextRequest) {
 
     // Create like
     await likesCollection.insertOne({
-      userId: userPayload.email,
-      likedUserId: userId,
+      userId: new ObjectId(user.userId),
+      likedUserId: new ObjectId(userId),
       createdAt: new Date()
     })
 
