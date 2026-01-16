@@ -3,7 +3,7 @@
  * Handles file uploads/downloads to tm.d2d.ng
  */
 
-const HOSTGATOR_BASE_URL = 'https://tm.d2d.ng'
+const HOSTGATOR_BASE_URL = process.env.HOSTGATOR_BASE_URL || 'https://tm.d2d.ng'
 const HOSTGATOR_API_KEY = process.env.HOSTGATOR_API_KEY || ''
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -16,6 +16,15 @@ export interface UploadOptions {
 /**
  * Upload a file to HostGator
  */
+const buildUploadFormData = (buffer: Buffer, filename: string, folder: string, fieldName: 'image' | 'file') => {
+  const formData = new FormData()
+  // Convert Buffer to ArrayBuffer for browser compatibility
+  const arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer
+  formData.append(fieldName, new Blob([arrayBuffer]), filename)
+  formData.append('folder', folder)
+  return formData
+}
+
 export async function uploadToHostGator(
   buffer: Buffer,
   filename: string,
@@ -23,29 +32,42 @@ export async function uploadToHostGator(
   options: UploadOptions = {}
 ) {
   try {
-    const formData = new FormData()
-    // Convert Buffer to ArrayBuffer for browser compatibility
-    const arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer
-    // HostGator expects the field name `image`
-    formData.append('image', new Blob([arrayBuffer]), filename)
-    formData.append('folder', folder)
+    const tryUpload = async (fieldName: 'image' | 'file') => {
+      const formData = buildUploadFormData(buffer, filename, folder, fieldName)
+      const response = await fetch(`${HOSTGATOR_BASE_URL}/api/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${HOSTGATOR_API_KEY}`,
+          'X-API-Key': HOSTGATOR_API_KEY,
+        },
+        body: formData,
+      })
 
-    const response = await fetch(`${HOSTGATOR_BASE_URL}/api/upload`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${HOSTGATOR_API_KEY}`,
-      },
-      body: formData,
-    })
+      const responseText = await response.text()
+      const data = responseText ? JSON.parse(responseText) : undefined
 
-    if (!response.ok) {
-      throw new Error(`Upload failed: ${response.statusText}`)
+      if (!response.ok || !data?.success) {
+        const errorMessage = data?.error || data?.message || response.statusText || 'Upload failed'
+        const detail = responseText ? ` | body: ${responseText.slice(0, 400)}` : ''
+        const error = new Error(`Upload failed: ${errorMessage}${detail}`)
+        ;(error as any).status = response.status
+        ;(error as any).fieldName = fieldName
+        ;(error as any).responseText = responseText
+        throw error
+      }
+
+      return data
     }
 
-    const data = await response.json()
-
-    if (!data.success) {
-      throw new Error(data.error || 'Upload failed')
+    let data: any
+    try {
+      data = await tryUpload('image')
+    } catch (error: any) {
+      if (isDev) console.warn('[hostgator] upload failed with image field, retrying with file', {
+        status: error?.status,
+        responseText: error?.responseText?.slice(0, 200),
+      })
+      data = await tryUpload('file')
     }
 
     // Construct the media URL
