@@ -22,6 +22,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const allowedGenders = new Set(['male', 'female', 'non-binary', 'other'])
+    if (!allowedGenders.has(String(gender).toLowerCase())) {
+      return NextResponse.json<AuthResponse>(
+        {
+          success: false,
+          message: 'Please select a valid gender',
+        },
+        { status: 400 }
+      )
+    }
+
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
