@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 
     // Convert to plain object and add name field
     const plainUser = JSON.parse(JSON.stringify(userData));
-    const name = [plainUser.firstName, plainUser.lastName].filter(Boolean).join(' ') || plainUser.email;
+    const name = [plainUser.firstName, plainUser.lastName].filter(Boolean).join(' ') || plainUser.email?.split('@')[0] || 'User';
 
     // Refresh the session token on each request to extend the 2-hour window
     const newToken = await createToken({

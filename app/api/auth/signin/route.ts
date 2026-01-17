@@ -70,14 +70,18 @@ export async function POST(request: NextRequest) {
     })
     console.log('[signin] Token created successfully')
 
-    // Remove password from response
+    // Remove password from response and add name field
     const { password: _, ...userWithoutPassword } = user
+    const name = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email?.split('@')[0] || 'User';
 
     const response = NextResponse.json<AuthResponse>(
       {
         success: true,
         message: 'Login successful',
-        user: userWithoutPassword as any,
+        user: {
+          ...userWithoutPassword as any,
+          name,
+        },
         token,
         redirectTo: user.registrationComplete ? '/dashboard-spa' : '/sign-up?step=continue', // Redirect incomplete users
       },

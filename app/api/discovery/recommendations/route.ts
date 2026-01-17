@@ -30,11 +30,15 @@ export async function GET(req: NextRequest) {
       registrationComplete: true,
     };
 
-    // Apply user gender preference filter
+    // Apply user gender preference filter (opposite gender or unspecified)
     if (currentUser.gender) {
-      // If user is male, show females; if female, show males
-      const preferredGender = currentUser.gender === 'male' ? 'female' : 'male';
-      filter.gender = preferredGender;
+      const userGender = String(currentUser.gender).toLowerCase();
+      const unknownGenderFilter = [{ gender: { $exists: false } }, { gender: null }, { gender: '' }];
+      if (userGender === 'male') {
+        filter.$or = [{ gender: { $regex: new RegExp('^female$', 'i') } }, ...unknownGenderFilter];
+      } else if (userGender === 'female') {
+        filter.$or = [{ gender: { $regex: new RegExp('^male$', 'i') } }, ...unknownGenderFilter];
+      }
     }
 
     // Apply age filter if user has preferences (safely typed)

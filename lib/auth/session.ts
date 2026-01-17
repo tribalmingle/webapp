@@ -62,7 +62,11 @@ export async function verifyAccessToken(token: string): Promise<AuthUser | null>
  */
 export async function getAuthUser(request: NextRequest): Promise<AuthUser | null> {
   try {
-    const authHeader = request.headers.get('authorization')
+    const authHeader =
+      request.headers.get('authorization') ||
+      request.headers.get('Authorization') ||
+      request.headers.get('x-auth-token') ||
+      request.headers.get('X-Auth-Token')
     
     // No auth header - check for dev mode fallback
     if (!authHeader) {

@@ -56,6 +56,11 @@ export async function sendEmailViaResend(options: SendEmailOptions, retries = 2)
         console.log(`[resend] Retry attempt ${attempt}/${retries}`)
       }
 
+      const controller = new AbortController()
+      const timeoutMs = 15000
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+      const start = Date.now()
+
       const response = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
@@ -70,7 +75,12 @@ export async function sendEmailViaResend(options: SendEmailOptions, retries = 2)
           text: options.text,
           reply_to: options.replyTo,
         }),
+        signal: controller.signal,
       })
+
+      clearTimeout(timeoutId)
+      const elapsedMs = Date.now() - start
+      const requestId = response.headers.get('x-request-id') || response.headers.get('x-resend-request-id')
 
       if (!response.ok) {
         const errorText = await response.text()
@@ -82,7 +92,7 @@ export async function sendEmailViaResend(options: SendEmailOptions, retries = 2)
         }
         
         // Retry on server errors (5xx) or network issues
-        lastError = new Error(`Resend API error: ${response.statusText}`)
+        lastError = new Error(`Resend API error: ${response.statusText} (${response.status})`) 
         
         // Wait before retry (exponential backoff)
         if (attempt < retries) {
@@ -90,13 +100,24 @@ export async function sendEmailViaResend(options: SendEmailOptions, retries = 2)
           continue
         }
       } else {
-        const data = await response.json()
+        const data = await response.json().catch(() => ({}))
 
         if (isDev) console.log('[resend] Email sent', {
           to: options.to,
           emailId: data.id,
           attempt: attempt + 1,
+          elapsedMs,
+          requestId,
         })
+        if (!isDev) {
+          console.log('[resend] Email sent', {
+            to: options.to,
+            emailId: data.id,
+            attempt: attempt + 1,
+            elapsedMs,
+            requestId,
+          })
+        }
 
         return {
           success: true,
@@ -245,6 +266,14 @@ export async function sendVerificationCodeEmail(options: SendVerificationEmailOp
   `
 
   const text = `
+Your Tribal Mingle verification code is ${options.code}.
+
+This code expires in 10 minutes.
+
+If you did not request this, you can ignore this email.
+  `
+
+  const text = `
 Hi ${options.name},
 
 Here's your verification code to complete your Tribal Mingle registration:
@@ -263,6 +292,7 @@ The Tribal Mingle Team
     to: options.to,
     subject: '🔐 Your Tribal Mingle Verification Code',
     html,
+    text,
     text,
   })
 }

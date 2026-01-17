@@ -44,6 +44,7 @@ type MediaUploadState = {
 
 const STEP_COUNT = 7
 const STEP_INDICATORS = Array.from({ length: STEP_COUNT }, (_, index) => index + 1)
+const STEP_LABELS = ['Account', 'Details', 'Heritage', 'Compatibility', 'Security', 'Verification', 'Plan']
 
 const buildDefaultQuizState = () => {
   return COMPATIBILITY_QUESTIONS.reduce<Record<string, number>>((state, question) => {
@@ -743,25 +744,79 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-background-primary flex items-center justify-center p-4">
-      <div className="w-full max-w-md max-h-[95vh] bg-background-secondary/95 backdrop-blur-xl rounded-2xl shadow-premium border border-border-gold/30 overflow-y-auto">
-        {/* Dark Purple Header Section */}
-        <div className="bg-purple-900 px-6 py-3 sticky top-0 z-10">
-          {/* Logo */}
-          <div className="flex items-center justify-center">
-            <img src="/triballogo.png" alt="Tribal Mingle" className="w-32 h-32 md:w-40 md:h-40 object-contain" />
+    <div className="min-h-dvh bg-background-primary relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(800px_circle_at_top,_rgba(255,181,83,0.18),_transparent_60%)]" />
+      <div className="pointer-events-none absolute -top-24 right-0 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-10 lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-start">
+        <aside className="hidden lg:flex flex-col gap-6 rounded-3xl border border-border-gold/30 bg-background-secondary/70 p-8 shadow-premium backdrop-blur-xl">
+          <div className="flex items-center gap-4">
+            <img src="/triballogo.png" alt="Tribal Mingle" className="h-20 w-20 object-contain" />
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Tribal Mingle</p>
+              <h1 className="text-2xl font-semibold text-foreground">Concierge match-ready onboarding</h1>
+              <p className="text-sm text-muted-foreground">Premium, faith-first dating for global African communities.</p>
+            </div>
           </div>
 
-          {/* Step Indicator */}
-          <div className="flex gap-2 mt-2">
-            {STEP_INDICATORS.map(s => (
-              <div key={s} className={`h-1 flex-1 rounded-full transition ${s <= step ? 'bg-orange-500' : 'bg-purple-700'}`} />
-            ))}
+          <div className="rounded-2xl border border-border-gold/20 bg-background-tertiary/60 p-5">
+            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Your progress</p>
+            <div className="mt-4 space-y-3">
+              {STEP_INDICATORS.map((s) => (
+                <div key={s} className="flex items-center gap-3">
+                  <div className={`h-2.5 w-2.5 rounded-full ${s <= step ? 'bg-accent' : 'bg-muted'}`} />
+                  <div className="flex-1">
+                    <p className={`text-sm font-medium ${s <= step ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {STEP_LABELS[s - 1]}
+                    </p>
+                    <div className="mt-1 h-1 rounded-full bg-border">
+                      <div className={`h-full rounded-full ${s <= step ? 'bg-accent' : 'bg-muted'}`} style={{ width: `${s <= step ? 100 : 0}%` }} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* White Form Section */}
-        <div className="p-5">
+          <div className="space-y-3 text-sm text-muted-foreground">
+            <div className="flex items-start gap-3">
+              <span className="mt-1 h-2 w-2 rounded-full bg-accent" />
+              <p>Matchmakers review verified profiles to accelerate introductions.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="mt-1 h-2 w-2 rounded-full bg-accent" />
+              <p>Compatibility signals help curate your concierge shortlist.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="mt-1 h-2 w-2 rounded-full bg-accent" />
+              <p>Identity verification keeps the community trusted.</p>
+            </div>
+          </div>
+        </aside>
+
+        <div className="w-full">
+          <div className="mx-auto w-full max-w-xl">
+            <div className="max-h-[95vh] overflow-y-auto rounded-3xl border border-border-gold/30 bg-background-secondary/95 shadow-premium backdrop-blur-xl">
+              <div className="sticky top-0 z-10 border-b border-border-gold/20 bg-background-primary/80 px-6 py-4 backdrop-blur-xl">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Step {step} of {STEP_COUNT}</p>
+                    <h2 className="text-lg font-semibold text-foreground">{STEP_LABELS[step - 1]}</h2>
+                    <p className="text-xs text-muted-foreground">Complete your onboarding details.</p>
+                  </div>
+                  <div className="hidden sm:flex items-center gap-2 rounded-full border border-border-gold/30 bg-background-tertiary/60 px-3 py-1 text-xs font-semibold text-foreground">
+                    <span className="h-2 w-2 rounded-full bg-accent" />
+                    {STEP_LABELS[step - 1]}
+                  </div>
+                </div>
+
+                <div className="mt-4 flex gap-2">
+                  {STEP_INDICATORS.map((s) => (
+                    <div key={s} className={`h-1 flex-1 rounded-full transition ${s <= step ? 'bg-accent' : 'bg-border'}`} />
+                  ))}
+                </div>
+              </div>
+
+              <div className="px-6 py-6">
         {/* Step 1: Basic Info */}
         {step === 1 && (
           <div className="space-y-2.5">
@@ -1561,6 +1616,9 @@ export default function SignUpPage() {
         <p className="text-center text-sm text-muted-foreground mt-6">
           Already have an account? <Link href="/login" className="text-accent font-semibold hover:underline">Log in</Link>
         </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

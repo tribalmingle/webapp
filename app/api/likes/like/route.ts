@@ -17,7 +17,12 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { userId } = body
 
-    if (!userId) {
+    const likedUserIdValue =
+      typeof userId === 'string'
+        ? userId
+        : userId?.userId ?? userId?.id ?? userId?._id ?? userId?.$oid
+
+    if (!likedUserIdValue) {
       return NextResponse.json(
         { success: false, message: 'User ID is required' },
         { status: 400 }
@@ -26,11 +31,51 @@ export async function POST(req: NextRequest) {
 
     const db = await getDb()
     const likesCollection = db.collection('likes')
+    const usersCollection = db.collection('users')
+
+    let currentUserObjectId: ObjectId | null = null
+    if (ObjectId.isValid(user.userId)) {
+      currentUserObjectId = new ObjectId(user.userId)
+    } else if (user.email) {
+      const currentUserDoc = await usersCollection.findOne(
+        { email: user.email.toLowerCase() },
+        { projection: { _id: 1 } }
+      )
+      if (currentUserDoc?._id) {
+        currentUserObjectId = currentUserDoc._id
+      }
+    }
+
+    if (!currentUserObjectId) {
+      return NextResponse.json(
+        { success: false, message: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
+    let likedUserObjectId: ObjectId | null = null
+    if (ObjectId.isValid(likedUserIdValue)) {
+      likedUserObjectId = new ObjectId(likedUserIdValue)
+    } else {
+      const userDoc = await usersCollection.findOne({
+        email: String(likedUserIdValue).toLowerCase(),
+      })
+      if (userDoc?._id) {
+        likedUserObjectId = userDoc._id
+      }
+    }
+
+    if (!likedUserObjectId) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid user ID' },
+        { status: 400 }
+      )
+    }
 
     // Check if already liked
     const existingLike = await likesCollection.findOne({
-      userId: new ObjectId(user.userId),
-      likedUserId: new ObjectId(userId)
+      userId: currentUserObjectId,
+      likedUserId: likedUserObjectId
     })
 
     if (existingLike) {
@@ -42,8 +87,8 @@ export async function POST(req: NextRequest) {
 
     // Create like
     await likesCollection.insertOne({
-      userId: new ObjectId(user.userId),
-      likedUserId: new ObjectId(userId),
+      userId: currentUserObjectId,
+      likedUserId: likedUserObjectId,
       createdAt: new Date()
     })
 

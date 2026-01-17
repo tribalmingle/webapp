@@ -71,28 +71,41 @@ export async function GET(request: Request) {
       query.email = { $nin: excludedEmails }
     }
 
-    // Gender-based visibility: men see women, women see men (straight platform only)
+    // Gender-based visibility: men see women or unknown, women see men or unknown
     if (currentUserEmail) {
       const currentUser = await db.collection('users').findOne({ email: currentUserEmail })
       if (currentUser?.gender) {
         const userGender = currentUser.gender.toLowerCase()
-        // Males only see Females, Females only see Males (case-insensitive)
+        const unknownGenderFilter = [{ gender: { $exists: false } }, { gender: null }, { gender: '' }]
+        // Males only see Females or users without gender
         if (userGender === 'male') {
-          query.gender = { $regex: new RegExp('^female$', 'i') }
+          query.$or = [
+            { gender: { $regex: new RegExp('^female$', 'i') } },
+            ...unknownGenderFilter,
+          ]
         } else if (userGender === 'female') {
-          query.gender = { $regex: new RegExp('^male$', 'i') }
+          query.$or = [
+            { gender: { $regex: new RegExp('^male$', 'i') } },
+            ...unknownGenderFilter,
+          ]
         }
       }
     }
     
-    // Add search functionality - gender filter MUST always apply
+    // Add search functionality - keep gender filter applied by combining with $and
     if (search) {
-      query.$or = [
+      const searchOr = [
         { name: { $regex: search, $options: 'i' } },
         { city: { $regex: search, $options: 'i' } },
         { tribe: { $regex: search, $options: 'i' } },
         { country: { $regex: search, $options: 'i' } }
       ]
+      if (query.$or) {
+        query.$and = [{ $or: query.$or }, { $or: searchOr }]
+        delete query.$or
+      } else {
+        query.$or = searchOr
+      }
     }
 
     // Filter by marital status when provided

@@ -21,6 +21,7 @@ export async function PUT(req: NextRequest) {
       gender,
       tribe,
       country,
+      heritage,
       city,
       maritalStatus,
       height,
@@ -30,7 +31,13 @@ export async function PUT(req: NextRequest) {
       religion,
       lookingFor,
       interests,
-  profilePhotos
+      profilePhotos,
+      selfiePhoto,
+      idVerificationUrl,
+      idVerificationType,
+      verificationIdUrl,
+      verificationIdType,
+      verificationSelfie
     } = body
 
     // Calculate age from date of birth
@@ -62,6 +69,7 @@ export async function PUT(req: NextRequest) {
     if (gender !== undefined) updateData.gender = gender
     if (tribe !== undefined) updateData.tribe = tribe
     if (country !== undefined) updateData.country = country
+    if (heritage !== undefined) updateData.heritage = heritage
     if (city !== undefined) updateData.city = city
     if (maritalStatus !== undefined) updateData.maritalStatus = maritalStatus
     if (height !== undefined) updateData.height = height
@@ -72,6 +80,12 @@ export async function PUT(req: NextRequest) {
     if (lookingFor !== undefined) updateData.lookingFor = lookingFor
     if (interests !== undefined) updateData.interests = interests
     if (profilePhotos !== undefined) updateData.profilePhotos = profilePhotos
+    if (selfiePhoto !== undefined) updateData.selfiePhoto = selfiePhoto
+    if (idVerificationUrl !== undefined) updateData.idVerificationUrl = idVerificationUrl
+    if (idVerificationType !== undefined) updateData.idVerificationType = idVerificationType
+    if (verificationIdUrl !== undefined) updateData.verificationIdUrl = verificationIdUrl
+    if (verificationIdType !== undefined) updateData.verificationIdType = verificationIdType
+    if (verificationSelfie !== undefined) updateData.verificationSelfie = verificationSelfie
     // Keep a primary profilePhoto field in sync with the first photo if present
     if (Array.isArray(profilePhotos) && profilePhotos.length > 0) {
       updateData.profilePhoto = profilePhotos[0]

@@ -172,15 +172,26 @@ export async function POST(request: NextRequest) {
       createdAt: new Date(),
     })
 
-    // Send verification code email
-    sendVerificationCodeEmail({
-      to: newUser.email,
-      name: newUser.name,
-      code: otp,
-    }).catch((error) => {
+    // Send verification code email (await to avoid serverless early exit)
+    try {
+      const result = await sendVerificationCodeEmail({
+        to: newUser.email,
+        name: newUser.name,
+        code: otp,
+      })
+      if (!result || (result as any).success !== true) {
+        throw new Error('Verification email not sent')
+      }
+    } catch (error) {
       console.error('Failed to send verification code email:', error)
-      // Don't fail signup if email fails
-    })
+      return NextResponse.json<AuthResponse>(
+        {
+          success: false,
+          message: 'Verification email failed to send. Please try again or resend the code.',
+        },
+        { status: 502 }
+      )
+    }
 
     // Send welcome email via Resend (async, don't wait for it)
     sendWelcomeEmail({

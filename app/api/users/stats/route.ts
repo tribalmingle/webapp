@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
-import { getAuthUser } from '@/lib/auth/session'
-import { getMongoDb } from '@/lib/mongodb'
+import { getCurrentUser } from '@/lib/auth'
+import { getDb } from '@/lib/db/mongodb'
 import { CollectionNames } from '@/lib/data/collection-names'
 
 export const runtime = 'nodejs'
@@ -13,13 +13,13 @@ export const dynamic = 'force-dynamic'
  */
 export async function GET(request: NextRequest) {
   try {
-    const authUser = await getAuthUser(request)
-    if (!authUser?.userId) {
+    const user = await getCurrentUser(request)
+    if (!user?.userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const db = await getMongoDb()
-    const userId = new ObjectId(authUser.userId)
+    const db = await getDb()
+    const userId = new ObjectId(user.userId)
 
     // Get matches count
     const matchesCount = await db.collection('matches').countDocuments({
