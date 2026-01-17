@@ -266,14 +266,6 @@ export async function sendVerificationCodeEmail(options: SendVerificationEmailOp
   `
 
   const text = `
-Your Tribal Mingle verification code is ${options.code}.
-
-This code expires in 10 minutes.
-
-If you did not request this, you can ignore this email.
-  `
-
-  const text = `
 Hi ${options.name},
 
 Here's your verification code to complete your Tribal Mingle registration:
@@ -292,7 +284,6 @@ The Tribal Mingle Team
     to: options.to,
     subject: '🔐 Your Tribal Mingle Verification Code',
     html,
-    text,
     text,
   })
 }
