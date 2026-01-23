@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/db/mongodb'
 import { getCurrentUser } from '@/lib/auth'
 import { ObjectId } from 'mongodb'
+import { MatchingService } from '@/lib/services/matching-service'
 
 export async function POST(req: NextRequest) {
   try {
@@ -92,9 +93,34 @@ export async function POST(req: NextRequest) {
       createdAt: new Date()
     })
 
+    const mutualLike = await likesCollection.findOne({
+      userId: likedUserObjectId,
+      likedUserId: currentUserObjectId,
+    })
+
+    if (mutualLike) {
+      const matchesCollection = db.collection('matches')
+      const pairHash = MatchingService.pairHash(currentUserObjectId.toHexString(), likedUserObjectId.toHexString())
+      const existingMatch = await matchesCollection.findOne({ pairHash })
+      if (!existingMatch) {
+        const memberIds = [currentUserObjectId, likedUserObjectId].sort((a, b) =>
+          a.toHexString().localeCompare(b.toHexString())
+        )
+        await matchesCollection.insertOne({
+          memberIds,
+          pairHash,
+          state: 'active',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          confirmedAt: new Date(),
+        })
+      }
+    }
+
     return NextResponse.json({
       success: true,
-      message: 'User liked successfully'
+      message: 'User liked successfully',
+      mutual: Boolean(mutualLike)
     })
   } catch (error) {
     console.error('Error liking user:', error)
