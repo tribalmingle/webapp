@@ -1,3 +1,5 @@
+import { AFRICAN_COUNTRIES_WITH_TRIBES } from '@/lib/constants/profile-options'
+
 export type MatchBreakdownItem = {
   key: string;
   label: string;
@@ -12,6 +14,17 @@ export type MatchResult = {
 };
 
 const normalize = (value?: string | null) => (value || '').trim().toLowerCase();
+
+const inferOriginFromTribe = (tribe?: string | null) => {
+  const normalized = normalize(tribe)
+  if (!normalized) return ''
+  for (const [country, tribes] of Object.entries(AFRICAN_COUNTRIES_WITH_TRIBES)) {
+    if (tribes.some((item) => normalize(item) === normalized)) {
+      return country
+    }
+  }
+  return ''
+}
 
 const getSharedInterests = (left?: string[], right?: string[]) => {
   const leftSet = new Set((left || []).map((item) => normalize(item)).filter(Boolean));
@@ -29,7 +42,9 @@ export const computeMatchScore = (currentUser: any | null, candidate: any): Matc
   const currentTribe = normalize(currentUser?.tribe);
   const currentCity = normalize(currentUser?.city);
   const currentCountry = normalize(currentUser?.country);
-  const currentOrigin = normalize(currentUser?.heritage || currentUser?.countryOfOrigin);
+  const currentOrigin = normalize(
+    currentUser?.heritage || currentUser?.countryOfOrigin || inferOriginFromTribe(currentUser?.tribe)
+  );
   const currentFaith = normalize(currentUser?.faith || currentUser?.religion);
   const currentLookingFor = normalize(
     currentUser?.lookingFor || (Array.isArray(currentUser?.relationshipGoals) ? currentUser.relationshipGoals[0] : ''),
@@ -39,7 +54,9 @@ export const computeMatchScore = (currentUser: any | null, candidate: any): Matc
   const candidateTribe = normalize(candidate?.tribe);
   const candidateCity = normalize(candidate?.city);
   const candidateCountry = normalize(candidate?.country);
-  const candidateOrigin = normalize(candidate?.heritage || candidate?.countryOfOrigin);
+  const candidateOrigin = normalize(
+    candidate?.heritage || candidate?.countryOfOrigin || inferOriginFromTribe(candidate?.tribe)
+  );
   const candidateFaith = normalize(candidate?.faith || candidate?.religion);
   const candidateLookingFor = normalize(
     candidate?.lookingFor || (Array.isArray(candidate?.relationshipGoals) ? candidate.relationshipGoals[0] : ''),

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentUser, createToken } from '@/lib/auth'
 import { connectDB } from '@/lib/db/mongodb'
 import { ObjectId } from 'mongodb'
+import { computeProfileCompletion } from '@/lib/matching/profile-completion'
 
 export const runtime = 'nodejs';
 
@@ -40,12 +41,15 @@ export async function GET(request: NextRequest) {
       email: userData.email,
     })
 
+    const completion = computeProfileCompletion(plainUser)
+
     const response = NextResponse.json({
       success: true,
       user: {
         ...plainUser,
         name,
         id: plainUser._id,
+        profileCompletion: completion.percent,
       },
     })
 

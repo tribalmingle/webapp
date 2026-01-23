@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { connectDB } from '@/lib/db/mongodb';
 import { computeMatchScore } from '@/lib/matching/match-score';
+import { computeProfileCompletion } from '@/lib/matching/profile-completion';
 
 export const runtime = 'nodejs';
 
@@ -74,9 +75,11 @@ export async function GET(req: NextRequest) {
 
     const scored = recommendations
       .map((user: any) => {
+        const completion = computeProfileCompletion(user);
         const match = computeMatchScore(currentUser, user);
         return {
           ...user,
+          profileCompletion: completion.percent,
           matchPercent: match.matchPercent,
           compatibility: match.matchPercent,
           matchReasons: match.reasons,
@@ -84,6 +87,7 @@ export async function GET(req: NextRequest) {
           _priorityScore: match.priority,
         };
       })
+      .filter((user: any) => (user.profileCompletion ?? 0) >= 60)
       .sort((a: any, b: any) => {
         if (a._priorityScore !== b._priorityScore) {
           return a._priorityScore - b._priorityScore;

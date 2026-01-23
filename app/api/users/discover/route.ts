@@ -3,6 +3,7 @@ import { getMongoDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { getCurrentUser } from '@/lib/auth'
 import { computeMatchScore } from '@/lib/matching/match-score'
+import { computeProfileCompletion } from '@/lib/matching/profile-completion'
 
 // GET - Discover users (exclude current user and blocked users)
 export async function GET(request: Request) {
@@ -174,9 +175,11 @@ export async function GET(request: Request) {
 
     const scoredUsers = users
       .map((user: any) => {
+        const completion = computeProfileCompletion(user)
         const match = computeMatchScore(currentUser, user)
         return {
           ...user,
+          profileCompletion: completion.percent,
           matchPercent: match.matchPercent,
           compatibility: match.matchPercent,
           matchReasons: match.reasons,
@@ -184,6 +187,7 @@ export async function GET(request: Request) {
           _priorityScore: match.priority,
         }
       })
+      .filter((user: any) => (user.profileCompletion ?? 0) >= 60)
       .sort((a: any, b: any) => {
         if (a._priorityScore !== b._priorityScore) {
           return a._priorityScore - b._priorityScore
