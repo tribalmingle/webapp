@@ -109,7 +109,8 @@ export const computeMatchScore = (currentUser: any | null, candidate: any): Matc
     reasons.push(`Same country of residence (${candidate?.country || 'Country'})`);
   }
   if (sameOrigin) {
-    reasons.push(`Same origin (${candidate?.heritage || candidate?.countryOfOrigin || 'Origin'})`);
+    const originLabel = candidate?.heritage || candidate?.countryOfOrigin || inferOriginFromTribe(candidate?.tribe) || 'Origin'
+    reasons.push(`Same origin (${originLabel})`);
   }
   if (sameFaith) {
     reasons.push(`Shared faith (${candidate?.faith || candidate?.religion || 'Faith'})`);
