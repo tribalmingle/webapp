@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getMongoDb } from '@/lib/mongodb'
 import jwt from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
+import { computeMatchScore } from '@/lib/matching/match-score'
 
 // GET - Discover users (exclude current user and blocked users)
 export async function GET(request: Request) {
@@ -21,6 +22,7 @@ export async function GET(request: Request) {
     
     let currentUserEmail: string | null = null
     let currentUserId: string | null = null
+    let currentUser: any = null
     
     // Try to decode token to get current user
     if (token) {
@@ -39,7 +41,7 @@ export async function GET(request: Request) {
     let usersWhoBlockedMe: string[] = []
     
     if (currentUserEmail) {
-      const currentUser = await db.collection('users').findOne({ email: currentUserEmail })
+      currentUser = await db.collection('users').findOne({ email: currentUserEmail })
       if (currentUser) {
         currentUserId = currentUser._id.toString()
         
@@ -71,25 +73,18 @@ export async function GET(request: Request) {
       query.email = { $nin: excludedEmails }
     }
 
-    // Gender-based visibility: men see women or unknown, women see men or unknown
-    if (currentUserEmail) {
-      const currentUser = await db.collection('users').findOne({ email: currentUserEmail })
-      if (currentUser?.gender) {
-        const userGender = currentUser.gender.toLowerCase()
-        const unknownGenderFilter = [{ gender: { $exists: false } }, { gender: null }, { gender: '' }]
-        // Males only see Females or users without gender
-        if (userGender === 'male') {
-          query.$or = [
-            { gender: { $regex: new RegExp('^female$', 'i') } },
-            ...unknownGenderFilter,
-          ]
-        } else if (userGender === 'female') {
-          query.$or = [
-            { gender: { $regex: new RegExp('^male$', 'i') } },
-            ...unknownGenderFilter,
-          ]
-        }
+    // Gender-based visibility: men see women only, women see men only. Exclude other genders.
+    if (currentUser?.gender) {
+      const userGender = String(currentUser.gender).toLowerCase()
+      if (userGender === 'male') {
+        query.gender = { $regex: new RegExp('^female$', 'i') }
+      } else if (userGender === 'female') {
+        query.gender = { $regex: new RegExp('^male$', 'i') }
+      } else {
+        query.gender = { $regex: new RegExp('^(male|female)$', 'i') }
       }
+    } else {
+      query.gender = { $regex: new RegExp('^(male|female)$', 'i') }
     }
     
     // Add search functionality - keep gender filter applied by combining with $and
@@ -147,113 +142,61 @@ export async function GET(request: Request) {
       query.workType = workType
     }
 
-    // Tribe + location based ordering
-    let sortStage: any = {}
-    if (currentUserEmail) {
-      const currentUser = await db.collection('users').findOne({ email: currentUserEmail })
-      if (currentUser) {
-        const currentTribe = currentUser.tribe || null
-        const currentCity = currentUser.city || null
-        const currentCountry = currentUser.country || null
-
-        sortStage = {
-          scoreSameTribeSameCity: {
-            $cond: [
-              {
-                $and: [
-                  currentTribe ? { $eq: ['$tribe', currentTribe] } : false,
-                  currentCity ? { $eq: ['$city', currentCity] } : false
-                ]
-              },
-              0,
-              2
-            ]
-          },
-          scoreSameTribeSameCountry: {
-            $cond: [
-              {
-                $and: [
-                  currentTribe ? { $eq: ['$tribe', currentTribe] } : false,
-                  currentCountry ? { $eq: ['$country', currentCountry] } : false
-                ]
-              },
-              1,
-              2
-            ]
+    const users = await db
+      .collection('users')
+      .aggregate([
+        { $match: query },
+        {
+          $addFields: {
+            profilePhoto: {
+              $cond: {
+                if: { $gt: [{ $size: { $ifNull: ['$profilePhotos', []] } }, 0] },
+                then: { $arrayElemAt: ['$profilePhotos', 0] },
+                else: { $ifNull: ['$profilePhoto', ''] }
+              }
+            }
           }
+        },
+        {
+          $project: {
+            password: 0,
+            token: 0
+          }
+        },
+        { $limit: 120 }
+      ])
+      .toArray()
+
+    const scoredUsers = users
+      .map((user: any) => {
+        const match = computeMatchScore(currentUser, user)
+        return {
+          ...user,
+          matchPercent: match.matchPercent,
+          compatibility: match.matchPercent,
+          matchReasons: match.reasons,
+          matchBreakdown: match.breakdown,
+          _priorityScore: match.priority,
         }
-      }
-    }
-
-    let users
-
-    if (Object.keys(sortStage).length > 0) {
-      users = await db
-        .collection('users')
-        .aggregate([
-          { $match: query },
-          {
-            $addFields: sortStage
-          },
-          {
-            $sort: {
-              scoreSameTribeSameCity: 1,
-              scoreSameTribeSameCountry: 1
-            }
-          },
-          {
-            $addFields: {
-              profilePhoto: {
-                $cond: {
-                  if: { $gt: [{ $size: { $ifNull: ['$profilePhotos', []] } }, 0] },
-                  then: { $arrayElemAt: ['$profilePhotos', 0] },
-                  else: { $ifNull: ['$profilePhoto', ''] }
-                }
-              }
-            }
-          },
-          {
-            $project: {
-              password: 0,
-              token: 0,
-              scoreSameTribeSameCity: 0,
-              scoreSameTribeSameCountry: 0
-            }
-          },
-          { $limit: 50 }
-        ])
-        .toArray()
-    } else {
-      users = await db
-        .collection('users')
-        .aggregate([
-          { $match: query },
-          {
-            $addFields: {
-              profilePhoto: {
-                $cond: {
-                  if: { $gt: [{ $size: { $ifNull: ['$profilePhotos', []] } }, 0] },
-                  then: { $arrayElemAt: ['$profilePhotos', 0] },
-                  else: { $ifNull: ['$profilePhoto', ''] }
-                }
-              }
-            }
-          },
-          {
-            $project: {
-              password: 0,
-              token: 0
-            }
-          },
-          { $limit: 50 }
-        ])
-        .toArray()
-    }
+      })
+      .sort((a: any, b: any) => {
+        if (a._priorityScore !== b._priorityScore) {
+          return a._priorityScore - b._priorityScore
+        }
+        if (b.matchPercent !== a.matchPercent) {
+          return b.matchPercent - a.matchPercent
+        }
+        const aUpdated = new Date(a.updatedAt || 0).getTime()
+        const bUpdated = new Date(b.updatedAt || 0).getTime()
+        return bUpdated - aUpdated
+      })
+      .slice(0, 50)
+      .map(({ _priorityScore, ...user }) => user)
     
     return NextResponse.json({
       success: true,
-      count: users.length,
-      users,
+      count: scoredUsers.length,
+      users: scoredUsers,
     })
   } catch (error) {
     console.error('Error fetching discover users:', error)

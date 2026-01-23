@@ -33,6 +33,7 @@ export interface User {
   occupation?: string
   religion?: string
   lookingFor?: string // What they're looking for
+  loveLanguage?: string
   createdAt: Date
   updatedAt: Date
 }

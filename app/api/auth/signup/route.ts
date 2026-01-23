@@ -9,7 +9,7 @@ import { sendWelcomeEmail, sendVerificationCodeEmail } from '@/lib/vendors/resen
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-  const { email, password, name, age, gender, tribe, bio, interests, location, profilePhoto, selfiePhoto, username } = body
+  const { email, password, name, age, gender, tribe, bio, interests, location, profilePhoto, selfiePhoto, username, loveLanguage } = body
 
     // Validation
     if (!email || !password || !name || !age || !gender) {
@@ -143,6 +143,7 @@ export async function POST(request: NextRequest) {
       tribe: tribe || '',
       bio: bio || '',
       interests: interests || [],
+      loveLanguage: loveLanguage || '',
       location: location || '',
       city: body.city || '',
       country: body.country || '',

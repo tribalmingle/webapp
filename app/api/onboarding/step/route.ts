@@ -81,6 +81,7 @@ export async function POST(request: NextRequest) {
 
       case 6: // Interests
         if (data.interests) updateDoc.interests = data.interests
+        if (data.loveLanguage) updateDoc.loveLanguage = data.loveLanguage
         break
 
       case 7: // Looking For
@@ -228,6 +229,9 @@ function validateStepData(step: number, data: any): string | null {
     case 6: // Interests
       if (!data.interests || !Array.isArray(data.interests) || data.interests.length < 3) {
         return 'Please select at least 3 interests'
+      }
+      if (!data.loveLanguage) {
+        return 'Please select a love language'
       }
       break
 

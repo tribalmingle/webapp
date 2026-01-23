@@ -51,6 +51,7 @@ export async function GET(
         country: userWithoutPassword.country,
         bio: userWithoutPassword.bio,
         interests: userWithoutPassword.interests,
+        loveLanguage: userWithoutPassword.loveLanguage,
         verified: userWithoutPassword.verified,
         occupation: userWithoutPassword.occupation,
         education: userWithoutPassword.education,

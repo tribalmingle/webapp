@@ -5,6 +5,7 @@ import { getMongoDb } from '@/lib/mongodb'
 import { withSpan } from '@/lib/observability/tracing'
 import { MatchingService } from './matching-service'
 import { AnalyticsService } from './analytics-service'
+import { computeMatchScore } from '@/lib/matching/match-score'
 
 type InteractionKind = 'like' | 'super_like' | 'rewind'
 
@@ -64,16 +65,78 @@ export class InteractionService {
       .sort({ updatedAt: -1 })
       .limit(50)
       .toArray()
-    return docs.map((doc) => ({
-      matchId: doc._id?.toHexString() ?? doc.pairHash,
-      score: doc.score,
-      aiOpener: doc.aiOpener,
-      trustBadges: doc.trustBadges,
-      state: doc.state,
-      insights: doc.insights,
-      members: doc.memberIds.map((id) => id.toHexString()),
-      confirmedAt: doc.confirmedAt?.toISOString(),
-    }))
+
+    const usersCollection = db.collection('users')
+    const currentUser = await usersCollection.findOne({ _id: new ObjectId(userId) })
+
+    const otherIds = docs
+      .map((doc) => doc.memberIds.find((id) => id.toHexString() !== userId))
+      .filter(Boolean) as ObjectId[]
+
+    const otherUsers = otherIds.length
+      ? await usersCollection
+          .find({ _id: { $in: otherIds } })
+          .project({ password: 0 })
+          .toArray()
+      : []
+
+    const otherUserMap = new Map<string, any>()
+    otherUsers.forEach((user) => {
+      otherUserMap.set((user as any)._id?.toHexString?.() ?? String((user as any)._id), user)
+    })
+
+    const enriched = docs.map((doc) => {
+      const otherId = doc.memberIds.find((id) => id.toHexString() !== userId)
+      const otherUser = otherId ? otherUserMap.get(otherId.toHexString()) : undefined
+      const match = computeMatchScore(currentUser, otherUser)
+      const profilePhoto = Array.isArray(otherUser?.profilePhotos) && otherUser.profilePhotos.length > 0
+        ? otherUser.profilePhotos[0]
+        : otherUser?.profilePhoto
+
+      return {
+        matchId: doc._id?.toHexString() ?? doc.pairHash,
+        score: doc.score,
+        matchPercent: match.matchPercent,
+        matchReasons: match.reasons,
+        matchBreakdown: match.breakdown,
+        priorityScore: match.priority,
+        aiOpener: doc.aiOpener,
+        trustBadges: doc.trustBadges,
+        state: doc.state,
+        insights: doc.insights,
+        members: doc.memberIds.map((id) => id.toHexString()),
+        confirmedAt: doc.confirmedAt?.toISOString(),
+        updatedAt: doc.updatedAt,
+        id: otherUser?._id?.toString?.() ?? otherUser?._id,
+        userId: otherUser?._id?.toString?.() ?? otherUser?._id,
+        email: otherUser?.email,
+        name: otherUser?.name,
+        age: otherUser?.age,
+        gender: otherUser?.gender,
+        tribe: otherUser?.tribe,
+        city: otherUser?.city,
+        country: otherUser?.country,
+        heritage: otherUser?.heritage,
+        countryOfOrigin: otherUser?.countryOfOrigin,
+        cityOfOrigin: otherUser?.cityOfOrigin,
+        religion: otherUser?.religion || otherUser?.faith,
+        lookingFor: otherUser?.lookingFor,
+        interests: otherUser?.interests,
+        profilePhoto,
+        photo: profilePhoto,
+        bio: otherUser?.bio,
+      }
+    })
+
+    return enriched
+      .sort((a, b) => {
+        if (a.priorityScore !== b.priorityScore) return a.priorityScore - b.priorityScore
+        if ((b.matchPercent ?? 0) !== (a.matchPercent ?? 0)) return (b.matchPercent ?? 0) - (a.matchPercent ?? 0)
+        const aUpdated = new Date(a.updatedAt || a.confirmedAt || 0).getTime()
+        const bUpdated = new Date(b.updatedAt || b.confirmedAt || 0).getTime()
+        return bUpdated - aUpdated
+      })
+      .map(({ priorityScore, updatedAt, ...rest }) => rest)
   }
 
   static async getBoostStrip(userId: string) {

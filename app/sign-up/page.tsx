@@ -17,7 +17,8 @@ import {
   LOOKING_FOR_OPTIONS,
   INTERESTS_OPTIONS,
   MARITAL_STATUS_OPTIONS,
-  getCountryPhoneCode
+  getCountryPhoneCode,
+  LOVE_LANGUAGES
 } from '@/lib/constants/profile-options'
 import { COMPATIBILITY_QUESTIONS, DEFAULT_COMPATIBILITY_VALUE } from '@/lib/constants/compatibility-quiz'
 
@@ -174,6 +175,7 @@ export default function SignUpPage() {
     education: '',
     religion: '',
     lookingFor: '',
+    loveLanguage: '',
     interests: [] as string[]
   })
 
@@ -623,6 +625,10 @@ export default function SignUpPage() {
         setError('Please select at least one interest')
         return
       }
+      if (!formData.loveLanguage) {
+        setError('Please select your love language')
+        return
+      }
     }
 
     // Step 4: Compatibility Quiz - All questions must be answered
@@ -701,6 +707,7 @@ export default function SignUpPage() {
         religion: formData.religion || '',
         lookingFor: formData.lookingFor || '',
         interests: formData.interests || [],
+        loveLanguage: formData.loveLanguage || '',
         profilePhoto: mediaState.id.fileUrl || '',
         selfiePhoto: mediaState.selfie.fileUrl || '',
         subscriptionPlan: selectedPlan || 'free',
@@ -745,7 +752,7 @@ export default function SignUpPage() {
 
   return (
     <div className="min-h-dvh bg-background-primary relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(800px_circle_at_top,_rgba(255,181,83,0.18),_transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(800px_circle_at_top,rgba(255,181,83,0.18),transparent_60%)]" />
       <div className="pointer-events-none absolute -top-24 right-0 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
       <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-10 lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-start">
         <aside className="hidden lg:flex flex-col gap-6 rounded-3xl border border-border-gold/30 bg-background-secondary/70 p-8 shadow-premium backdrop-blur-xl">
@@ -1083,6 +1090,21 @@ export default function SignUpPage() {
               <p className="text-xs text-muted-foreground mt-1">
                 Selected: {formData.interests.length} interests
               </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Love Language</label>
+              <select
+                name="loveLanguage"
+                value={formData.loveLanguage}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+              >
+                <option value="">Select love language...</option>
+                {LOVE_LANGUAGES.map(language => (
+                  <option key={language} value={language}>{language}</option>
+                ))}
+              </select>
             </div>
           </div>
         )}

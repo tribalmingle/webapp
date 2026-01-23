@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { connectDB } from '@/lib/db/mongodb';
+import { computeMatchScore } from '@/lib/matching/match-score';
 
 export const runtime = 'nodejs';
 
@@ -30,15 +31,18 @@ export async function GET(req: NextRequest) {
       registrationComplete: true,
     };
 
-    // Apply user gender preference filter (opposite gender or unspecified)
+    // Apply strict gender visibility: men see women only, women see men only. Exclude other genders.
     if (currentUser.gender) {
       const userGender = String(currentUser.gender).toLowerCase();
-      const unknownGenderFilter = [{ gender: { $exists: false } }, { gender: null }, { gender: '' }];
       if (userGender === 'male') {
-        filter.$or = [{ gender: { $regex: new RegExp('^female$', 'i') } }, ...unknownGenderFilter];
+        filter.gender = { $regex: new RegExp('^female$', 'i') };
       } else if (userGender === 'female') {
-        filter.$or = [{ gender: { $regex: new RegExp('^male$', 'i') } }, ...unknownGenderFilter];
+        filter.gender = { $regex: new RegExp('^male$', 'i') };
+      } else {
+        filter.gender = { $regex: new RegExp('^(male|female)$', 'i') };
       }
+    } else {
+      filter.gender = { $regex: new RegExp('^(male|female)$', 'i') };
     }
 
     // Apply age filter if user has preferences (safely typed)
@@ -61,15 +65,41 @@ export async function GET(req: NextRequest) {
     // Get total count for pagination
     const total = await usersCollection.countDocuments(filter);
 
-    // Fetch recommendations
+    // Fetch recommendations (over-fetch for smarter sorting)
+    const fetchLimit = Math.min(Math.max(limit * 4, 50), 200);
     const recommendations = await usersCollection
       .find(filter)
-      .skip(skip)
-      .limit(limit)
+      .limit(fetchLimit)
       .toArray();
 
+    const scored = recommendations
+      .map((user: any) => {
+        const match = computeMatchScore(currentUser, user);
+        return {
+          ...user,
+          matchPercent: match.matchPercent,
+          compatibility: match.matchPercent,
+          matchReasons: match.reasons,
+          matchBreakdown: match.breakdown,
+          _priorityScore: match.priority,
+        };
+      })
+      .sort((a: any, b: any) => {
+        if (a._priorityScore !== b._priorityScore) {
+          return a._priorityScore - b._priorityScore;
+        }
+        if (b.matchPercent !== a.matchPercent) {
+          return b.matchPercent - a.matchPercent;
+        }
+        const aUpdated = new Date(a.updatedAt || 0).getTime();
+        const bUpdated = new Date(b.updatedAt || 0).getTime();
+        return bUpdated - aUpdated;
+      });
+
+    const paged = scored.slice(skip, skip + limit);
+
     // Map to recommendation format
-    const results = recommendations.map((user: any) => ({
+    const results = paged.map((user: any) => ({
       id: user._id.toString(),
       email: user.email,
       name: user.name || 'User',
@@ -77,12 +107,21 @@ export async function GET(req: NextRequest) {
       tribe: user.tribe,
       city: user.city,
       country: user.country,
+      heritage: user.heritage,
+      countryOfOrigin: user.countryOfOrigin,
+      cityOfOrigin: user.cityOfOrigin,
+      religion: user.religion || user.faith,
+      lookingFor: user.lookingFor,
+      relationshipGoals: user.relationshipGoals || (user.lookingFor ? [user.lookingFor] : []),
       bio: user.bio,
       interests: user.interests || [],
+      loveLanguage: user.loveLanguage,
       verified: user.verified || false,
       photos: user.profilePhotos || (user.profilePhoto ? [user.profilePhoto] : []),
-      matchPercent: Math.floor(Math.random() * 20) + 80, // Mock compatibility score
-      compatibility: Math.floor(Math.random() * 20) + 80,
+      matchPercent: user.matchPercent,
+      compatibility: user.compatibility,
+      matchReasons: user.matchReasons || [],
+      matchBreakdown: user.matchBreakdown || [],
     }));
 
     return NextResponse.json({

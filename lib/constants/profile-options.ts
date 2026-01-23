@@ -98,6 +98,14 @@ export const COUNTRIES = [
   'Other'
 ]
 
+export const LOVE_LANGUAGES = [
+  'Words of Affirmation',
+  'Quality Time',
+  'Acts of Service',
+  'Physical Touch',
+  'Receiving Gifts'
+]
+
 // Country phone codes with flags
 export const COUNTRY_PHONE_CODES: { [key: string]: { code: string; flag: string } } = {
   'Nigeria': { code: '+234', flag: '🇳🇬' },

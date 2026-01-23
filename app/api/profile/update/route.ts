@@ -30,6 +30,7 @@ export async function PUT(req: NextRequest) {
       occupation,
       religion,
       lookingFor,
+      loveLanguage,
       interests,
       profilePhotos,
       selfiePhoto,
@@ -78,6 +79,7 @@ export async function PUT(req: NextRequest) {
     if (occupation !== undefined) updateData.occupation = occupation
     if (religion !== undefined) updateData.religion = religion
     if (lookingFor !== undefined) updateData.lookingFor = lookingFor
+    if (loveLanguage !== undefined) updateData.loveLanguage = loveLanguage
     if (interests !== undefined) updateData.interests = interests
     if (profilePhotos !== undefined) updateData.profilePhotos = profilePhotos
     if (selfiePhoto !== undefined) updateData.selfiePhoto = selfiePhoto
