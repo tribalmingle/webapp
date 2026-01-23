@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server'
 import { getMongoDb } from '@/lib/mongodb'
-import jwt from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
+import { getCurrentUser } from '@/lib/auth'
 import { computeMatchScore } from '@/lib/matching/match-score'
 
 // GET - Discover users (exclude current user and blocked users)
 export async function GET(request: Request) {
   try {
   const { searchParams } = new URL(request.url)
-  const token = searchParams.get('token') || request.headers.get('authorization')?.replace('Bearer ', '')
   const search = searchParams.get('search') || ''
   const maritalStatus = searchParams.get('maritalStatus') || ''
   const minAgeParam = searchParams.get('minAge') || ''
@@ -20,19 +19,13 @@ export async function GET(request: Request) {
   const education = searchParams.get('education') || ''
   const workType = searchParams.get('workType') || ''
     
-    let currentUserEmail: string | null = null
-    let currentUserId: string | null = null
-    let currentUser: any = null
-    
-    // Try to decode token to get current user
-    if (token) {
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any
-        currentUserEmail = decoded.email
-      } catch (error) {
-        console.log('Invalid token, proceeding without user filter')
-      }
+    const authUser = await getCurrentUser(request)
+    if (!authUser) {
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 })
     }
+
+    const currentUserEmail: string | null = authUser.email || null
+    const currentUserId: string | null = authUser.userId || null
     
     const db = await getMongoDb()
     
@@ -40,8 +33,15 @@ export async function GET(request: Request) {
     let blockedUserIds: string[] = []
     let usersWhoBlockedMe: string[] = []
     
-    if (currentUserEmail) {
-      currentUser = await db.collection('users').findOne({ email: currentUserEmail })
+    if (currentUserId || currentUserEmail) {
+      const currentUserQuery: any = {}
+      if (currentUserId && ObjectId.isValid(currentUserId)) {
+        currentUserQuery._id = new ObjectId(currentUserId)
+      } else if (currentUserEmail) {
+        currentUserQuery.email = currentUserEmail
+      }
+
+      currentUser = await db.collection('users').findOne(currentUserQuery)
       if (currentUser) {
         currentUserId = currentUser._id.toString()
         
@@ -71,6 +71,10 @@ export async function GET(request: Request) {
     
     if (excludedEmails.length > 0) {
       query.email = { $nin: excludedEmails }
+    }
+
+    if (currentUserId && ObjectId.isValid(currentUserId)) {
+      query._id = { $ne: new ObjectId(currentUserId) }
     }
 
     // Gender-based visibility: men see women only, women see men only. Exclude other genders.

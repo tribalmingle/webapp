@@ -54,59 +54,30 @@ export const computeMatchScore = (currentUser: any | null, candidate: any): Matc
   const sameLookingFor = currentLookingFor && candidateLookingFor && currentLookingFor === candidateLookingFor;
   const sameLoveLanguage = currentLoveLanguage && candidateLoveLanguage && currentLoveLanguage === candidateLoveLanguage;
   const sharedInterests = getSharedInterests(currentUser?.interests, candidate?.interests);
-  const conflictingLookingFor =
-    currentLookingFor && candidateLookingFor && currentLookingFor !== candidateLookingFor;
-  const conflictingFaith = currentFaith && candidateFaith && currentFaith !== candidateFaith;
 
-  let score = 58;
-  const breakdown: MatchBreakdownItem[] = [];
+  const factors = {
+    origin: Boolean(sameOrigin),
+    tribe: Boolean(sameTribe),
+    residenceCountry: Boolean(sameCountry),
+    religion: Boolean(sameFaith),
+    loveLanguage: Boolean(sameLoveLanguage),
+    lookingFor: Boolean(sameLookingFor),
+    sharedInterests: sharedInterests.length > 0,
+  };
 
-  if (sameTribe) {
-    score += 12;
-    breakdown.push({ key: 'tribe', label: 'Same tribe', score: 12 });
-  }
-  if (sameCity) {
-    score += 10;
-    breakdown.push({ key: 'city', label: 'Same city', score: 10 });
-  }
-  if (sameCountry) {
-    score += 6;
-    breakdown.push({ key: 'country', label: 'Same country', score: 6 });
-  }
-  if (sameOrigin) {
-    score += 6;
-    breakdown.push({ key: 'origin', label: 'Same origin country', score: 6 });
-  }
-  if (sameFaith) {
-    score += 6;
-    breakdown.push({ key: 'faith', label: 'Same faith', score: 6 });
-  }
-  if (sameLookingFor) {
-    score += 5;
-    breakdown.push({ key: 'lookingFor', label: 'Aligned intentions', score: 5 });
-  }
-  if (sameLoveLanguage) {
-    score += 5;
-    breakdown.push({ key: 'loveLanguage', label: 'Same love language', score: 5 });
-  }
-  if (sharedInterests.length) {
-    const interestScore = Math.min(sharedInterests.length, 4) * 3;
-    score += interestScore;
-    breakdown.push({ key: 'interests', label: 'Shared interests', score: interestScore });
-  }
-  if (conflictingLookingFor) {
-    score -= 10;
-    breakdown.push({ key: 'intent_mismatch', label: 'Different relationship intent', score: -10 });
-  }
-  if (conflictingFaith) {
-    score -= 6;
-    breakdown.push({ key: 'faith_mismatch', label: 'Different faith', score: -6 });
-  }
+  const totalFactors = Object.keys(factors).length;
+  const matchedCount = Object.values(factors).filter(Boolean).length;
+  const matchPercent = Math.round((matchedCount / totalFactors) * 100);
 
-  const geoAligned = sameTribe || sameCity || sameCountry || sameOrigin;
-  const geoCap = geoAligned ? 99 : 88;
-
-  const cappedScore = Math.max(52, Math.min(geoCap, Math.round(score)));
+  const breakdown: MatchBreakdownItem[] = [
+    { key: 'origin', label: 'Same origin country', score: factors.origin ? 1 : 0 },
+    { key: 'tribe', label: 'Same tribe', score: factors.tribe ? 1 : 0 },
+    { key: 'residence_country', label: 'Same country of residence', score: factors.residenceCountry ? 1 : 0 },
+    { key: 'religion', label: 'Same religion', score: factors.religion ? 1 : 0 },
+    { key: 'love_language', label: 'Same love language', score: factors.loveLanguage ? 1 : 0 },
+    { key: 'looking_for', label: 'Same relationship intent', score: factors.lookingFor ? 1 : 0 },
+    { key: 'shared_interests', label: 'Shared interests', score: factors.sharedInterests ? 1 : 0 },
+  ];
 
   const reasons: string[] = [];
   if (sameTribe && sameCity) {
@@ -118,7 +89,7 @@ export const computeMatchScore = (currentUser: any | null, candidate: any): Matc
     reasons.push(`Same city (${candidate?.city || 'City'})`);
   }
   if (sameCountry) {
-    reasons.push(`Same country (${candidate?.country || 'Country'})`);
+    reasons.push(`Same country of residence (${candidate?.country || 'Country'})`);
   }
   if (sameOrigin) {
     reasons.push(`Same origin (${candidate?.heritage || candidate?.countryOfOrigin || 'Origin'})`);
@@ -135,9 +106,6 @@ export const computeMatchScore = (currentUser: any | null, candidate: any): Matc
   if (sameLoveLanguage) {
     reasons.push(`Love language match (${candidate?.loveLanguage || candidateLoveLanguage})`);
   }
-  if (conflictingLookingFor) {
-    reasons.push('Different relationship goals');
-  }
 
   let priority = 4;
   if (sameTribe && sameCity) {
@@ -151,7 +119,7 @@ export const computeMatchScore = (currentUser: any | null, candidate: any): Matc
   }
 
   return {
-    matchPercent: cappedScore,
+    matchPercent,
     reasons: reasons.slice(0, 4),
     breakdown,
     priority,
