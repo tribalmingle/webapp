@@ -24,8 +24,9 @@ export async function GET(request: Request) {
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 })
     }
 
-    const currentUserEmail: string | null = authUser.email || null
-    const currentUserId: string | null = authUser.userId || null
+    let currentUserEmail: string | null = authUser.email || null
+    let currentUserId: string | null = authUser.userId || null
+    let currentUser: any = null
     
     const db = await getMongoDb()
     
