@@ -24,8 +24,8 @@ export function MobileNav({ primaryCta, dictionary }: MobileNavProps) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden h-14 w-14">
-          <Menu className="h-9 w-9" />
+        <Button variant="ghost" size="icon" className="md:hidden h-[72px] w-[72px]">
+          <Menu className="h-[36px] w-[36px]" />
           <span className="sr-only">Open menu</span>
         </Button>
       </SheetTrigger>

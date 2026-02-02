@@ -119,6 +119,11 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
                 </Button>
               </Link>
             </div>
+            <Link href="/sign-up" className="md:hidden">
+              <Button className="bg-purple-gradient" size="sm">
+                Get started
+              </Button>
+            </Link>
             <MobileNav 
               primaryCta={heroVariant.primaryCta} 
               dictionary={{
