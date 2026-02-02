@@ -88,6 +88,9 @@ export default function PrivacyPolicyPage() {
         <p>
           If you have questions or requests, contact us at <a href="mailto:support@tribalmingle.com">support@tribalmingle.com</a>.
         </p>
+        <p>
+          To request account and data deletion, use this link: <a href="mailto:privacy@tribalmingle.com?subject=Account%20Deletion%20Request">privacy@tribalmingle.com</a>.
+        </p>
       </section>
     </main>
   )
