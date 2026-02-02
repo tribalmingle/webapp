@@ -89,15 +89,6 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
         </div>
         
         <div className="relative mx-auto flex h-14 md:h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <MobileNav 
-            primaryCta={heroVariant.primaryCta} 
-            dictionary={{
-              footer: {
-                features: dictionary.footer.features,
-                contact: dictionary.footer.contact
-              }
-            }} 
-          />
           <div className="flex items-center">
             <img src="/triballogo.webp" alt="TribalMingle" className="h-12 md:h-16 w-auto object-contain" />
           </div>
@@ -115,17 +106,28 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
               Dating Advice & Tips
             </a>
           </nav>
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/login">
-              <Button variant="outline" size="default" className="border-gold-warm text-gold-warm hover:bg-gold-warm hover:text-white">
-                Login
-              </Button>
-            </Link>
-            <Link href="/sign-up">
-              <Button className="bg-purple-gradient" size="default">
-                {heroVariant.primaryCta}
-              </Button>
-            </Link>
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-3">
+              <Link href="/login">
+                <Button variant="outline" size="default" className="border-gold-warm text-gold-warm hover:bg-gold-warm hover:text-white">
+                  Login
+                </Button>
+              </Link>
+              <Link href="/sign-up">
+                <Button className="bg-purple-gradient" size="default">
+                  {heroVariant.primaryCta}
+                </Button>
+              </Link>
+            </div>
+            <MobileNav 
+              primaryCta={heroVariant.primaryCta} 
+              dictionary={{
+                footer: {
+                  features: dictionary.footer.features,
+                  contact: dictionary.footer.contact
+                }
+              }} 
+            />
           </div>
         </div>
       </header>
