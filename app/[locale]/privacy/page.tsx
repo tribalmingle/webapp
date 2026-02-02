@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { SiteHeader } from '@/components/marketing/site-header'
 import { normalizeLocale } from '@/lib/i18n/locales'
 
@@ -21,21 +22,21 @@ export default async function PrivacyPolicyPage({ params }: PageProps) {
     <main className="min-h-screen bg-background-primary">
       <SiteHeader locale={locale} />
       <div className="mx-auto max-w-4xl px-6 pb-16 pt-28">
-      <div className="rounded-3xl border border-neutral-200/60 bg-white/70 p-8 shadow-sm backdrop-blur dark:border-neutral-800/60 dark:bg-neutral-950/70">
-        <div className="flex flex-col gap-3">
-          <span className="inline-flex w-fit items-center rounded-full bg-rose-50 px-3 py-1 text-xs font-medium text-rose-700 dark:bg-rose-500/10 dark:text-rose-200">
-            Privacy Policy
-          </span>
-          <h1 className="text-3xl font-semibold tracking-tight">Your privacy at TribalMingle</h1>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">Effective date: {effectiveDate}</p>
-          <p className="text-base text-neutral-700 dark:text-neutral-300">
-            TribalMingle ("we", "us", "our") provides the TribalMingle mobile application and website
-            (collectively, the "Service"). This Privacy Policy explains how we collect, use, disclose,
-            and safeguard your information when you use the Service.
-          </p>
-        </div>
+        <div className="rounded-3xl border border-neutral-200/60 bg-white/70 p-8 shadow-sm backdrop-blur dark:border-neutral-800/60 dark:bg-neutral-950/70">
+          <div className="flex flex-col gap-3">
+            <span className="inline-flex w-fit items-center rounded-full bg-purple-50 px-3 py-1 text-xs font-medium text-purple-700 dark:bg-purple-500/10 dark:text-purple-200">
+              Privacy Policy
+            </span>
+            <h1 className="text-3xl font-semibold tracking-tight">TribalMingle Privacy Policy</h1>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">Effective date: {effectiveDate}</p>
+            <p className="text-base text-neutral-700 dark:text-neutral-300">
+              TribalMingle ("we", "us", "our") provides the TribalMingle mobile application and website
+              (collectively, the "Service"). This Privacy Policy explains how we collect, use, disclose,
+              and safeguard your information when you use the Service.
+            </p>
+          </div>
 
-        <ol className="mt-8 space-y-6">
+          <ol className="mt-8 space-y-6">
           <li className="rounded-2xl border border-neutral-200/60 p-6 dark:border-neutral-800/60">
             <h2 className="text-lg font-semibold">1. Information we collect</h2>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-neutral-700 dark:text-neutral-300">
@@ -117,18 +118,33 @@ export default async function PrivacyPolicyPage({ params }: PageProps) {
               We may update this Privacy Policy from time to time. We will post the updated policy with a new effective date.
             </p>
           </li>
-        </ol>
+          </ol>
 
-        <div className="mt-8 rounded-2xl border border-neutral-200/60 bg-neutral-50 p-6 text-sm text-neutral-700 dark:border-neutral-800/60 dark:bg-neutral-900/40 dark:text-neutral-300">
-          <h2 className="text-base font-semibold">10. Contact & deletion requests</h2>
-          <p className="mt-2">
-            Questions or requests? Email <a className="font-medium text-rose-700 hover:text-rose-800 dark:text-rose-200" href="mailto:support@tribalmingle.com">support@tribalmingle.com</a>.
-          </p>
-          <p className="mt-2">
-            To request account and data deletion, email <a className="font-medium text-rose-700 hover:text-rose-800 dark:text-rose-200" href="mailto:privacy@tribalmingle.com?subject=Account%20Deletion%20Request">privacy@tribalmingle.com</a>.
-          </p>
+          <div className="mt-8 rounded-2xl border border-neutral-200/60 bg-neutral-50 p-6 text-sm text-neutral-700 dark:border-neutral-800/60 dark:bg-neutral-900/40 dark:text-neutral-300">
+            <h2 className="text-base font-semibold">10. Contact, safety standards & deletion requests</h2>
+            <p className="mt-2">
+              Questions or requests? Email{' '}
+              <a className="font-medium text-purple-700 hover:text-purple-800 dark:text-purple-200" href="mailto:support@tribalmingle.com">
+                support@tribalmingle.com
+              </a>.
+            </p>
+            <p className="mt-2">
+              Review our child safety standards at{' '}
+              <Link className="font-medium text-purple-700 hover:text-purple-800 dark:text-purple-200" href={`/${locale}/safety-standards`}>
+                Safety Standards
+              </Link>.
+            </p>
+            <p className="mt-2">
+              To request account and data deletion, email{' '}
+              <a
+                className="font-medium text-purple-700 hover:text-purple-800 dark:text-purple-200"
+                href="mailto:privacy@tribalmingle.com?subject=Account%20Deletion%20Request"
+              >
+                privacy@tribalmingle.com
+              </a>.
+            </p>
+          </div>
         </div>
-      </div>
       </div>
     </main>
   )

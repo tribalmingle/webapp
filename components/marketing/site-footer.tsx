@@ -49,8 +49,8 @@ export function SiteFooter({ locale = 'en', dictionary = defaultDictionary }: Si
               <li><Link href="/careers" className="hover:text-gold-warm transition-colors">Careers</Link></li>
             </ul>
             {/* Logo - positioned right below Careers */}
-            <div className="mt-4">
-              <img src="/triballogo.webp" alt="Tribal Mingle" className="h-32 w-auto" />
+            <div className="mt-4 h-32">
+              <img src="/triballogo.webp" alt="Tribal Mingle" className="h-full w-auto object-contain" />
             </div>
           </div>
           <div>
