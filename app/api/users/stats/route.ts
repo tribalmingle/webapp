@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { getCurrentUser } from '@/lib/auth'
 import { getDb } from '@/lib/db/mongodb'
-import { CollectionNames } from '@/lib/data/collection-names'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -19,36 +18,88 @@ export async function GET(request: NextRequest) {
     }
 
     const db = await getDb()
-    const userId = new ObjectId(user.userId)
+    const usersCollection = db.collection('users')
+    const likesCollection = db.collection('likes')
+    const matchesCollection = db.collection('matches')
+    const viewsCollection = db.collection('profile_views')
+    const messagesCollection = db.collection('messages')
+
+    const userEmail = user.email?.toLowerCase()
+    let userObjectId: ObjectId | null = null
+
+    if (ObjectId.isValid(user.userId)) {
+      userObjectId = new ObjectId(user.userId)
+    } else if (userEmail) {
+      const userDoc = await usersCollection.findOne({ email: userEmail }, { projection: { _id: 1 } })
+      if (userDoc?._id) userObjectId = userDoc._id
+    }
+
+    if (!userObjectId && !userEmail) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
 
     // Get matches count
-    const matchesCount = await db.collection('matches').countDocuments({
-      $or: [
-        { userId1: userId },
-        { userId2: userId }
-      ],
-      status: 'active'
-    })
+    const matchesCount = userObjectId
+      ? await matchesCollection.countDocuments({
+          $and: [
+            {
+              $or: [
+                { memberIds: userObjectId },
+                { userId1: userObjectId },
+                { userId2: userObjectId },
+              ],
+            },
+            {
+              $or: [
+                { state: 'active' },
+                { status: 'active' },
+                { state: { $exists: false } },
+                { status: { $exists: false } },
+              ],
+            },
+          ],
+        })
+      : 0
 
     // Get profile views count (last 30 days)
     const thirtyDaysAgo = new Date()
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-    const viewsCount = await db.collection('profile_views').countDocuments({
-      viewedUserId: userId,
-      createdAt: { $gte: thirtyDaysAgo }
-    })
+    const viewsCount = userEmail
+      ? await viewsCollection.countDocuments({
+          viewedUserId: userEmail,
+          $or: [
+            { viewedAt: { $gte: thirtyDaysAgo } },
+            { createdAt: { $gte: thirtyDaysAgo } },
+          ],
+        })
+      : 0
 
     // Get chats count (conversations with at least 1 message)
-    const chatsCount = await db.collection('conversations').countDocuments({
-      participants: userId,
-      messageCount: { $gt: 0 }
-    })
+    let chatsCount = 0
+    if (userEmail) {
+      const sentTo = await messagesCollection.distinct('receiverId', { senderId: userEmail })
+      const receivedFrom = await messagesCollection.distinct('senderId', { receiverId: userEmail })
+      const uniquePartners = new Set([
+        ...sentTo.filter(Boolean),
+        ...receivedFrom.filter(Boolean),
+      ])
+      chatsCount = uniquePartners.size
+    }
 
     // Get likes count (likes received)
-    const likesCount = await db.collection('likes').countDocuments({
-      likedUserId: userId,
-      status: 'pending' // Only count pending likes (not matched yet)
-    })
+    const likesTargetFilters = [{ likedUserId: userObjectId }]
+    if (userEmail) {
+      likesTargetFilters.push({ likedUserId: userEmail })
+    }
+
+    const likesCount = userObjectId
+      ? await likesCollection.countDocuments({
+          $and: [
+            { $or: likesTargetFilters },
+            { $or: [{ status: 'pending' }, { status: { $exists: false } }] },
+          ],
+        })
+      : 0
 
     return NextResponse.json({
       success: true,

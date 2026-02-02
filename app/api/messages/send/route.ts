@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { ObjectId } from 'mongodb'
 import { getMongoDb } from '@/lib/mongodb'
 import { getCurrentUser } from '@/lib/auth'
 
@@ -25,16 +26,70 @@ export async function POST(req: NextRequest) {
 
     const db = await getMongoDb()
     const messagesCollection = db.collection('messages')
+    const usersCollection = db.collection('users')
+    const notificationsCollection = db.collection('notifications')
+
+    let receiverEmail = String(receiverId).toLowerCase()
+    let receiverDoc = null as any
+
+    if (!receiverEmail.includes('@')) {
+      const maybeObjectId = receiverId
+      const objectId = typeof maybeObjectId === 'string' && ObjectId.isValid(maybeObjectId)
+        ? new ObjectId(maybeObjectId)
+        : null
+      receiverDoc = await usersCollection.findOne(objectId ? { _id: objectId } : { email: receiverEmail })
+      if (receiverDoc?.email) {
+        receiverEmail = String(receiverDoc.email).toLowerCase()
+      }
+    } else {
+      receiverDoc = await usersCollection.findOne({ email: receiverEmail })
+    }
+
+    if (!receiverEmail.includes('@')) {
+      return NextResponse.json(
+        { success: false, message: 'Receiver not found' },
+        { status: 400 }
+      )
+    }
 
     // Create message
     const newMessage = {
       senderId: userPayload.email,
-      receiverId,
+      receiverId: receiverEmail,
       message,
       createdAt: new Date()
     }
 
     const result = await messagesCollection.insertOne(newMessage)
+
+    if (receiverDoc?._id) {
+      const senderDoc = await usersCollection.findOne(
+        { email: userPayload.email },
+        { projection: { name: 1, profilePhotos: 1, profilePhoto: 1 } }
+      )
+      const senderName = senderDoc?.name || 'New message'
+      const senderPhoto = senderDoc?.profilePhotos?.[0] || senderDoc?.profilePhoto || undefined
+      const now = new Date()
+
+      await notificationsCollection.insertOne({
+        userId: receiverDoc._id,
+        category: 'message',
+        type: 'message_received',
+        channel: 'in_app',
+        templateId: 'message_received_v1',
+        payload: {
+          heading: `New message from ${senderName}`,
+          body: String(message).slice(0, 140),
+          senderName,
+          senderEmail: userPayload.email,
+          senderPhoto,
+        },
+        status: 'sent',
+        priority: 'high',
+        createdAt: now,
+        updatedAt: now,
+      })
+    }
 
     return NextResponse.json({
       success: true,

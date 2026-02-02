@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
     const db = await getDb()
     const likesCollection = db.collection('likes')
     const usersCollection = db.collection('users')
+    const notificationsCollection = db.collection('notifications')
 
     let currentUserObjectId: ObjectId | null = null
     if (ObjectId.isValid(user.userId)) {
@@ -93,6 +94,33 @@ export async function POST(req: NextRequest) {
       createdAt: new Date()
     })
 
+    const now = new Date()
+    const senderDoc = await usersCollection.findOne(
+      { _id: currentUserObjectId },
+      { projection: { name: 1, profilePhotos: 1, profilePhoto: 1 } }
+    )
+    const senderName = senderDoc?.name || 'Someone'
+    const senderPhoto = senderDoc?.profilePhotos?.[0] || senderDoc?.profilePhoto || undefined
+
+    await notificationsCollection.insertOne({
+      userId: likedUserObjectId,
+      category: 'match',
+      type: 'like_received',
+      channel: 'in_app',
+      templateId: 'like_received_v1',
+      payload: {
+        heading: 'New like',
+        body: `${senderName} liked you.`,
+        senderId: currentUserObjectId.toHexString(),
+        senderName,
+        senderPhoto,
+      },
+      status: 'sent',
+      priority: 'normal',
+      createdAt: now,
+      updatedAt: now,
+    })
+
     const mutualLike = await likesCollection.findOne({
       userId: likedUserObjectId,
       likedUserId: currentUserObjectId,
@@ -115,6 +143,50 @@ export async function POST(req: NextRequest) {
           confirmedAt: new Date(),
         })
       }
+
+      const likedDoc = await usersCollection.findOne(
+        { _id: likedUserObjectId },
+        { projection: { name: 1, profilePhotos: 1, profilePhoto: 1 } }
+      )
+      const likedName = likedDoc?.name || 'New match'
+      const likedPhoto = likedDoc?.profilePhotos?.[0] || likedDoc?.profilePhoto || undefined
+
+      const matchNotifications = [
+        {
+          userId: likedUserObjectId,
+          otherId: currentUserObjectId,
+          otherName: senderName,
+          otherPhoto: senderPhoto,
+        },
+        {
+          userId: currentUserObjectId,
+          otherId: likedUserObjectId,
+          otherName: likedName,
+          otherPhoto: likedPhoto,
+        },
+      ]
+
+      await notificationsCollection.insertMany(
+        matchNotifications.map((item) => ({
+          userId: item.userId,
+          category: 'match',
+          type: 'match_created',
+          channel: 'in_app',
+          templateId: 'match_created_v1',
+          payload: {
+            heading: 'It’s a match!',
+            body: `You matched with ${item.otherName}.`,
+            matchId: pairHash,
+            otherId: item.otherId.toHexString(),
+            otherName: item.otherName,
+            otherPhoto: item.otherPhoto,
+          },
+          status: 'sent',
+          priority: 'high',
+          createdAt: now,
+          updatedAt: now,
+        }))
+      )
     }
 
     return NextResponse.json({

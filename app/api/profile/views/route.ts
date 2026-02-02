@@ -16,6 +16,8 @@ export async function GET(req: NextRequest) {
     const db = await getMongoDb()
     const viewsCollection = db.collection('profile_views')
     const usersCollection = db.collection('users')
+    const notificationsCollection = db.collection('notifications')
+    const usersCollection = db.collection('users')
 
     // Get current user's gender to filter opposite gender only
     const currentUser = await usersCollection.findOne({ email: userPayload.email })
@@ -126,6 +128,40 @@ export async function POST(req: NextRequest) {
         viewedAt: new Date(),
         duration: duration || 0
       })
+
+      const viewerDoc = await usersCollection.findOne(
+        { email: userPayload.email },
+        { projection: { name: 1, profilePhotos: 1, profilePhoto: 1 } }
+      )
+      const viewedDoc = await usersCollection.findOne(
+        { email: String(viewedUserId).toLowerCase() },
+        { projection: { _id: 1 } }
+      )
+
+      if (viewedDoc?._id) {
+        const viewerName = viewerDoc?.name || 'Someone'
+        const viewerPhoto = viewerDoc?.profilePhotos?.[0] || viewerDoc?.profilePhoto || undefined
+        const now = new Date()
+
+        await notificationsCollection.insertOne({
+          userId: viewedDoc._id,
+          category: 'growth',
+          type: 'profile_view',
+          channel: 'in_app',
+          templateId: 'profile_view_v1',
+          payload: {
+            heading: 'Profile viewed',
+            body: `${viewerName} viewed your profile.`,
+            viewerName,
+            viewerEmail: userPayload.email,
+            viewerPhoto,
+          },
+          status: 'sent',
+          priority: 'normal',
+          createdAt: now,
+          updatedAt: now,
+        })
+      }
     }
 
     return NextResponse.json({

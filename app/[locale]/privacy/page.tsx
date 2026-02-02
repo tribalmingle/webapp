@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { SiteHeader } from '@/components/marketing/site-header'
+import { normalizeLocale } from '@/lib/i18n/locales'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | TribalMingle',
@@ -7,9 +9,18 @@ export const metadata: Metadata = {
 
 const effectiveDate = 'February 1, 2026'
 
-export default function PrivacyPolicyPage() {
+type PageProps = {
+  params: Promise<{ locale: string }>
+}
+
+export default async function PrivacyPolicyPage({ params }: PageProps) {
+  const { locale: rawLocale } = await params
+  const locale = normalizeLocale(rawLocale)
+
   return (
-    <main className="mx-auto max-w-4xl px-6 py-12">
+    <main className="min-h-screen bg-background-primary">
+      <SiteHeader locale={locale} />
+      <div className="mx-auto max-w-4xl px-6 pb-16 pt-28">
       <div className="rounded-3xl border border-neutral-200/60 bg-white/70 p-8 shadow-sm backdrop-blur dark:border-neutral-800/60 dark:bg-neutral-950/70">
         <div className="flex flex-col gap-3">
           <span className="inline-flex w-fit items-center rounded-full bg-rose-50 px-3 py-1 text-xs font-medium text-rose-700 dark:bg-rose-500/10 dark:text-rose-200">
@@ -117,6 +128,7 @@ export default function PrivacyPolicyPage() {
             To request account and data deletion, email <a className="font-medium text-rose-700 hover:text-rose-800 dark:text-rose-200" href="mailto:privacy@tribalmingle.com?subject=Account%20Deletion%20Request">privacy@tribalmingle.com</a>.
           </p>
         </div>
+      </div>
       </div>
     </main>
   )

@@ -148,7 +148,8 @@ export default function AdminOverviewPage() {
     { href: '/admin/billing', label: 'Revenue', icon: BarChart3, color: 'text-gold-warm' },
     { href: '/admin/labs', label: 'Labs', icon: Beaker, color: 'text-purple-royal' },
     { href: '/admin/system', label: 'System', icon: Server, color: 'text-text-secondary' },
-    { href: '/admin/support', label: 'Support', icon: MessageCircle, color: 'text-purple-royal-light' }
+    { href: '/admin/support', label: 'Support', icon: MessageCircle, color: 'text-purple-royal-light' },
+    { href: '/admin/feedback', label: 'Feedback', icon: MessageCircle, color: 'text-purple-royal-light' }
   ]
 
   if (loading) {
