@@ -115,7 +115,7 @@ function ResetPasswordForm() {
         <div className="bg-bg-secondary/60 backdrop-blur-xl rounded-2xl shadow-premium border border-border-gold/30 overflow-hidden">
           <div className="bg-purple-gradient px-6 py-8">
             <div className="flex items-center justify-center">
-              <img src="/triballogo.png" alt="Tribal Mingle" className="w-28 h-28 md:w-36 md:h-36 object-contain" />
+              <img src="/triballogo.webp" alt="Tribal Mingle" className="w-28 h-28 md:w-36 md:h-36 object-contain" />
             </div>
             <h1 className="text-xl md:text-2xl font-bold text-center text-white mt-3 font-display">Reset your password</h1>
             <p className="text-center text-white/80 text-sm md:text-base mt-2">Create a new password to get back into your account.</p>

@@ -52,7 +52,7 @@ export default function LoginPage() {
         <div className="bg-purple-gradient px-6 py-8">
           {/* Logo */}
           <div className="flex items-center justify-center">
-            <img src="/triballogo.png" alt="Tribal Mingle" className="w-32 h-32 md:w-40 md:h-40 object-contain" />
+            <img src="/triballogo.webp" alt="Tribal Mingle" className="w-32 h-32 md:w-40 md:h-40 object-contain" />
           </div>
           <h2 className="text-lg md:text-xl font-bold text-center text-white mt-2 font-display">Sign in to your account</h2>
         </div>

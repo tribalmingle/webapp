@@ -16,7 +16,7 @@ export function SiteHeader({ locale = 'en' }: SiteHeaderProps) {
       
       <div className="relative mx-auto flex h-14 md:h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href={`/${locale}`}>
-          <img src="/triballogo.png" alt="TribalMingle" className="h-12 md:h-14 w-auto" />
+          <img src="/triballogo.webp" alt="TribalMingle" className="h-12 md:h-14 w-auto" />
         </Link>
         
         <nav className="hidden items-center gap-8 text-sm font-semibold text-white md:flex">

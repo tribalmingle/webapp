@@ -86,7 +86,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
         
         <div className="relative mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center">
-            <img src="/triballogo.png" alt="TribalMingle" className="h-16 w-auto object-contain" />
+            <img src="/triballogo.webp" alt="TribalMingle" className="h-16 w-auto object-contain" />
           </div>
           <nav className="hidden items-center gap-8 text-sm font-semibold text-text-secondary md:flex">
             <a href="#features" className="transition-colors hover:text-gold-warm">

@@ -757,7 +757,7 @@ export default function SignUpPage() {
       <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-10 lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-start">
         <aside className="hidden lg:flex flex-col gap-6 rounded-3xl border border-border-gold/30 bg-background-secondary/70 p-8 shadow-premium backdrop-blur-xl">
           <div className="flex items-center gap-4">
-            <img src="/triballogo.png" alt="Tribal Mingle" className="h-20 w-20 object-contain" />
+            <img src="/triballogo.webp" alt="Tribal Mingle" className="h-20 w-20 object-contain" />
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Tribal Mingle</p>
               <h1 className="text-2xl font-semibold text-foreground">Concierge match-ready onboarding</h1>

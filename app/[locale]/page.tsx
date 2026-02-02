@@ -99,7 +99,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
             }} 
           />
           <div className="flex items-center">
-            <img src="/triballogo.png" alt="TribalMingle" className="h-12 md:h-16 w-auto object-contain" />
+            <img src="/triballogo.webp" alt="TribalMingle" className="h-12 md:h-16 w-auto object-contain" />
           </div>
           <nav className="hidden items-center gap-8 text-sm font-semibold text-text-secondary md:flex">
             <a href="#features" className="transition-colors hover:text-purple-royal">
@@ -461,7 +461,7 @@ export default async function MarketingPage({ params, searchParams }: PageProps)
               </ul>
               {/* Logo - positioned right below Careers */}
               <div className="mt-4">
-                <img src="/triballogo.png" alt="Tribal Mingle" className="h-32 w-auto" />
+                <img src="/triballogo.webp" alt="Tribal Mingle" className="h-32 w-auto" />
               </div>
             </div>
             <div>

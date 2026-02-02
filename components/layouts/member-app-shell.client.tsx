@@ -197,7 +197,7 @@ export default function MemberAppShellClient({ children, title, description, act
       <aside className="hidden lg:flex lg:w-64 lg:flex-col border-r border-border bg-card/60 backdrop-blur-sm fixed top-0 left-0 h-screen overflow-y-auto z-40">
         <div className="px-4 lg:px-6 pb-4 lg:pb-6 pt-6 lg:pt-8">
           <Link href="/dashboard-spa" className="flex items-center gap-2">
-            <img src="/triballogo.png" alt="Tribal Mingle" className="h-10 lg:h-12 w-auto" />
+            <img src="/triballogo.webp" alt="Tribal Mingle" className="h-10 lg:h-12 w-auto" />
           </Link>
           <p className="mt-1 text-xs lg:text-sm text-muted-foreground">Your daily member workspace</p>
         </div>
@@ -447,7 +447,7 @@ export default function MemberAppShellClient({ children, title, description, act
             <div className="px-4 pb-4 pt-6">
               <div className="flex items-center justify-between mb-4">
                 <Link href="/dashboard-spa" className="flex items-center gap-2" onClick={() => setShowMobileMenu(false)}>
-                  <img src="/triballogo.png" alt="Tribal Mingle" className="h-10 w-auto" />
+                  <img src="/triballogo.webp" alt="Tribal Mingle" className="h-10 w-auto" />
                 </Link>
                 <button
                   onClick={() => setShowMobileMenu(false)}
@@ -661,7 +661,7 @@ export default function MemberAppShellClient({ children, title, description, act
                 <Menu className="h-5 w-5" />
               </button>
               <Link href="/dashboard-spa" className="flex items-center lg:hidden">
-                <img src="/triballogo.png" alt="Tribal Mingle" className="h-8 w-auto" />
+                <img src="/triballogo.webp" alt="Tribal Mingle" className="h-8 w-auto" />
               </Link>
             </div>
             

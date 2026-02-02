@@ -55,7 +55,7 @@ export default async function FamilyPortalPage({ params }: PageProps) {
       <header className="sticky top-0 z-50 border-b border-border-gold/20 bg-background-primary/80 backdrop-blur-xl">
         <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href={`/${locale}`} className="flex items-center gap-3" prefetch={false}>
-            <img src="/triballogo.png" alt="Tribal Mingle" className="h-16 w-auto object-contain" />
+            <img src="/triballogo.webp" alt="Tribal Mingle" className="h-16 w-auto object-contain" />
           </Link>
           <nav className="hidden items-center gap-8 text-sm font-semibold text-text-secondary md:flex">
             <a href="#pillars" className="transition-colors hover:text-gold-warm">
