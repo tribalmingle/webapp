@@ -17,7 +17,6 @@ export async function GET(req: NextRequest) {
     const viewsCollection = db.collection('profile_views')
     const usersCollection = db.collection('users')
     const notificationsCollection = db.collection('notifications')
-    const usersCollection = db.collection('users')
 
     // Get current user's gender to filter opposite gender only
     const currentUser = await usersCollection.findOne({ email: userPayload.email })
