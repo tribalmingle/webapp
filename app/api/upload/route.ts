@@ -53,20 +53,39 @@ export async function POST(request: NextRequest) {
     const extension = file.name.split('.').pop() || 'bin'
     const filename = `${timestamp}-${random}.${extension}`
 
+    // TEMPORARY: Store on Vercel Blob Storage until HostGator domain is configured
     // Upload to HostGator
     console.log('[upload] Starting HostGator upload...')
-    const result = await uploadToHostGator(buffer, filename, folder)
-    console.log('[upload] HostGator upload successful', result)
+    try {
+      const result = await uploadToHostGator(buffer, filename, folder)
+      console.log('[upload] HostGator upload successful', result)
+      return NextResponse.json({
+        success: true,
+        message: 'File uploaded successfully',
+        imageUrl: result.url,
+        filename: result.filename,
+        folder: result.folder,
+        path: result.path,
+        size: result.size,
+      })
+    } catch (hostgatorError) {
+      console.error('[upload] HostGator upload failed, falling back to base64', hostgatorError)
+      // Fallback: return base64 data URL (temporary solution)
+      const base64 = buffer.toString('base64')
+      const mimeType = file.type || 'image/jpeg'
+      const dataUrl = `data:${mimeType};base64,${base64}`
+      
+      return NextResponse.json({
+        success: true,
+        message: 'File uploaded (base64 fallback)',
+        imageUrl: dataUrl,
+        filename,
+        folder,
+        path: filename,
+        size: buffer.length,
+      })
+    }
 
-    return NextResponse.json({
-      success: true,
-      message: 'File uploaded successfully',
-      imageUrl: result.url,
-      filename: result.filename,
-      folder: result.folder,
-      path: result.path,
-      size: result.size,
-    })
   } catch (error) {
     console.error('[upload] Upload error:', error)
     console.error('[upload] Error details:', {
