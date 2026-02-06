@@ -22,50 +22,26 @@ export async function POST(request: Request) {
 
     const body = await request.json()
     const {
-      loveLanguages, // Array of 1-2 love languages
-      idealDateActivities, // Array of activities
-      dealBreakers, // Array of deal breakers
-      communicationStyle, // String
-      conflictResolutionStyle, // String
-      familyPlans, // String
-      religiousPracticeLevel, // String (casual, moderate, devout)
+      loveLanguages, // Array of 1-2 love languages (optional during free period)
+      idealDateActivities, // Array of activities (optional)
+      dealBreakers, // Array of deal breakers (optional)
+      communicationStyle, // String (optional)
+      conflictResolutionStyle, // String (optional)
+      familyPlans, // String (optional)
+      religiousPracticeLevel, // String (optional)
       politicalViews, // String (optional)
-      datingGoals, // String (casual, serious, marriage)
-      idealFirstDate, // String description
-      mustHaveQualities, // Array of strings
+      datingGoals, // String (optional)
+      idealFirstDate, // String description (optional)
+      mustHaveQualities, // Array of strings (optional)
       additionalNotes, // String (optional)
-      paymentIntentId, // From Stripe/payment processor
-      paymentAmount, // Should be 50
+      notes, // Simple notes field from mobile app
+      preferences, // Simple preferences object from mobile app
+      paymentIntentId, // From Stripe/payment processor (optional during free period)
+      paymentAmount, // Should be 50 (optional during free period)
     } = body
 
-    // Validation
-    if (!loveLanguages || loveLanguages.length < 1 || loveLanguages.length > 2) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'You must select 1 or 2 love languages' 
-      }, { status: 400 })
-    }
-
-    if (!idealDateActivities || idealDateActivities.length === 0) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Please select at least one ideal date activity' 
-      }, { status: 400 })
-    }
-
-    if (!datingGoals) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Please specify your dating goals' 
-      }, { status: 400 })
-    }
-
-    if (paymentAmount !== 50) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'Payment amount must be $50' 
-      }, { status: 400 })
-    }
+    // During free launch period, we only require the user to be authenticated
+    // All other fields are optional - we'll use their profile data for matching
 
     const db = await getMongoDb()
 
@@ -90,7 +66,7 @@ export async function POST(request: Request) {
 
     // Create request
     const now = new Date()
-    const expiryDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000) // 30 days from now
+    const expiryDate = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000) // 90 days from now (matching guarantee)
 
     const guaranteedDatingRequest = {
       userEmail,
@@ -102,24 +78,26 @@ export async function POST(request: Request) {
       userTribe: user.tribe,
       userProfilePhoto: user.profilePhotos?.[0] || user.profilePhoto,
       
-      // Guaranteed dating specific preferences
-      loveLanguages,
-      idealDateActivities,
+      // Guaranteed dating specific preferences (all optional during free period)
+      loveLanguages: loveLanguages || user.loveLanguages || [],
+      idealDateActivities: idealDateActivities || [],
       dealBreakers: dealBreakers || [],
-      communicationStyle,
-      conflictResolutionStyle,
-      familyPlans,
-      religiousPracticeLevel,
+      communicationStyle: communicationStyle || '',
+      conflictResolutionStyle: conflictResolutionStyle || '',
+      familyPlans: familyPlans || '',
+      religiousPracticeLevel: religiousPracticeLevel || '',
       politicalViews: politicalViews || '',
-      datingGoals,
-      idealFirstDate,
+      datingGoals: datingGoals || user.relationshipGoals || 'serious',
+      idealFirstDate: idealFirstDate || '',
       mustHaveQualities: mustHaveQualities || [],
-      additionalNotes: additionalNotes || '',
+      additionalNotes: additionalNotes || notes || '',
+      simplePreferences: preferences || {},
       
-      // Payment info
-      paymentIntentId,
-      paymentAmount,
-      paymentDate: now,
+      // Payment info (optional during free launch period)
+      paymentIntentId: paymentIntentId || null,
+      paymentAmount: paymentAmount || 0, // Free during launch
+      paymentDate: paymentIntentId ? now : null,
+      isFreeRequest: !paymentIntentId, // Flag for free launch requests
       
       // Request status
       status: 'pending', // pending, matched, completed, expired, refunded

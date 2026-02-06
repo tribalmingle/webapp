@@ -218,8 +218,8 @@ function validateStepData(step: number, data: any): string | null {
       break
 
     case 5: // Bio
-      if (!data.bio || data.bio.trim().length < 20) {
-        return 'Bio must be at least 20 characters'
+      if (!data.bio || data.bio.trim().length < 10) {
+        return 'Bio must be at least 10 characters'
       }
       if (data.bio.length > 500) {
         return 'Bio must be less than 500 characters'
