@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { uploadToCloudinary } from '@/lib/vendors/cloudinary-client'
 import { uploadToHostGator } from '@/lib/vendors/hostgator-client'
 
 // Configure route for larger uploads and longer timeout
@@ -53,37 +54,55 @@ export async function POST(request: NextRequest) {
     const extension = file.name.split('.').pop() || 'bin'
     const filename = `${timestamp}-${random}.${extension}`
 
-    // TEMPORARY: Store on Vercel Blob Storage until HostGator domain is configured
-    // Upload to HostGator
-    console.log('[upload] Starting HostGator upload...')
+    // Try Cloudinary first (free tier primary)
+    console.log('[upload] Attempting Cloudinary upload...')
     try {
-      const result = await uploadToHostGator(buffer, filename, folder)
-      console.log('[upload] HostGator upload successful', result)
-      return NextResponse.json({
-        success: true,
-        message: 'File uploaded successfully',
-        imageUrl: result.url,
-        filename: result.filename,
-        folder: result.folder,
-        path: result.path,
-        size: result.size,
-      })
-    } catch (hostgatorError) {
-      console.error('[upload] HostGator upload failed, falling back to base64', hostgatorError)
-      // Fallback: return base64 data URL (temporary solution)
-      const base64 = buffer.toString('base64')
-      const mimeType = file.type || 'image/jpeg'
-      const dataUrl = `data:${mimeType};base64,${base64}`
+      const cloudinaryResult = await uploadToCloudinary(buffer, filename, folder)
+      console.log('[upload] Cloudinary upload successful', cloudinaryResult)
       
       return NextResponse.json({
         success: true,
-        message: 'File uploaded (base64 fallback)',
-        imageUrl: dataUrl,
-        filename,
-        folder,
-        path: filename,
-        size: buffer.length,
+        message: 'File uploaded successfully (Cloudinary)',
+        imageUrl: cloudinaryResult.url,
+        filename: cloudinaryResult.filename,
+        folder: cloudinaryResult.folder,
+        path: cloudinaryResult.publicId,
+        size: cloudinaryResult.size,
+        provider: 'cloudinary',
       })
+    } catch (cloudinaryError: any) {
+      console.warn('[upload] Cloudinary upload failed, falling back to HostGator', {
+        error: cloudinaryError.message,
+      })
+      
+      // Fallback to HostGator if Cloudinary fails (e.g., quota exceeded)
+      console.log('[upload] Attempting HostGator fallback...')
+      try {
+        const hostgatorResult = await uploadToHostGator(buffer, filename, folder)
+        console.log('[upload] HostGator fallback successful', hostgatorResult)
+        
+        return NextResponse.json({
+          success: true,
+          message: 'File uploaded successfully (HostGator fallback)',
+          imageUrl: hostgatorResult.url,
+          filename: hostgatorResult.filename,
+          folder: hostgatorResult.folder,
+          path: hostgatorResult.path,
+          size: hostgatorResult.size,
+          provider: 'hostgator',
+        })
+      } catch (hostgatorError: any) {
+        console.error('[upload] Both Cloudinary and HostGator failed', {
+          cloudinary: cloudinaryError.message,
+          hostgator: hostgatorError.message,
+        })
+        
+        return NextResponse.json({
+          success: false,
+          message: 'All upload providers failed',
+          error: `Cloudinary: ${cloudinaryError.message}, HostGator: ${hostgatorError.message}`,
+        }, { status: 500 })
+      }
     }
 
   } catch (error) {
