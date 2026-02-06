@@ -79,10 +79,14 @@ export async function GET(request: NextRequest) {
     if (userEmail) {
       const sentTo = await messagesCollection.distinct('receiverId', { senderId: userEmail })
       const receivedFrom = await messagesCollection.distinct('senderId', { receiverId: userEmail })
-      const uniquePartners = new Set([
-        ...sentTo.filter(Boolean),
-        ...receivedFrom.filter(Boolean),
-      ])
+      const normalize = (value: unknown) =>
+        typeof value === 'string' ? value.trim().toLowerCase() : ''
+
+      const uniquePartners = new Set(
+        [...sentTo, ...receivedFrom]
+          .map(normalize)
+          .filter((value) => value && value !== userEmail)
+      )
       chatsCount = uniquePartners.size
     }
 
