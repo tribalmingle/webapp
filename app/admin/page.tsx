@@ -1118,10 +1118,10 @@ export default function AdminDashboard() {
 
   if (loading || !isAuthenticated) {
     return (
-      <div className="min-h-screen bg-background-primary flex items-center justify-center">
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-royal border-t-gold-warm rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-text-secondary">Loading admin dashboard...</p>
+          <div className="w-16 h-16 border-4 border-violet-500 border-t-amber-500 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-400">Loading admin dashboard...</p>
         </div>
       </div>
     )
@@ -1139,10 +1139,10 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen flex relative">
       {/* Premium background effects */}
-      <div className="fixed inset-0 -z-50 bg-hero-gradient">
-        <div className="absolute top-20 left-20 w-48 h-48 md:w-96 md:h-96 bg-purple-royal/30 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gold-warm/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-royal/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+      <div className="fixed inset-0 -z-50 bg-linear-to-br from-slate-950 via-slate-900 to-slate-950">
+        <div className="absolute top-20 left-20 w-48 h-48 md:w-96 md:h-96 bg-violet-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-violet-500/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
       </div>
       
       {/* Grid overlay */}
@@ -1157,12 +1157,11 @@ export default function AdminDashboard() {
       )}
       
       {/* Premium Sidebar */}
-      <div className={`w-64 bg-card/60 backdrop-blur-md border-r border-border-gold/20 fixed h-full overflow-y-auto z-50 transition-transform duration-300 lg:translate-x-0 ${
+      <div className={`w-64 bg-slate-900/60 backdrop-blur-md border-r border-slate-800/40 fixed h-full overflow-y-auto z-50 transition-transform duration-300 lg:translate-x-0 ${
         mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       } lg:block`}>
-        <div className="bg-gradient-to-br from-purple-royal via-purple-royal/90 to-purple-royal/80 p-4 lg:p-6">
-          <div className="flex flex-col items-center mb-6 lg:mb-8">
-            <img src="/triballogo.webp" alt="Tribal Mingle" className="w-full h-auto max-w-[180px] mb-0" />
+        <div className="bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 p-4 lg:p-6">
+          <div className="flex flex-col items-center mb-6 lg:mb-8">\n            <img src="/triballogo.webp" alt="Tribal Mingle" className="w-full h-auto max-w-[180px] mb-0" />
             <h1 className="text-lg lg:text-xl font-bold text-white font-display">Admin Panel</h1>
             <Badge variant="gold" className="mt-2 text-xs">
               <Crown className="w-3 h-3 mr-1" />
@@ -1199,8 +1198,8 @@ export default function AdminDashboard() {
                   }}
                   className={`w-full flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg transition-all duration-300 text-sm lg:text-base ${
                     activeTab === tab.id
-                      ? 'bg-purple-royal/20 text-purple-royal font-semibold border border-purple-royal/40 backdrop-blur-sm'
-                      : 'text-text-secondary hover:bg-background-tertiary/50 hover:text-text-primary backdrop-blur-sm'
+                      ? 'bg-violet-500/20 text-violet-400 font-semibold border border-violet-500/40 backdrop-blur-sm'
+                      : 'text-slate-400 hover:bg-slate-800/50 hover:text-white backdrop-blur-sm'
                   }`}
                 >
                   <Icon className="w-4 h-4 lg:w-5 lg:h-5 shrink-0" />
@@ -1211,10 +1210,10 @@ export default function AdminDashboard() {
           </nav>
         </div>
 
-        <div className="p-4 lg:p-6 border-t border-border-gold/20 space-y-2">
+        <div className="p-4 lg:p-6 border-t border-slate-800/40 space-y-2">
           <button
             onClick={() => router.push('/dashboard-spa')}
-            className="w-full flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2.5 lg:py-3 text-text-secondary hover:bg-background-tertiary/50 hover:text-text-primary rounded-lg transition-all backdrop-blur-sm text-sm lg:text-base"
+            className="w-full flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2.5 lg:py-3 text-slate-400 hover:bg-slate-800/50 hover:text-white rounded-lg transition-all backdrop-blur-sm text-sm lg:text-base"
           >
             <Users className="w-4 h-4 lg:w-5 lg:h-5" />
             <span className="truncate">User Dashboard</span>
@@ -1232,11 +1231,11 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <div className="lg:ml-64 flex-1 p-4 sm:p-6 lg:p-8 w-full">
         {/* Mobile Header */}
-        <div className="lg:hidden sticky top-0 z-30 -mx-4 sm:-mx-6 mb-4 sm:mb-6 px-4 sm:px-6 py-3 bg-card/60 backdrop-blur-md border-b border-border-gold/20">
+        <div className="lg:hidden sticky top-0 z-30 -mx-4 sm:-mx-6 mb-4 sm:mb-6 px-4 sm:px-6 py-3 bg-slate-900/60 backdrop-blur-md border-b border-slate-800/40">
           <div className="flex items-center justify-between">
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-royal/10 text-purple-royal hover:bg-purple-royal/20 transition-all"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-500/10 text-violet-400 hover:bg-violet-500/20 transition-all"
             >
               <Menu className="w-5 h-5" />
               <span className="text-sm font-semibold">Menu</span>
@@ -1309,17 +1308,17 @@ export default function AdminDashboard() {
                 <Card variant="glass" className="p-6">
                   <h3 className="text-h3 font-display text-text-primary mb-4">Subscription Breakdown</h3>
                   <div className="space-y-4">{[
-                      { plan: 'Free', count: stats.freeUsers, color: 'bg-text-tertiary', percentage: (stats.freeUsers / stats.totalUsers) * 100 },
+                      { plan: 'Free', count: stats.freeUsers, color: 'bg-slate-500', percentage: (stats.freeUsers / stats.totalUsers) * 100 },
                       { plan: 'Monthly', count: Math.floor(stats.premiumUsers * 0.4), color: 'bg-blue-500', percentage: (Math.floor(stats.premiumUsers * 0.4) / stats.totalUsers) * 100 },
-                      { plan: '3 Months', count: Math.floor(stats.premiumUsers * 0.35), color: 'bg-purple-royal', percentage: (Math.floor(stats.premiumUsers * 0.35) / stats.totalUsers) * 100 },
-                      { plan: '6 Months', count: Math.floor(stats.premiumUsers * 0.25), color: 'bg-gold-warm', percentage: (Math.floor(stats.premiumUsers * 0.25) / stats.totalUsers) * 100 }
+                      { plan: '3 Months', count: Math.floor(stats.premiumUsers * 0.35), color: 'bg-violet-500', percentage: (Math.floor(stats.premiumUsers * 0.35) / stats.totalUsers) * 100 },
+                      { plan: '6 Months', count: Math.floor(stats.premiumUsers * 0.25), color: 'bg-amber-500', percentage: (Math.floor(stats.premiumUsers * 0.25) / stats.totalUsers) * 100 }
                     ].map((item, index) => (
                       <div key={index}>
                         <div className="flex items-center justify-between text-sm mb-2">
                           <span className="text-text-secondary font-medium">{item.plan}</span>
                           <span className="text-text-primary font-semibold">{item.count} ({item.percentage.toFixed(1)}%)</span>
                         </div>
-                        <div className="w-full bg-background-tertiary rounded-full h-2">
+                        <div className="w-full bg-slate-800 rounded-full h-2">
                           <div className={`${item.color} h-2 rounded-full transition-all duration-1000`} style={{ width: `${item.percentage}%` }}></div>
                         </div>
                       </div>
@@ -1354,11 +1353,11 @@ export default function AdminDashboard() {
             </FadeIn>
 
             {/* Recent Activity */}
-            <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
-              <h3 className="text-lg font-bold text-text-primary mb-4">Recent Registrations</h3>
+            <div className="bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 p-6">
+              <h3 className="text-lg font-bold text-white mb-4">Recent Registrations</h3>
               <div className="space-y-3">
                 {users.slice(0, 5).map(user => (
-                  <div key={user._id} className="flex items-center justify-between p-3 hover:bg-background-tertiary rounded-lg transition">
+                  <div key={user._id} className="flex items-center justify-between p-3 hover:bg-slate-800 rounded-lg transition">
                     <div className="flex items-center gap-3">
                       {user.profilePhoto ? (
                         <img src={user.profilePhoto} alt={user.name} className="w-10 h-10 rounded-full object-cover" />
@@ -1374,7 +1373,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="text-right">
                       <div className={`text-xs px-2 py-1 rounded-full ${
-                        user.subscriptionPlan === 'free' ? 'bg-background-tertiary text-text-secondary' : 'bg-purple-100 text-purple-700'
+                        user.subscriptionPlan === 'free' ? 'bg-slate-800 text-slate-400' : 'bg-violet-500/10 text-violet-400'
                       }`}>
                         {user.subscriptionPlan}
                       </div>
@@ -1402,7 +1401,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Filters */}
-            <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-4 mb-6">
+            <div className="bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 p-4 mb-6">
               <div className="flex flex-wrap gap-4 items-end">
                 <div className="flex-1 min-w-[260px]">
                   <label className="block text-xs font-semibold text-text-tertiary mb-1">Search</label>
@@ -1471,10 +1470,10 @@ export default function AdminDashboard() {
             </div>
 
             {/* Users Table */}
-            <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 overflow-hidden">
+            <div className="bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-background-tertiary border-b border-border-gold/10">
+                  <thead className="bg-slate-800 border-b border-slate-800/20">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">User</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">Location</th>
@@ -1484,9 +1483,9 @@ export default function AdminDashboard() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-background-secondary divide-y divide-border-gold/10">
+                  <tbody className="bg-slate-900 divide-y divide-slate-800/20">
                     {filteredUsers.map(user => (
-                      <tr key={user._id} className="hover:bg-background-tertiary">
+                      <tr key={user._id} className="hover:bg-slate-800">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             {user.profilePhoto ? (
@@ -1511,10 +1510,10 @@ export default function AdminDashboard() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            user.subscriptionPlan === 'free' ? 'bg-background-tertiary text-text-primary' :
-                            user.subscriptionPlan === 'monthly' ? 'bg-blue-100 text-blue-800' :
-                            user.subscriptionPlan === '3-months' ? 'bg-purple-100 text-purple-800' :
-                            'bg-orange-100 text-orange-800'
+                            user.subscriptionPlan === 'free' ? 'bg-slate-800 text-slate-400' :
+                            user.subscriptionPlan === 'monthly' ? 'bg-blue-500/10 text-blue-400' :
+                            user.subscriptionPlan === '3-months' ? 'bg-violet-500/10 text-violet-400' :
+                            'bg-amber-500/10 text-amber-400'
                           }`}>
                             {user.subscriptionPlan}
                           </span>
@@ -1606,30 +1605,30 @@ export default function AdminDashboard() {
               {[
                 { label: 'Total Revenue', value: `£${stats.totalRevenue.toLocaleString()}`, icon: DollarSign, color: 'bg-green-500' },
                 { label: 'This Month', value: `£${stats.monthlyRevenue.toLocaleString()}`, icon: TrendingUp, color: 'bg-blue-500' },
-                { label: 'Premium Users', value: stats.premiumUsers.toString(), icon: Crown, color: 'bg-purple-500' }
+                { label: 'Premium Users', value: stats.premiumUsers.toString(), icon: Crown, color: 'bg-violet-500' }
               ].map((stat, index) => {
                 const Icon = stat.icon
                 return (
-                  <div key={index} className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
+                  <div key={index} className="bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 p-6">
                     <div className={`${stat.color} p-3 rounded-lg w-fit mb-4`}>
                       <Icon className="w-6 h-6 text-white" />
                     </div>
-                    <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                    <div className="text-sm text-text-secondary">{stat.label}</div>
+                    <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
+                    <div className="text-sm text-slate-400">{stat.label}</div>
                   </div>
                 )
               })}
             </div>
 
             {/* Wallet Providers Admin */}
-            <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 mb-8">
-              <div className="px-6 py-4 border-b border-gray-200 flex flex-wrap items-center gap-4 justify-between">
+            <div className="bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 mb-8">
+              <div className="px-6 py-4 border-b border-slate-800/40 flex flex-wrap items-center gap-4 justify-between">
                 <div>
-                  <div className="flex items-center gap-2 text-gray-900 font-semibold">
-                    <WalletCards className="w-5 h-5 text-purple-600" />
+                  <div className="flex items-center gap-2 text-white font-semibold">
+                    <WalletCards className="w-5 h-5 text-violet-400" />
                     Wallet Providers
                   </div>
-                  <p className="text-sm text-text-secondary mt-1">Control Apple Pay & Google Pay availability by region</p>
+                  <p className="text-sm text-slate-400 mt-1">Control Apple Pay & Google Pay availability by region</p>
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -1907,34 +1906,34 @@ export default function AdminDashboard() {
             </div>
 
             {/* Transactions Table */}
-            <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-bold text-gray-900">Recent Transactions</h3>
+            <div className="bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 overflow-hidden">
+              <div className="px-6 py-4 border-b border-slate-800/40">
+                <h3 className="text-lg font-bold text-white">Recent Transactions</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-background-tertiary border-b border-border-gold/10">
+                  <thead className="bg-slate-800 border-b border-slate-800/20">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">User</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">Plan</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">Amount</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-text-tertiary uppercase tracking-wider">Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">User</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Plan</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Amount</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Date</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-background-secondary divide-y divide-border-gold/10">
+                  <tbody className="bg-slate-900 divide-y divide-slate-800/20">
                     {transactions.map(transaction => (
-                      <tr key={transaction._id} className="hover:bg-background-tertiary">
+                      <tr key={transaction._id} className="hover:bg-slate-800">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{transaction.userName}</div>
-                          <div className="text-sm text-text-tertiary">{transaction.userEmail}</div>
+                          <div className="text-sm font-medium text-white">{transaction.userName}</div>
+                          <div className="text-sm text-slate-400">{transaction.userEmail}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-violet-500/10 text-violet-400">
                             {transaction.plan}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-white">
                           £{transaction.amount.toFixed(2)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -1977,37 +1976,37 @@ export default function AdminDashboard() {
             {/* Reports Grid */}
             <div className="grid gap-4">
               {reports.map(report => (
-                <div key={report._id} className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
+                <div key={report._id} className="bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-4">
-                      <div className="p-3 bg-red-100 rounded-lg">
-                        <Flag className="w-6 h-6 text-red-600" />
+                      <div className="p-3 bg-red-500/10 rounded-lg">
+                        <Flag className="w-6 h-6 text-red-400" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-gray-900">{report.reason}</h3>
-                        <p className="text-sm text-text-secondary mt-1">Reported by: {report.reporterUserName}</p>
-                        <p className="text-xs text-text-tertiary mt-0.5">
-                          Reported user: <span className="font-semibold text-gray-900">{report.reportedUserName}</span>
+                        <h3 className="text-lg font-bold text-white">{report.reason}</h3>
+                        <p className="text-sm text-slate-400 mt-1">Reported by: {report.reporterUserName}</p>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Reported user: <span className="font-semibold text-white">{report.reportedUserName}</span>
                         </p>
                         {(report.reportedUserTribe || report.reportedUserCountry || report.reportedUserSubscriptionPlan || report.totalReportsForUser) && (
                           <div className="mt-2 flex flex-wrap gap-2">
                             {report.reportedUserTribe && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-purple-50 text-[10px] font-medium text-purple-800">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-violet-500/10 text-[10px] font-medium text-violet-400">
                                 Tribe: {report.reportedUserTribe}
                               </span>
                             )}
                             {report.reportedUserCountry && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-50 text-[10px] font-medium text-blue-800">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-500/10 text-[10px] font-medium text-blue-400">
                                 Country: {report.reportedUserCountry}
                               </span>
                             )}
                             {report.reportedUserSubscriptionPlan && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-50 text-[10px] font-medium text-amber-800">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-500/10 text-[10px] font-medium text-amber-400">
                                 Plan: {report.reportedUserSubscriptionPlan}
                               </span>
                             )}
                             {typeof report.totalReportsForUser === 'number' && report.totalReportsForUser > 0 && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-red-50 text-[10px] font-medium text-red-800">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-red-500/10 text-[10px] font-medium text-red-400">
                                 {report.totalReportsForUser} prior report{report.totalReportsForUser > 1 ? 's' : ''}
                               </span>
                             )}
@@ -2016,28 +2015,28 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                      report.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                      report.status === 'reviewed' ? 'bg-blue-100 text-blue-800' :
-                      'bg-green-100 text-green-800'
+                      report.status === 'pending' ? 'bg-amber-500/10 text-amber-400' :
+                      report.status === 'reviewed' ? 'bg-blue-500/10 text-blue-400' :
+                      'bg-emerald-500/10 text-emerald-400'
                     }`}>
                       {report.status}
                     </span>
                   </div>
 
-                  <div className="bg-background-tertiary rounded-lg p-4 mb-4">
-                    <p className="text-sm text-text-secondary">{report.description}</p>
+                  <div className="bg-slate-800 rounded-lg p-4 mb-4">
+                    <p className="text-sm text-slate-400">{report.description}</p>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="text-xs text-text-tertiary space-y-0.5">
+                    <div className="text-xs text-slate-500 space-y-0.5">
                       <div>
                         Created: {new Date(report.createdAt).toLocaleString()}
                       </div>
                       <div className="flex flex-wrap gap-2 mt-1">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-background-tertiary text-[10px] font-medium text-text-secondary">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-medium text-slate-400">
                           Reporter ID: {report.reporterUserId}
                         </span>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-background-tertiary text-[10px] font-medium text-text-secondary">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-800 text-[10px] font-medium text-slate-400">
                           Reported ID: {report.reportedUserId}
                         </span>
                       </div>
@@ -2070,10 +2069,10 @@ export default function AdminDashboard() {
               ))}
 
               {reports.length === 0 && (
-                <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-12 text-center">
-                  <CheckCircle className="w-16 h-16 mx-auto mb-4 text-green-500" />
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">No Reports</h3>
-                  <p className="text-text-secondary">All reports have been reviewed</p>
+                <div className="bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 p-12 text-center">
+                  <CheckCircle className="w-16 h-16 mx-auto mb-4 text-emerald-500" />
+                  <h3 className="text-xl font-bold text-white mb-2">No Reports</h3>
+                  <p className="text-slate-400">All reports have been reviewed</p>
                 </div>
               )}
             </div>
@@ -2085,8 +2084,8 @@ export default function AdminDashboard() {
           <div>
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Testimonials & Success Stories</h1>
-                <p className="text-text-secondary mt-1">Curate social proof from real members and publish official Tribal Mingle success stories.</p>
+                <h1 className="text-3xl font-bold text-white">Testimonials & Success Stories</h1>
+                <p className="text-slate-400 mt-1">Curate social proof from real members and publish official Tribal Mingle success stories.</p>
               </div>
               <Button onClick={fetchTestimonials} variant="outline">
                 <RefreshCw className="w-4 h-4 mr-2" />
@@ -2098,14 +2097,14 @@ export default function AdminDashboard() {
               {/* List & moderation */}
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center justify-between mb-2">
-                  <h2 className="text-lg font-semibold text-gray-900">Community stories</h2>
+                  <h2 className="text-lg font-semibold text-white">Community stories</h2>
                   {loadingTestimonials && (
-                    <span className="text-xs text-text-tertiary">Loading…</span>
+                    <span className="text-xs text-slate-500">Loading…</span>
                   )}
                 </div>
 
                 {testimonials.length === 0 && !loadingTestimonials && (
-                  <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-8 text-center text-sm text-text-tertiary">
+                  <div className="bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 p-8 text-center text-sm text-slate-400">
                     No testimonials found yet.
                   </div>
                 )}
@@ -2114,7 +2113,7 @@ export default function AdminDashboard() {
                   {testimonials.map((t) => (
                     <div
                       key={t._id}
-                      className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-4 flex items-start gap-3"
+                      className="bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 p-4 flex items-start gap-3"
                     >
                       <div className="shrink-0">
                         {t.profilePhoto ? (
@@ -2124,7 +2123,7 @@ export default function AdminDashboard() {
                             className="w-10 h-10 rounded-full object-cover"
                           />
                         ) : (
-                          <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 text-xs font-semibold">
+                          <div className="w-10 h-10 rounded-full bg-violet-500/10 flex items-center justify-center text-violet-400 text-xs font-semibold">
                             {t.name.charAt(0).toUpperCase()}
                           </div>
                         )}
@@ -2132,16 +2131,16 @@ export default function AdminDashboard() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 mb-1">
                           <div>
-                            <div className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                            <div className="flex items-center gap-2 text-sm font-semibold text-white">
                               {t.name}
                               {typeof t.age === 'number' && t.age > 0 && (
-                                <span className="text-text-tertiary">· {t.age}</span>
+                                <span className="text-slate-500">· {t.age}</span>
                               )}
-                              <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-background-tertiary text-text-secondary">
+                              <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-400">
                                 {t.sourceType === 'admin' ? 'Admin story' : 'Member story'}
                               </span>
                             </div>
-                            <div className="text-[11px] text-text-tertiary flex items-center gap-2 mt-0.5">
+                            <div className="text-[11px] text-slate-500 flex items-center gap-2 mt-0.5">
                               {[t.city, t.country].filter(Boolean).join(', ') || t.tribe || 'Location not set'}
                             </div>
                           </div>
@@ -2223,14 +2222,14 @@ export default function AdminDashboard() {
               </div>
 
               {/* Create admin testimonial */}
-              <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-1">Add Admin Story</h2>
-                <p className="text-xs text-text-tertiary mb-4">
+              <div className="bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 p-6">
+                <h2 className="text-lg font-semibold text-white mb-1">Add Admin Story</h2>
+                <p className="text-xs text-slate-500 mb-4">
                   Create official success stories that will appear alongside user testimonials.
                 </p>
                 <form onSubmit={handleCreateAdminTestimonial} className="space-y-3 text-sm">
                   <div>
-                    <label className="block text-xs font-medium text-text-secondary mb-1">Name *</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Name *</label>
                     <Input
                       value={newTestimonial.name}
                       onChange={(e) => setNewTestimonial({ ...newTestimonial, name: e.target.value })}
@@ -2239,7 +2238,7 @@ export default function AdminDashboard() {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-text-secondary mb-1">Age</label>
+                      <label className="block text-xs font-medium text-slate-400 mb-1">Age</label>
                       <Input
                         type="number"
                         min={18}
@@ -2248,7 +2247,7 @@ export default function AdminDashboard() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-text-secondary mb-1">Rating (1–5)</label>
+                      <label className="block text-xs font-medium text-slate-400 mb-1">Rating (1–5)</label>
                       <Input
                         type="number"
                         min={1}
@@ -2260,14 +2259,14 @@ export default function AdminDashboard() {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-text-secondary mb-1">City</label>
+                      <label className="block text-xs font-medium text-slate-400 mb-1">City</label>
                       <Input
                         value={newTestimonial.city}
                         onChange={(e) => setNewTestimonial({ ...newTestimonial, city: e.target.value })}
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-text-secondary mb-1">Country</label>
+                      <label className="block text-xs font-medium text-slate-400 mb-1">Country</label>
                       <Input
                         value={newTestimonial.country}
                         onChange={(e) => setNewTestimonial({ ...newTestimonial, country: e.target.value })}
@@ -2275,21 +2274,21 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-text-secondary mb-1">Tribe</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Tribe</label>
                     <Input
                       value={newTestimonial.tribe}
                       onChange={(e) => setNewTestimonial({ ...newTestimonial, tribe: e.target.value })}
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-text-secondary mb-1">Story *</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Story *</label>
                     <textarea
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[120px]"
+                      className="w-full border border-slate-800 bg-slate-950 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent min-h-[120px]"
                       value={newTestimonial.content}
                       onChange={(e) => setNewTestimonial({ ...newTestimonial, content: e.target.value })}
                       placeholder="Describe how Tribal Mingle helped them meet, connect or build a relationship."
                     />
-                    <p className="mt-1 text-[11px] text-text-tertiary">
+                    <p className="mt-1 text-[11px] text-slate-500">
                       Minimum 20 characters. You can anonymise names and locations if needed.
                     </p>
                   </div>
@@ -2308,8 +2307,8 @@ export default function AdminDashboard() {
           <div>
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Trust &amp; Safety Automation</h1>
-                <p className="text-text-secondary mt-1">Monitor liveness escalations, guardian invites, and audit trails.</p>
+                <h1 className="text-3xl font-bold text-white">Trust &amp; Safety Automation</h1>
+                <p className="text-slate-400 mt-1">Monitor liveness escalations, guardian invites, and audit trails.</p>
               </div>
               <Button
                 variant="outline"
@@ -2323,18 +2322,18 @@ export default function AdminDashboard() {
             </div>
 
             {trustError && (
-              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <div className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-400">
                 {trustError}
               </div>
             )}
 
             {trustActionMessage && (
-              <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 flex items-start justify-between gap-3">
+              <div className="mb-4 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400 flex items-start justify-between gap-3">
                 <span>{trustActionMessage}</span>
                 <button
                   type="button"
                   onClick={() => setTrustActionMessage(null)}
-                  className="text-xs font-semibold text-emerald-700 hover:text-emerald-900"
+                  className="text-xs font-semibold text-emerald-400 hover:text-emerald-300"
                 >
                   Dismiss
                 </button>
@@ -2342,8 +2341,8 @@ export default function AdminDashboard() {
             )}
 
             {trustLoading && !trustSnapshot && (
-              <div className="mb-6 bg-background-secondary border border-border-gold/20 rounded-xl p-6 flex items-center gap-3 text-text-secondary">
-                <div className="w-5 h-5 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="mb-6 bg-slate-900 border border-slate-800/40 rounded-xl p-6 flex items-center gap-3 text-slate-400">
+                <div className="w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
                 Fetching trust automation data…
               </div>
             )}
@@ -2368,33 +2367,33 @@ export default function AdminDashboard() {
                     value: trustSnapshot.trustSignals.last24hCount,
                     caption: 'Events in the last 24 hours',
                     icon: Activity,
-                    color: 'bg-purple-500'
+                    color: 'bg-violet-500'
                   }].map((card, index) => {
                     const Icon = card.icon
                     return (
-                      <div key={index} className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
+                      <div key={index} className="bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 p-6">
                         <div className="flex items-center justify-between mb-4">
                           <div className={`${card.color} p-3 rounded-lg`}>
                             <Icon className="w-6 h-6 text-white" />
                           </div>
-                          <span className="text-3xl font-bold text-gray-900">{card.value.toLocaleString()}</span>
+                          <span className="text-3xl font-bold text-white">{card.value.toLocaleString()}</span>
                         </div>
-                        <p className="text-sm font-semibold text-gray-900">{card.label}</p>
-                        <p className="text-xs text-text-tertiary mt-1">{card.caption}</p>
+                        <p className="text-sm font-semibold text-white">{card.label}</p>
+                        <p className="text-xs text-slate-500 mt-1">{card.caption}</p>
                       </div>
                     )
                   })}
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
-                  <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
+                  <div className="bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 p-6">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <h3 className="text-lg font-bold text-gray-900">Manual review queue</h3>
-                        <p className="text-sm text-text-secondary">Sessions needing human decisions.</p>
+                        <h3 className="text-lg font-bold text-white">Manual review queue</h3>
+                        <p className="text-sm text-slate-400">Sessions needing human decisions.</p>
                       </div>
-                      <div className="text-right text-sm text-text-tertiary">
-                        <p className="font-semibold text-gray-900">{trustSnapshot.livenessQueue.pendingSessions} pending</p>
+                      <div className="text-right text-sm text-slate-500">
+                        <p className="font-semibold text-white">{trustSnapshot.livenessQueue.pendingSessions} pending</p>
                         <p className="text-xs">{trustSnapshot.livenessQueue.totalEvents} escalations total</p>
                       </div>
                     </div>
@@ -2477,34 +2476,34 @@ export default function AdminDashboard() {
                         <h3 className="text-lg font-bold text-gray-900">Guardian requests</h3>
                         <p className="text-sm text-text-secondary">Family portal invites that need responses.</p>
                       </div>
-                      <div className="text-right text-sm text-text-tertiary">
-                        <p className="font-semibold text-gray-900">{trustSnapshot.guardianInvites.pendingCount} received</p>
+                      <div className="text-right text-sm text-slate-500">
+                        <p className="font-semibold text-white">{trustSnapshot.guardianInvites.pendingCount} received</p>
                         <p className="text-xs">{trustSnapshot.guardianInvites.queuedCount} queued for follow-up</p>
                       </div>
                     </div>
                     {trustSnapshot.guardianInvites.items.length === 0 ? (
-                      <div className="mt-6 rounded-lg border border-dashed border-gray-300 p-6 text-center text-sm text-text-tertiary">
+                      <div className="mt-6 rounded-lg border border-dashed border-slate-800 p-6 text-center text-sm text-slate-500">
                         No guardian outreach requests at the moment.
                       </div>
                     ) : (
                       <div className="mt-4 space-y-4">
                         {trustSnapshot.guardianInvites.items.map((item) => (
-                          <div key={item.id} className="p-4 border border-border-gold/10 rounded-lg bg-background-tertiary">
+                          <div key={item.id} className="p-4 border border-slate-800/20 rounded-lg bg-slate-800">
                             <div className="flex items-center justify-between">
                               <div>
-                                <p className="text-sm font-semibold text-gray-900">{item.memberName}</p>
-                                <p className="text-xs text-text-tertiary">{item.contact}</p>
+                                <p className="text-sm font-semibold text-white">{item.memberName}</p>
+                                <p className="text-xs text-slate-500">{item.contact}</p>
                               </div>
-                              <div className="text-right text-xs text-text-tertiary">
-                                <p className="font-semibold text-text-secondary">{item.locale.toUpperCase()}</p>
+                              <div className="text-right text-xs text-slate-500">
+                                <p className="font-semibold text-slate-400">{item.locale.toUpperCase()}</p>
                                 <p>{formatRelativeTime(item.createdAt)}</p>
                               </div>
                             </div>
-                            <p className="text-xs text-text-tertiary mt-2">
+                            <p className="text-xs text-slate-500 mt-2">
                               Status {item.status} · Source {item.source}{item.regionHint ? ` · ${item.regionHint}` : ''}
                             </p>
                             {item.context && (
-                              <p className="text-sm text-text-secondary mt-2">{item.context}</p>
+                              <p className="text-sm text-slate-400 mt-2">{item.context}</p>
                             )}
                           </div>
                         ))}
@@ -2514,15 +2513,15 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
-                  <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
-                    <h3 className="text-lg font-bold text-text-primary mb-4">Recent trust signals</h3>
+                  <div className="bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 p-6">
+                    <h3 className="text-lg font-bold text-white mb-4">Recent trust signals</h3>
                     {trustSnapshot.trustSignals.items.length === 0 ? (
-                      <p className="text-sm text-text-tertiary">No trust events recorded yet.</p>
+                      <p className="text-sm text-slate-400">No trust events recorded yet.</p>
                     ) : (
                       <div className="overflow-x-auto">
                         <table className="min-w-full text-sm">
                           <thead>
-                            <tr className="text-left text-xs uppercase tracking-wide text-text-tertiary">
+                            <tr className="text-left text-xs uppercase tracking-wide text-slate-400">
                               <th className="pb-2 pr-4">Event</th>
                               <th className="pb-2 pr-4">Score</th>
                               <th className="pb-2 pr-4">Aggregate</th>
@@ -2531,16 +2530,16 @@ export default function AdminDashboard() {
                           </thead>
                           <tbody>
                             {trustSnapshot.trustSignals.items.map((event) => (
-                              <tr key={event.id} className="border-t border-border-gold/10">
+                              <tr key={event.id} className="border-t border-slate-800/20">
                                 <td className="py-2 pr-4">
-                                  <p className="font-semibold text-gray-900 text-xs">{event.eventType.replace(/_/g, ' ')}</p>
-                                  <p className="text-xs text-text-tertiary">Source {event.source}</p>
+                                  <p className="font-semibold text-white text-xs">{event.eventType.replace(/_/g, ' ')}</p>
+                                  <p className="text-xs text-slate-500">Source {event.source}</p>
                                 </td>
-                                <td className="py-2 pr-4 text-sm font-semibold text-gray-900">
+                                <td className="py-2 pr-4 text-sm font-semibold text-white">
                                   {formatTrustScoreDelta(event.scoreDelta)}
                                 </td>
-                                <td className="py-2 pr-4 text-sm text-gray-900">{formatAggregateScore(event.aggregateScore)}</td>
-                                <td className="py-2 pr-4 text-xs text-text-tertiary">{formatRelativeTime(event.createdAt)}</td>
+                                <td className="py-2 pr-4 text-sm text-white">{formatAggregateScore(event.aggregateScore)}</td>
+                                <td className="py-2 pr-4 text-xs text-slate-500">{formatRelativeTime(event.createdAt)}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -2549,22 +2548,22 @@ export default function AdminDashboard() {
                     )}
                   </div>
 
-                  <div className="bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
-                    <h3 className="text-lg font-bold text-text-primary mb-4">Latest audit trail</h3>
+                  <div className="bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 p-6">
+                    <h3 className="text-lg font-bold text-white mb-4">Latest audit trail</h3>
                     {trustSnapshot.activityLogs.items.length === 0 ? (
-                      <p className="text-sm text-text-tertiary">No activity has been logged yet.</p>
+                      <p className="text-sm text-slate-400">No activity has been logged yet.</p>
                     ) : (
                       <div className="space-y-4">
                         {trustSnapshot.activityLogs.items.map((log) => (
-                          <div key={log.id} className="border border-border-gold/10 rounded-lg p-4 bg-background-tertiary">
-                            <p className="text-sm font-semibold text-gray-900">{log.action}</p>
-                            <p className="text-xs text-text-tertiary mt-1">
+                          <div key={log.id} className="border border-slate-800/20 rounded-lg p-4 bg-slate-800">
+                            <p className="text-sm font-semibold text-white">{log.action}</p>
+                            <p className="text-xs text-slate-500 mt-1">
                               {log.resource.collection}
                               {log.resource.id ? ` · ${log.resource.id}` : ''}
                             </p>
-                            <p className="text-xs text-text-tertiary mt-1">{formatRelativeTime(log.createdAt)}</p>
+                            <p className="text-xs text-slate-500 mt-1">{formatRelativeTime(log.createdAt)}</p>
                             {log.metadata && (
-                              <pre className="mt-2 text-[11px] text-text-secondary bg-background-tertiary rounded-md p-2 overflow-auto">
+                              <pre className="mt-2 text-[11px] text-slate-400 bg-slate-800 rounded-md p-2 overflow-auto">
                                 {JSON.stringify(log.metadata, null, 2)}
                               </pre>
                             )}
@@ -2575,15 +2574,15 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                <div className="mt-6 bg-background-secondary rounded-xl shadow-sm border border-border-gold/20 p-6">
+                <div className="mt-6 bg-slate-900 rounded-xl shadow-sm border border-slate-800/40 p-6">
                   <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900">Verification media queue</h3>
-                      <p className="text-sm text-text-secondary">Review ID + selfie uploads and approve them manually.</p>
+                      <h3 className="text-lg font-bold text-white">Verification media queue</h3>
+                      <p className="text-sm text-slate-400">Review ID + selfie uploads and approve them manually.</p>
                     </div>
                     <div className="flex items-center gap-2">
                       {moderationError && (
-                        <span className="text-xs text-red-600">{moderationError}</span>
+                        <span className="text-xs text-red-400">{moderationError}</span>
                       )}
                       <Button
                         size="sm"
@@ -2599,13 +2598,13 @@ export default function AdminDashboard() {
                   </div>
 
                   {moderationLoading && (
-                    <div className="mt-4 rounded-lg border border-dashed border-gray-300 p-4 text-sm text-text-tertiary">
+                    <div className="mt-4 rounded-lg border border-dashed border-slate-800 p-4 text-sm text-slate-400">
                       Loading verification jobs…
                     </div>
                   )}
 
                   {!moderationLoading && moderationJobs.length === 0 && (
-                    <div className="mt-4 rounded-lg border border-dashed border-gray-300 p-6 text-center text-sm text-text-tertiary">
+                    <div className="mt-4 rounded-lg border border-dashed border-slate-800 p-6 text-center text-sm text-slate-400">
                       All identity uploads are reviewed. New submissions will show up here automatically.
                     </div>
                   )}
@@ -2615,23 +2614,23 @@ export default function AdminDashboard() {
                       {moderationJobs.map((job) => {
                         const aiScoreLabel = formatAiScoreLabel(job.aiScore)
                         return (
-                        <div key={job.id} className="border border-border-gold/10 rounded-xl p-4">
+                        <div key={job.id} className="border border-slate-800/20 rounded-xl p-4">
                           <div className="flex flex-wrap items-center justify-between gap-3">
                             <div>
-                              <p className="text-sm font-semibold text-gray-900">
+                              <p className="text-sm font-semibold text-white">
                                 {formatMediaTypeLabel(job.mediaType)}
                                 {job.email && (
-                                  <span className="ml-2 text-xs text-text-tertiary">· {job.email}</span>
+                                  <span className="ml-2 text-xs text-slate-500">· {job.email}</span>
                                 )}
                               </p>
-                              <p className="text-xs text-text-tertiary">{formatRelativeTimeSafe(job.createdAt)}</p>
+                              <p className="text-xs text-slate-500">{formatRelativeTimeSafe(job.createdAt)}</p>
                             </div>
-                            <span className="text-xs font-semibold px-2 py-1 rounded-full bg-yellow-50 text-yellow-700">
+                            <span className="text-xs font-semibold px-2 py-1 rounded-full bg-amber-500/10 text-amber-400">
                               {job.status}
                             </span>
                           </div>
 
-                          <div className="mt-3 rounded-lg bg-background-tertiary p-3">
+                          <div className="mt-3 rounded-lg bg-slate-800 p-3">
                             {job.mediaType === 'voice' ? (
                               <audio controls src={job.fileUrl} className="w-full" />
                             ) : job.mediaType === 'video' ? (
@@ -2639,40 +2638,40 @@ export default function AdminDashboard() {
                             ) : (
                               <img src={job.fileUrl} alt={`${job.mediaType} upload`} className="w-full max-h-64 object-contain rounded-lg" />
                             )}
-                            <div className="mt-2 flex items-center justify-between text-xs text-text-tertiary">
+                            <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
                               <span>Upload key {job.uploadKey.slice(0, 6)}…</span>
-                              <a href={job.fileUrl} target="_blank" rel="noreferrer" className="text-purple-600 font-semibold">
+                              <a href={job.fileUrl} target="_blank" rel="noreferrer" className="text-violet-400 font-semibold">
                                 Open original
                               </a>
                             </div>
                           </div>
 
-                          <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-text-secondary">
+                          <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-slate-400">
                             {aiScoreLabel && (
-                              <span className="inline-flex items-center rounded-full bg-background-tertiary px-2 py-0.5 border border-border-gold/20 text-text-secondary">
+                              <span className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 border border-slate-800/40 text-slate-400">
                                 {aiScoreLabel}
                               </span>
                             )}
                             {job.partner && (
-                              <span className="inline-flex items-center rounded-full bg-background-tertiary px-2 py-0.5 border border-border-gold/20 text-text-secondary">
+                              <span className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 border border-slate-800/40 text-slate-400">
                                 Partner {job.partner}
                               </span>
                             )}
-                            <span className="inline-flex items-center rounded-full bg-background-tertiary px-2 py-0.5 border border-border-gold/20 text-text-secondary">
+                            <span className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 border border-slate-800/40 text-slate-400">
                               Attempts {job.attempts}
                             </span>
-                            <span className="inline-flex items-center rounded-full bg-background-tertiary px-2 py-0.5 border border-border-gold/20 text-text-secondary">
+                            <span className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 border border-slate-800/40 text-slate-400">
                               Prospect {job.prospectId.slice(0, 6)}…
                             </span>
                             {job.mediaStatus && (
-                              <span className="inline-flex items-center rounded-full bg-background-tertiary px-2 py-0.5 border border-border-gold/20 text-text-secondary">
+                              <span className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 border border-slate-800/40 text-slate-400">
                                 Media {job.mediaStatus}
                               </span>
                             )}
                           </div>
 
                           {(job.mediaMessage || job.mediaStatus) && (
-                            <div className="mt-2 text-xs text-text-secondary">
+                            <div className="mt-2 text-xs text-slate-400">
                               {job.mediaMessage || job.mediaStatus}
                             </div>
                           )}
