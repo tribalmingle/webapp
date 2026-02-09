@@ -228,7 +228,7 @@ If bottom nav feels too "app-like" for a web product:
     </Sheet>
     
     <Link href="/dashboard">
-      <img src="/logo.png" className="h-8" />
+      <img src="/triballogo.png" className="h-8" />
     </Link>
     
     <DropdownMenu>

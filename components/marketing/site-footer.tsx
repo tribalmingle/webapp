@@ -50,7 +50,7 @@ export function SiteFooter({ locale = 'en', dictionary = defaultDictionary }: Si
             </ul>
             {/* Logo - positioned right below Careers */}
             <div className="mt-4 h-32">
-              <img src="/triballogo.webp" alt="Tribal Mingle" className="h-full w-auto object-contain" />
+              <img src="/triballogo.png" alt="Tribal Mingle" className="h-full w-auto object-contain" />
             </div>
           </div>
           <div>

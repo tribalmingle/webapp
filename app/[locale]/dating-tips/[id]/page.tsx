@@ -117,7 +117,7 @@ export default async function DatingTipPage({ params }: PageProps) {
       name: 'Tribal Mingle',
       logo: {
         '@type': 'ImageObject',
-        url: `${baseUrl}/logo.png`,
+        url: `${baseUrl}/triballogo.png`,
       },
     },
     mainEntityOfPage: {

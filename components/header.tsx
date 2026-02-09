@@ -19,7 +19,7 @@ export function Header({ onSearchClick, onSettingsClick }: HeaderProps = {}) {
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         <Link href="/dashboard-spa" className="flex items-center w-auto">
-          <img src="/triballogo.webp" alt="Tribal Mingle" className="h-[60px] w-full object-contain" />
+          <img src="/triballogo.png" alt="Tribal Mingle" className="h-[60px] w-full object-contain" />
         </Link>
         
         <div className="flex items-center gap-4">

@@ -1161,7 +1161,7 @@ export default function AdminDashboard() {
         mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       } lg:block`}>
         <div className="bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 p-4 lg:p-6">
-          <div className="flex flex-col items-center mb-6 lg:mb-8">\n            <img src="/triballogo.webp" alt="Tribal Mingle" className="w-full h-auto max-w-[180px] mb-0" />
+          <div className="flex flex-col items-center mb-6 lg:mb-8">\n            <img src="/triballogo.png" alt="Tribal Mingle" className="w-full h-auto max-w-[180px] mb-0" />
             <h1 className="text-lg lg:text-xl font-bold text-white font-display">Admin Panel</h1>
             <Badge variant="gold" className="mt-2 text-xs">
               <Crown className="w-3 h-3 mr-1" />
@@ -1241,7 +1241,7 @@ export default function AdminDashboard() {
               <span className="text-sm font-semibold">Menu</span>
             </button>
             <div className="flex items-center gap-2">
-              <img src="/triballogo.webp" alt="Tribal Mingle" className="h-8 w-auto" />
+              <img src="/triballogo.png" alt="Tribal Mingle" className="h-8 w-auto" />
             </div>
             <Badge variant="gold" className="text-xs">
               <Crown className="w-3 h-3 mr-1" />
@@ -3883,7 +3883,7 @@ function EmailUsersSection({ users }: { users: User[] }) {
             </h4>
             <div className="bg-background-secondary rounded-lg p-4 shadow-sm">
               <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-200">
-                <img src="/triballogo.webp" alt="Logo" className="w-8 h-8" />
+                <img src="/triballogo.png" alt="Logo" className="w-8 h-8" />
                 <span className="font-bold text-purple-900">Tribal Mingle</span>
               </div>
               <h3 className="font-bold text-lg mb-2">{emailSubject || 'Your Subject Here'}</h3>
