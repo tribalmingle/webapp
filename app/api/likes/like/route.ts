@@ -3,6 +3,7 @@ import { getDb } from '@/lib/db/mongodb'
 import { getCurrentUser } from '@/lib/auth'
 import { ObjectId } from 'mongodb'
 import { MatchingService } from '@/lib/services/matching-service'
+import { enqueuePushEvent } from '@/lib/services/push-events-service'
 
 export async function POST(req: NextRequest) {
   try {
@@ -121,6 +122,18 @@ export async function POST(req: NextRequest) {
       updatedAt: now,
     })
 
+    try {
+      await enqueuePushEvent({
+        type: 'like',
+        recipientUserId: likedUserObjectId.toHexString(),
+        senderUserId: currentUserObjectId.toHexString(),
+        senderName,
+        senderPhoto,
+      })
+    } catch (error) {
+      console.warn('[likes] push enqueue failed', error)
+    }
+
     const mutualLike = await likesCollection.findOne({
       userId: likedUserObjectId,
       likedUserId: currentUserObjectId,
@@ -187,6 +200,26 @@ export async function POST(req: NextRequest) {
           updatedAt: now,
         }))
       )
+
+      try {
+        await enqueuePushEvent({
+          type: 'match',
+          recipientUserId: likedUserObjectId.toHexString(),
+          senderUserId: currentUserObjectId.toHexString(),
+          senderName,
+          senderPhoto,
+        })
+
+        await enqueuePushEvent({
+          type: 'match',
+          recipientUserId: currentUserObjectId.toHexString(),
+          senderUserId: likedUserObjectId.toHexString(),
+          senderName: likedName,
+          senderPhoto: likedPhoto,
+        })
+      } catch (error) {
+        console.warn('[likes] match push enqueue failed', error)
+      }
     }
 
     return NextResponse.json({

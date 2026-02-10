@@ -12,9 +12,11 @@ export const dynamic = 'force-dynamic'
  * 
  * Expected body:
  * {
- *   deviceToken: string      // OneSignal player ID or Expo push token
+ *   deviceToken: string      // FCM or APNs device token
+ *   tokenType?: 'fcm' | 'apns'
  *   platform: 'ios' | 'android'
  *   deviceId?: string        // Unique device identifier
+ *   deviceName?: string      // Device name
  *   appVersion?: string      // App version (e.g., "1.0.0")
  * }
  */
@@ -43,7 +45,7 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json()
-    const { deviceToken, platform, deviceId, appVersion } = body
+    const { deviceToken, tokenType, platform, deviceId, deviceName, appVersion } = body
 
     // Validate required fields
     if (!deviceToken || typeof deviceToken !== 'string') {
@@ -59,6 +61,12 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    const resolvedTokenType = tokenType === 'fcm' || tokenType === 'apns'
+      ? tokenType
+      : platform === 'ios'
+        ? 'apns'
+        : 'fcm'
 
     const db = await getMongoDb()
     const devicesCollection = db.collection('device_tokens')
@@ -79,7 +87,9 @@ export async function POST(request: NextRequest) {
           $set: {
             platform,
             deviceId: deviceId || null,
+            deviceName: deviceName || null,
             appVersion: appVersion || null,
+            tokenType: resolvedTokenType,
             updatedAt: now,
             lastSeenAt: now,
           },
@@ -98,7 +108,9 @@ export async function POST(request: NextRequest) {
       userId,
       deviceToken,
       platform,
+      tokenType: resolvedTokenType,
       deviceId: deviceId || null,
+      deviceName: deviceName || null,
       appVersion: appVersion || null,
       createdAt: now,
       updatedAt: now,

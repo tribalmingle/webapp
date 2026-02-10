@@ -6,6 +6,7 @@
 import { Worker } from 'bullmq'
 import { createMatchGenerationWorker } from './match-generation'
 import { createNotificationSchedulerWorker } from './notification-scheduler'
+import { createPushEventsWorker } from './push-events'
 import { createEventRemindersWorker } from './event-reminders'
 import { createCampaignExecutorWorker } from './campaign-executor'
 import { createDataExportWorker } from './data-export'
@@ -25,6 +26,7 @@ export function startWorkers() {
   workers = [
     createMatchGenerationWorker(),
     createNotificationSchedulerWorker(),
+    createPushEventsWorker(),
     createEventRemindersWorker(),
     createCampaignExecutorWorker(),
     createDataExportWorker(),

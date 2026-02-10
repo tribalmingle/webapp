@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { getMongoDb } from '@/lib/mongodb'
 import { getCurrentUser } from '@/lib/auth'
+import { enqueuePushEvent } from '@/lib/services/push-events-service'
 
 export async function POST(req: NextRequest) {
   try {
@@ -89,6 +90,20 @@ export async function POST(req: NextRequest) {
         createdAt: now,
         updatedAt: now,
       })
+
+      try {
+        await enqueuePushEvent({
+          type: 'message',
+          recipientUserId: receiverDoc._id.toHexString(),
+          senderUserId: String(userPayload.userId || userPayload.email || senderDoc?._id?.toHexString?.() || ''),
+          senderName,
+          senderPhoto,
+          messagePreview: String(message).slice(0, 140),
+          threadId: userPayload.email,
+        })
+      } catch (error) {
+        console.warn('[messages] push enqueue failed', error)
+      }
     }
 
     return NextResponse.json({

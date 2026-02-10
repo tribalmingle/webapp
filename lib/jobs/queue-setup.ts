@@ -25,6 +25,7 @@ export const redisConnection: ConnectionOptions = {
 export const QueueNames = {
   MATCH_GENERATION: 'match-generation',
   NOTIFICATIONS: 'notifications',
+  PUSH_EVENTS: 'push-events',
   EVENT_REMINDERS: 'event-reminders',
   CAMPAIGNS: 'campaigns',
   DATA_EXPORT: 'data-export',
